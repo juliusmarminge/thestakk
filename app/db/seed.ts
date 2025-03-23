@@ -638,13 +638,5 @@ const query = db.prepare(
 );
 
 for (const item of seedData) {
-  query.run(
-    item.header,
-    item.type,
-    item.status,
-    item.target,
-    item.limit,
-    item.reviewer,
-    item.id,
-  );
+  query.run(item.header, item.type, item.status, item.target, item.limit, item.reviewer, item.id);
 }

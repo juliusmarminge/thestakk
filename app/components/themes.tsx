@@ -57,9 +57,7 @@ const updateModeCookie = createServerFn({ method: "POST" })
   });
 
 export const getThemeCookie = createServerFn().handler(() => {
-  const [theme = "default", scaled] = (
-    getCookie(THEME_COOKIE_NAME) ?? "null"
-  ).split("-");
+  const [theme = "default", scaled] = (getCookie(THEME_COOKIE_NAME) ?? "null").split("-");
   let resolved = Theme(theme);
   if (resolved instanceof ArkErrors) resolved = "default";
   return { theme: resolved, scaled: !!scaled };
@@ -78,10 +76,7 @@ const updateThemeCookie = createServerFn({ method: "POST" })
   });
 
 // Helper to update <body> class
-function updateThemeClass(
-  mode: typeof Mode.infer,
-  prefers: typeof PrefersMode.infer,
-) {
+function updateThemeClass(mode: typeof Mode.infer, prefers: typeof PrefersMode.infer) {
   document.documentElement.classList.remove("dark");
   if (mode === "dark" || (mode === "system" && prefers === "dark")) {
     document.documentElement.classList.add("dark");
@@ -92,9 +87,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   resolvedMode: "system",
   preferredMode: (() => {
     if (typeof document !== "undefined") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
 
     return "light";
@@ -102,11 +95,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   toggleMode: () =>
     set((s) => {
       const newMode =
-        s.resolvedMode === "system"
-          ? "light"
-          : s.resolvedMode === "light"
-            ? "dark"
-            : "system";
+        s.resolvedMode === "system" ? "light" : s.resolvedMode === "light" ? "dark" : "system";
 
       updateThemeClass(newMode, s.preferredMode);
       updateModeCookie({ data: newMode });
@@ -139,15 +128,11 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
 }));
 
 if (typeof document !== "undefined") {
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (event) => {
-      if (useThemeStore.getState().resolvedMode === "system") {
-        useThemeStore
-          .getState()
-          .setPreferredMode(event.matches ? "dark" : "light");
-      }
-    });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+    if (useThemeStore.getState().resolvedMode === "system") {
+      useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
+    }
+  });
 }
 
 export function ModeToggle(props: {
@@ -161,9 +146,7 @@ export function ModeToggle(props: {
     setMounted(true);
   }, []);
 
-  const handleToggleMode = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleToggleMode = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     toggleMode();
@@ -204,8 +187,7 @@ export function ModeToggle(props: {
           <div
             className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all duration-300 ease-in-out dark:bg-accent-foreground"
             style={{
-              left:
-                mode === "system" ? "50%" : mode === "light" ? "100%" : "0%",
+              left: mode === "system" ? "50%" : mode === "light" ? "100%" : "0%",
               transform: `translateX(${
                 mode === "system" ? "-50%" : mode === "light" ? "-100%" : "0"
               }) scale(${mode === "system" ? 0 : 0.8})`,
@@ -236,12 +218,8 @@ export function ThemeSelector() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              <span className="hidden text-muted-foreground sm:block">
-                Select a theme:
-              </span>
-              <span className="block text-muted-foreground sm:hidden">
-                Theme
-              </span>
+              <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
+              <span className="block text-muted-foreground sm:hidden">Theme</span>
               <span className="capitalize">{activeTheme}</span>
             </Button>
           </DropdownMenuTrigger>
@@ -250,16 +228,10 @@ export function ThemeSelector() {
               <DropdownMenuLabel>Theme</DropdownMenuLabel>
               <DropdownMenuRadioGroup
                 value={activeTheme}
-                onValueChange={(value) =>
-                  setActiveTheme(value as typeof Theme.infer, scaled)
-                }
+                onValueChange={(value) => setActiveTheme(value as typeof Theme.infer, scaled)}
               >
                 {themeValues.map((theme) => (
-                  <DropdownMenuRadioItem
-                    key={theme}
-                    value={theme}
-                    className="capitalize"
-                  >
+                  <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
                     {theme}
                   </DropdownMenuRadioItem>
                 ))}
@@ -268,9 +240,7 @@ export function ThemeSelector() {
             <DropdownMenuGroup>
               <DropdownMenuCheckboxItem
                 checked={scaled}
-                onCheckedChange={(checked) =>
-                  setActiveTheme(activeTheme, checked)
-                }
+                onCheckedChange={(checked) => setActiveTheme(activeTheme, checked)}
               >
                 Scaled
               </DropdownMenuCheckboxItem>

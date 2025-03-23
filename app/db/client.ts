@@ -2,9 +2,7 @@ import * as path from "node:path";
 import * as sqlite from "node:sqlite";
 import { Item } from "./schema";
 
-export const db = new sqlite.DatabaseSync(
-  path.join(import.meta.dirname, "db.sqlite"),
-);
+export const db = new sqlite.DatabaseSync(path.join(import.meta.dirname, "db.sqlite"));
 
 export function countItems() {
   const { count } = db.prepare("SELECT COUNT(*) as count FROM items").get() as {

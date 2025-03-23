@@ -31,10 +31,7 @@ export const trpcRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      db.prepare("UPDATE items SET `order` = ? WHERE `id` = ?").run(
-        input.order,
-        input.id,
-      );
+      db.prepare("UPDATE items SET `order` = ? WHERE `id` = ?").run(input.order, input.id);
       return { ok: true };
     }),
 });

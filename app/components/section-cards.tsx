@@ -1,7 +1,4 @@
-import {
-  ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon,
-} from "@heroicons/react/16/solid";
+import { ArrowTrendingDownIcon, ArrowTrendingUpIcon } from "@heroicons/react/16/solid";
 import { Badge } from "~/components/ui/badge";
 import {
   Card,
@@ -32,9 +29,7 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Trending up this month <ArrowTrendingUpIcon className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
+          <div className="text-muted-foreground">Visitors for the last 6 months</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
@@ -54,9 +49,7 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Down 20% this period <ArrowTrendingDownIcon className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
+          <div className="text-muted-foreground">Acquisition needs attention</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
@@ -94,8 +87,7 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase{" "}
-            <ArrowTrendingUpIcon className="size-4" />
+            Steady performance increase <ArrowTrendingUpIcon className="size-4" />
           </div>
           <div className="text-muted-foreground">Meets growth projections</div>
         </CardFooter>

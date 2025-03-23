@@ -30,11 +30,7 @@ function RouteComponent() {
         <DataTable
           paginationState={paginationState}
           onPaginationChange={(pagination) => {
-            setFilters(
-              typeof pagination === "function"
-                ? pagination(paginationState)
-                : pagination,
-            );
+            setFilters(typeof pagination === "function" ? pagination(paginationState) : pagination);
           }}
         />
       </div>

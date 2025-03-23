@@ -50,9 +50,7 @@ function Home() {
           );
         }}
       </form.Field>
-      <form.Subscribe
-        selector={(formState) => [formState.canSubmit, formState.isSubmitting]}
-      >
+      <form.Subscribe selector={(formState) => [formState.canSubmit, formState.isSubmitting]}>
         {([canSubmit, isSubmitting]) => (
           <button type="submit" disabled={!canSubmit}>
             {isSubmitting ? "..." : "Submit"}

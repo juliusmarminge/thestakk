@@ -1,25 +1,12 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  HeadContent,
-  Outlet,
-  Scripts,
-  createRootRouteWithContext,
-} from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { AppSidebar } from "~/components/app-sidebar";
 import { SiteHeader } from "~/components/site-header";
-import {
-  getModeCookie,
-  getThemeCookie,
-  useThemeStore,
-} from "~/components/themes";
-import {
-  SidebarInset,
-  SidebarProvider,
-  getSidebarCookie,
-} from "~/components/ui/sidebar";
+import { getModeCookie, getThemeCookie, useThemeStore } from "~/components/themes";
+import { SidebarInset, SidebarProvider, getSidebarCookie } from "~/components/ui/sidebar";
 import { Toaster } from "~/components/ui/sonner";
 import { cn } from "~/lib/utils";
 import stylesUrl from "~/styles/index.css?url";
@@ -37,8 +24,7 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  loader: () =>
-    Promise.all([getModeCookie(), getThemeCookie(), getSidebarCookie()]),
+  loader: () => Promise.all([getModeCookie(), getThemeCookie(), getSidebarCookie()]),
   component: RootComponent,
 });
 

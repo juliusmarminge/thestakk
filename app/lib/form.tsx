@@ -1,8 +1,4 @@
-import {
-  ServerValidateError,
-  createServerValidate,
-  getFormData,
-} from "@tanstack/react-form/start";
+import { ServerValidateError, createServerValidate, getFormData } from "@tanstack/react-form/start";
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseStatus } from "@tanstack/react-start/server";
 import { type } from "arktype";
@@ -39,8 +35,6 @@ export const handleForm = createServerFn({
     return "Form has validated successfully";
   });
 
-export const getFormDataFromServer = createServerFn({ method: "GET" }).handler(
-  async () => {
-    return getFormData();
-  },
-);
+export const getFormDataFromServer = createServerFn({ method: "GET" }).handler(async () => {
+  return getFormData();
+});
