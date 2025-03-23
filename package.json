@@ -8,6 +8,7 @@
     "check:fix": "biome check --write --unsafe",
     "check": "biome check && tsc --noEmit",
     "dev": "vinxi dev",
+    "seed": "node --experimental-strip-types app/db/seed.ts",
     "start": "vinxi start"
   },
   "dependencies": {

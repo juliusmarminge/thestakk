@@ -634,9 +634,18 @@ db.exec(
 );
 
 const query = db.prepare(
-  "INSERT OR IGNORE INTO items (`header`, `type`, `status`, `target`, `limit`, `reviewer`, `order`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  "INSERT OR IGNORE INTO items (`id`, `header`, `type`, `status`, `target`, `limit`, `reviewer`, `order`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 );
 
 for (const item of seedData) {
-  query.run(item.header, item.type, item.status, item.target, item.limit, item.reviewer, item.id);
+  query.run(
+    item.id,
+    item.header,
+    item.type,
+    item.status,
+    item.target,
+    item.limit,
+    item.reviewer,
+    item.id,
+  );
 }
