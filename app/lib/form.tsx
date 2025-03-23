@@ -1,0 +1,46 @@
+import {
+  ServerValidateError,
+  createServerValidate,
+  getFormData,
+} from "@tanstack/react-form/start";
+import { createServerFn } from "@tanstack/react-start";
+import { setResponseStatus } from "@tanstack/react-start/server";
+import { type } from "arktype";
+import { formOpts } from "./form-isomorphic";
+
+const serverValidate = createServerValidate({
+  ...formOpts,
+  onServerValidate: ({ value }) => {
+    if (value.age < 12) {
+      return "Server validation: You must be at least 12 to sign up";
+    }
+  },
+});
+
+export const handleForm = createServerFn({
+  method: "POST",
+})
+  .validator(type("FormData"))
+  .handler(async (ctx) => {
+    try {
+      await serverValidate(ctx.data);
+    } catch (e) {
+      if (e instanceof ServerValidateError) {
+        // Log form errors or do any other logic here
+        return e.response;
+      }
+
+      // Some other error occurred when parsing the form
+      console.error(e);
+      setResponseStatus(500);
+      return "There was an internal error";
+    }
+
+    return "Form has validated successfully";
+  });
+
+export const getFormDataFromServer = createServerFn({ method: "GET" }).handler(
+  async () => {
+    return getFormData();
+  },
+);

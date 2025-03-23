@@ -1,0 +1,17 @@
+{
+  "include": ["**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "module": "preserve",
+    "target": "es2022",
+    "jsx": "preserve",
+    "strict": true,
+    "skipLibCheck": true,
+    "libReplacement": false,
+    "erasableSyntaxOnly": true,
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "types": ["vinxi/types/client"]
+  }
+}
