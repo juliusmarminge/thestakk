@@ -105,6 +105,9 @@ importers:
       '@biomejs/biome':
         specifier: ^1.9.4
         version: 1.9.4
+      '@tanstack/react-query-devtools':
+        specifier: ^5.69.0
+        version: 5.69.0(@tanstack/react-query@5.69.0(react@19.0.0))(react@19.0.0)
       '@types/node':
         specifier: ^22.13.11
         version: 22.13.11
@@ -1913,6 +1916,9 @@ packages:
   '@tanstack/query-core@5.69.0':
     resolution: {integrity: sha512-Kn410jq6vs1P8Nm+ZsRj9H+U3C0kjuEkYLxbiCyn3MDEiYor1j2DGVULqAz62SLZtUZ/e9Xt6xMXiJ3NJ65WyQ==}
 
+  '@tanstack/query-devtools@5.67.2':
+    resolution: {integrity: sha512-O4QXFFd7xqp6EX7sdvc9tsVO8nm4lpWBqwpgjpVLW5g7IeOY6VnS/xvs/YzbRhBVkKTMaJMOUGU7NhSX+YGoNg==}
+
   '@tanstack/react-form@1.1.2':
     resolution: {integrity: sha512-kbjKFvFrNMe+3QHJxmKLO61mXuScgRcB6xAWLI7yw8UkQ/MNVi1ZoL3inp5I4hDkcjdpCD1Syn1DotMOX5XQxw==}
     peerDependencies:
@@ -1924,6 +1930,12 @@ packages:
         optional: true
       vinxi:
         optional: true
+
+  '@tanstack/react-query-devtools@5.69.0':
+    resolution: {integrity: sha512-sYklnou3IKAemqB5wJeBwjmG5bUGDKAL5/I4pVA+aqSnsNibVLt8/pAU976uuJ5K71w71bHtI/AMxiIs3gtkEA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.69.0
+      react: ^18 || ^19
 
   '@tanstack/react-query@5.69.0':
     resolution: {integrity: sha512-Ift3IUNQqTcaFa1AiIQ7WCb/PPy8aexZdq9pZWLXhfLcLxH0+PZqJ2xFImxCpdDZrFRZhLJrh76geevS5xjRhA==}
@@ -5813,6 +5825,8 @@ snapshots:
 
   '@tanstack/query-core@5.69.0': {}
 
+  '@tanstack/query-devtools@5.67.2': {}
+
   '@tanstack/react-form@1.1.2(@tanstack/react-start@1.114.27(@tanstack/react-router@1.114.27(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@types/node@22.13.11)(db0@0.3.1)(ioredis@5.6.0)(jiti@2.4.2)(lightningcss@1.29.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.2)(vite@6.2.2(@types/node@22.13.11)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.8.2)(vinxi@0.5.3(@types/node@22.13.11)(db0@0.3.1)(ioredis@5.6.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.2))':
     dependencies:
       '@remix-run/node': 2.16.2(typescript@5.8.2)
@@ -5826,6 +5840,12 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
       - typescript
+
+  '@tanstack/react-query-devtools@5.69.0(@tanstack/react-query@5.69.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@tanstack/query-devtools': 5.67.2
+      '@tanstack/react-query': 5.69.0(react@19.0.0)
+      react: 19.0.0
 
   '@tanstack/react-query@5.69.0(react@19.0.0)':
     dependencies:

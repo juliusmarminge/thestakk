@@ -1,8 +1,5 @@
-import {
-  type QueryClient,
-  useQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   HeadContent,
   Outlet,
@@ -83,7 +80,6 @@ function RootDocument(props: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -102,6 +98,7 @@ function RootDocument(props: { children: React.ReactNode }) {
         {props.children}
         <Toaster />
         <Scripts />
+        <ReactQueryDevtools />
       </body>
     </html>
   );

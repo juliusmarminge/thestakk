@@ -15,7 +15,8 @@
     "enabled": true,
     "indentWidth": 2,
     "indentStyle": "space",
-    "formatWithErrors": true
+    "formatWithErrors": true,
+    "lineWidth": 80
   },
   "linter": {
     "enabled": true,
@@ -37,6 +38,9 @@
             "functions": ["cva", "cn", "cx"]
           }
         }
+      },
+      "performance": {
+        "noDelete": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",

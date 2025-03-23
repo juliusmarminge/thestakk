@@ -1,9 +1,9 @@
 {
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "lib": ["es2022", "dom"],
+    "lib": ["es2023", "dom"],
     "module": "preserve",
-    "target": "es2022",
+    "target": "es2023",
     "jsx": "preserve",
     "strict": true,
     "skipLibCheck": true,

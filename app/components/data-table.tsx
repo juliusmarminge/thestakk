@@ -6,7 +6,6 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  type UniqueIdentifier,
   closestCenter,
   useSensor,
   useSensors,
@@ -14,7 +13,6 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
-  arrayMove,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
@@ -31,10 +29,16 @@ import {
   ViewColumnsIcon,
 } from "@heroicons/react/16/solid";
 import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import {
   type ColumnDef,
-  type ColumnFiltersState,
-  type Row,
-  type SortingState,
+  type OnChangeFn,
+  type PaginationState,
+  type Table as ReactTable,
+  type Row as ReactTableRow,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -42,10 +46,8 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { type } from "arktype";
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
@@ -95,20 +97,13 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import type { Item } from "~/db/schema";
+import { useTRPC } from "~/lib/trpc";
 import { useIsMobile } from "~/lib/use-is-mobile";
+import { sleep } from "~/lib/utils";
 import { LoaderIcon } from "./icons";
 
-export const schema = type({
-  id: "number",
-  header: "string",
-  type: "string",
-  status: "string",
-  target: "string",
-  limit: "string",
-  reviewer: "string",
-});
-
-const columns: ColumnDef<typeof schema.infer>[] = [
+const columns: ColumnDef<typeof Item.infer>[] = [
   {
     id: "drag",
     header: () => null,
@@ -178,7 +173,7 @@ const columns: ColumnDef<typeof schema.infer>[] = [
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
+          toast.promise(sleep(1000), {
             loading: `Saving ${row.original.header}`,
             success: "Done",
             error: "Error",
@@ -203,7 +198,7 @@ const columns: ColumnDef<typeof schema.infer>[] = [
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
+          toast.promise(sleep(1000), {
             loading: `Saving ${row.original.header}`,
             success: "Done",
             error: "Error",
@@ -281,70 +276,107 @@ const columns: ColumnDef<typeof schema.infer>[] = [
   },
 ];
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: (typeof schema.infer)[];
+/**
+ * A data table component that displays a list of items in a table format.
+ * Supports rearranging items by dragging and dropping.
+ */
+export function DataTable(props: {
+  paginationState: PaginationState;
+  onPaginationChange: OnChangeFn<PaginationState>;
 }) {
-  const [data, setData] = React.useState(() => initialData);
+  const trpc = useTRPC();
+  const qc = useQueryClient();
+
+  /**
+   * Fetch the items for the current page
+   */
+  const itemsQuery = trpc.getItems.queryOptions({
+    pageIndex: props.paginationState.pageIndex,
+    pageSize: props.paginationState.pageSize,
+  });
+  const {
+    data: { items, pageCount },
+  } = useSuspenseQuery(itemsQuery);
+
+  /**
+   * Optimistic update for the moved item
+   */
+  const moveItemMutation = useMutation(
+    trpc.moveItem.mutationOptions({
+      onMutate: async (variables) => {
+        await qc.cancelQueries();
+        qc.setQueryData(itemsQuery.queryKey, (old) => {
+          const movedItem = old?.items.find((item) => item.id === variables.id);
+          if (!old || !movedItem) return undefined;
+
+          // Update the moved item's order and re-sort
+          movedItem.order = variables.order;
+          const sortedItems = old.items.toSorted((a, b) => a.order - b.order);
+
+          return { ...old, items: sortedItems };
+        });
+      },
+    }),
+  );
+
+  /**
+   * Handle the drag end event by calculating the new order of the items
+   * and then firing the mutation to update the order of the items on the backend
+   * @param event - The drag end event
+   */
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!active || !over || active.id === over.id) return;
+
+    const activeItemIndex = items.findIndex((i) => i.id === Number(active.id));
+    const overItemIndex = items.findIndex((i) => i.id === Number(over.id));
+    const overItem = items[overItemIndex];
+
+    let newOrder: number;
+    if (overItemIndex > activeItemIndex) {
+      const nextItemOrder =
+        overItemIndex === items.length - 1
+          ? overItem.order + 0.01
+          : items[overItemIndex + 1]?.order;
+      newOrder = (overItem?.order + nextItemOrder) / 2;
+    } else {
+      const prevItemOrder =
+        overItemIndex === 0
+          ? overItem.order - 0.01
+          : items[overItemIndex - 1]?.order;
+      newOrder = (overItem?.order + prevItemOrder) / 2;
+    }
+
+    moveItemMutation.mutate({
+      id: Number(active.id),
+      order: newOrder,
+    });
+  }
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const sortableId = React.useId();
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
-  );
-
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data],
-  );
 
   const table = useReactTable({
-    data,
     columns,
+    data: items,
     state: {
-      sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
-      pagination,
+      pagination: props.paginationState,
     },
+    manualPagination: true,
+    pageCount,
     getRowId: (row) => row.id.toString(),
-    enableRowSelection: true,
+    onPaginationChange: props.onPaginationChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
-    }
-  }
 
   return (
     <Tabs
@@ -380,178 +412,16 @@ export function DataTable({
           </TabsTrigger>
           <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
         </TabsList>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <ViewColumnsIcon />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
-                <ChevronDownIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value: unknown) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <PlusIcon />
-            <span className="hidden lg:inline">Add Section</span>
-          </Button>
-        </div>
+        <TableActions table={table} />
       </div>
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <div className="overflow-hidden rounded-lg border">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          >
-            <Table>
-              <TableHeader className="sticky top-0 z-10 bg-muted">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext
-                    items={dataIds}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
-                    ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
+          <TableWithDraggableRows table={table} handleDragEnd={handleDragEnd} />
         </div>
-        <div className="flex items-center justify-between px-4">
-          <div className="hidden flex-1 text-muted-foreground text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="flex w-full items-center gap-8 lg:w-fit">
-            <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="font-medium text-sm">
-                Rows per page
-              </Label>
-              <Select
-                value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value: unknown) => {
-                  table.setPageSize(Number(value));
-                }}
-              >
-                <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {pageSize}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex w-fit items-center justify-center font-medium text-sm">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </div>
-            <div className="ml-auto flex items-center gap-2 lg:ml-0">
-              <Button
-                variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to first page</span>
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                variant="outline"
-                className="size-8"
-                size="icon"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to previous page</span>
-                <ChevronLeftIcon />
-              </Button>
-              <Button
-                variant="outline"
-                className="size-8"
-                size="icon"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to next page</span>
-                <ChevronRightIcon />
-              </Button>
-              <Button
-                variant="outline"
-                className="hidden size-8 lg:flex"
-                size="icon"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to last page</span>
-                <ChevronRightIcon />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <TablePagination table={table} />
       </TabsContent>
       <TabsContent
         value="past-performance"
@@ -569,6 +439,196 @@ export function DataTable({
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
     </Tabs>
+  );
+}
+
+function TableActions({ table }: { table: ReactTable<typeof Item.infer> }) {
+  return (
+    <div className="flex items-center gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="sm">
+            <ViewColumnsIcon />
+            <span className="hidden lg:inline">Customize Columns</span>
+            <span className="lg:hidden">Columns</span>
+            <ChevronDownIcon />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          {table
+            .getAllColumns()
+            .filter(
+              (column) =>
+                typeof column.accessorFn !== "undefined" && column.getCanHide(),
+            )
+            .map((column) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value: unknown) =>
+                    column.toggleVisibility(!!value)
+                  }
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button variant="outline" size="sm">
+        <PlusIcon />
+        <span className="hidden lg:inline">Add Section</span>
+      </Button>
+    </div>
+  );
+}
+
+function TableWithDraggableRows({
+  table,
+
+  handleDragEnd,
+}: {
+  table: ReactTable<typeof Item.infer>;
+
+  handleDragEnd: (event: DragEndEvent) => void;
+}) {
+  const rows = table.getRowModel().rows;
+  const itemIds = React.useMemo(() => rows.map((row) => row.id), [rows]);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor),
+  );
+
+  return (
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+    >
+      <Table>
+        <TableHeader className="sticky top-0 z-10 bg-muted">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody className="**:data-[slot=table-cell]:first:w-8">
+          {table.getRowModel().rows.length ? (
+            <SortableContext
+              items={itemIds}
+              strategy={verticalListSortingStrategy}
+            >
+              {table.getRowModel().rows.map((row) => (
+                <DraggableRow key={row.id} row={row} />
+              ))}
+            </SortableContext>
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </DndContext>
+  );
+}
+
+function TablePagination({ table }: { table: ReactTable<typeof Item.infer> }) {
+  return (
+    <div className="flex items-center justify-between px-4">
+      <div className="hidden flex-1 text-muted-foreground text-sm lg:flex">
+        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+        {table.getFilteredRowModel().rows.length} row(s) selected.
+      </div>
+      <div className="flex w-full items-center gap-8 lg:w-fit">
+        <div className="hidden items-center gap-2 lg:flex">
+          <Label htmlFor="rows-per-page" className="font-medium text-sm">
+            Rows per page
+          </Label>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value: unknown) => {
+              table.setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex w-fit items-center justify-center font-medium text-sm">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
+        </div>
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <Button
+            variant="outline"
+            className="hidden h-8 w-8 p-0 lg:flex"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <span className="sr-only">Go to first page</span>
+            <ChevronLeftIcon />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8"
+            size="icon"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <span className="sr-only">Go to previous page</span>
+            <ChevronLeftIcon />
+          </Button>
+          <Button
+            variant="outline"
+            className="size-8"
+            size="icon"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <span className="sr-only">Go to next page</span>
+            <ChevronRightIcon />
+          </Button>
+          <Button
+            variant="outline"
+            className="hidden size-8 lg:flex"
+            size="icon"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            <span className="sr-only">Go to last page</span>
+            <ChevronRightIcon />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -592,7 +652,7 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
-function DraggableRow({ row }: { row: Row<typeof schema.infer> }) {
+function DraggableRow({ row }: { row: ReactTableRow<typeof Item.infer> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   });
@@ -637,7 +697,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function TableCellViewer({ item }: { item: typeof schema.infer }) {
+function TableCellViewer({ item }: { item: typeof Item.infer }) {
   const isMobile = useIsMobile();
 
   return (

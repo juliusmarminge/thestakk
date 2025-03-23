@@ -1,14 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { type } from "arktype";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
 import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
-import data from "~/trpc/data.json";
+import { useFilters } from "~/lib/use-filters";
 
 export const Route = createFileRoute("/")({
+  validateSearch: type({
+    pageIndex: type.number.default(0),
+    pageSize: type.number.default(10),
+  }),
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { filters, setFilters } = useFilters(Route.id);
+  const paginationState = {
+    pageIndex: filters.pageIndex,
+    pageSize: filters.pageSize,
+  };
+
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -16,7 +27,16 @@ function RouteComponent() {
         <div className="px-4 lg:px-6">
           <ChartAreaInteractive />
         </div>
-        <DataTable data={data} />
+        <DataTable
+          paginationState={paginationState}
+          onPaginationChange={(pagination) => {
+            setFilters(
+              typeof pagination === "function"
+                ? pagination(paginationState)
+                : pagination,
+            );
+          }}
+        />
       </div>
     </div>
   );
