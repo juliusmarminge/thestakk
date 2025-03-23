@@ -1,8 +1,8 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
 import { createServerFn } from "@tanstack/react-start";
+import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { ArkErrors, type } from "arktype";
 import * as React from "react";
-import { getCookie, setCookie } from "vinxi/http";
 import { create } from "zustand";
 import { Button } from "~/components/ui/button";
 import {
