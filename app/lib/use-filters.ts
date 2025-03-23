@@ -24,11 +24,19 @@ export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(ro
   const navigate = useNavigate();
   const filters = routeApi.useSearch();
 
-  const setFilters = (partialFilters: Partial<typeof filters>) =>
+  const setFilters = (partialFilters: Partial<typeof filters>) => {
     navigate({
       search: (prev) => cleanEmptyParams({ ...prev, ...partialFilters }),
+      to: ".",
     });
-  const resetFilters = () => navigate({ search: {} });
+  };
+
+  const resetFilters = () => {
+    navigate({
+      search: {},
+      to: ".",
+    });
+  };
 
   return { filters, setFilters, resetFilters };
 }

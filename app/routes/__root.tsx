@@ -5,7 +5,13 @@ import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { AppSidebar } from "~/components/app-sidebar";
 import { SiteHeader } from "~/components/site-header";
-import { getModeCookie, getThemeCookie, useThemeStore } from "~/components/themes";
+import {
+  EAGER_SET_SYSTEM_THEME_SCRIPT,
+  getModeCookie,
+  getThemeCookie,
+  useSystemTheme,
+  useThemeStore,
+} from "~/components/themes";
 import { SidebarInset, SidebarProvider, getSidebarCookie } from "~/components/ui/sidebar";
 import { Toaster } from "~/components/ui/sonner";
 import { cn } from "~/lib/utils";
@@ -67,10 +73,15 @@ function RootDocument(props: { children: React.ReactNode }) {
   React.useEffect(() => {
     useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
   }, []);
+  useSystemTheme();
 
   return (
-    <html lang="en" className={mode === "dark" ? "dark" : ""}>
+    <html lang="en" {...(mode === "dark" && { className: "dark" })}>
       <head>
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: needed for immediate theme application
+          dangerouslySetInnerHTML={{ __html: EAGER_SET_SYSTEM_THEME_SCRIPT }}
+        />
         <HeadContent />
       </head>
       <body

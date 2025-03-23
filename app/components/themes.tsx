@@ -32,7 +32,6 @@ interface ThemeStore {
   preferredMode: typeof PrefersMode.infer;
   toggleMode: () => void;
   setPreferredMode: (mode: typeof PrefersMode.infer) => void;
-
   activeTheme: typeof Theme.infer;
   setActiveTheme: (theme: typeof Theme.infer, scaled: boolean) => void;
   scaled: boolean;
@@ -42,6 +41,13 @@ export const getModeCookie = createServerFn().handler(() => {
   let resolved = Mode(getCookie(MODE_COOKIE_NAME) ?? "null");
   if (resolved instanceof ArkErrors) resolved = "system";
   return resolved;
+});
+
+export const getThemeCookie = createServerFn().handler(() => {
+  const [theme = "default", scaled] = (getCookie(THEME_COOKIE_NAME) ?? "null").split("-");
+  let resolved = Theme(theme);
+  if (resolved instanceof ArkErrors) resolved = "default";
+  return { theme: resolved, scaled: !!scaled };
 });
 
 const updateModeCookie = createServerFn({ method: "POST" })
@@ -55,13 +61,6 @@ const updateModeCookie = createServerFn({ method: "POST" })
       maxAge: 60 * 60 * 24 * 365 * 10,
     });
   });
-
-export const getThemeCookie = createServerFn().handler(() => {
-  const [theme = "default", scaled] = (getCookie(THEME_COOKIE_NAME) ?? "null").split("-");
-  let resolved = Theme(theme);
-  if (resolved instanceof ArkErrors) resolved = "default";
-  return { theme: resolved, scaled: !!scaled };
-});
 
 const updateThemeCookie = createServerFn({ method: "POST" })
   .validator(type("string"))
@@ -82,6 +81,20 @@ function updateThemeClass(mode: typeof Mode.infer, prefers: typeof PrefersMode.i
     document.documentElement.classList.add("dark");
   }
 }
+
+export const EAGER_SET_SYSTEM_THEME_SCRIPT = `
+(function() {
+  const mode = document.cookie.split('; ').find(row => row.startsWith('mode='))?.split('=')[1];
+  if (mode === "system") {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }
+})();
+`;
 
 export const useThemeStore = create<ThemeStore>((set, get) => ({
   resolvedMode: "system",
@@ -127,12 +140,20 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   },
 }));
 
-if (typeof document !== "undefined") {
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-    if (useThemeStore.getState().resolvedMode === "system") {
-      useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
+export function useSystemTheme() {
+  React.useEffect(() => {
+    const match = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function handleChange(event: MediaQueryListEvent) {
+      if (useThemeStore.getState().resolvedMode === "system") {
+        useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
+      }
     }
-  });
+    match.addEventListener("change", handleChange);
+    return () => match.removeEventListener("change", handleChange);
+  }, []);
+
+  return null;
 }
 
 export function ModeToggle(props: {
