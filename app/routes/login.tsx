@@ -3,7 +3,7 @@ import { type } from "arktype";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
-import { FieldGroup, Fieldset, Legend } from "~/components/form";
+import { FieldGroup, Fieldset, Form, Legend } from "~/components/form";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useAppForm } from "~/lib/use-form";
@@ -54,12 +54,8 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
+      <Form
+        form={form as never}
         className="w-full max-w-lg space-y-6 rounded-xl border bg-gradient-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
       >
         <Fieldset>
@@ -85,11 +81,9 @@ function RouteComponent() {
         </Fieldset>
 
         <div className="space-y-2">
-          <form.AppForm>
-            <form.SubscribeButton className="w-full">
-              {isSignUp ? "Sign Up" : "Sign In"}
-            </form.SubscribeButton>
-          </form.AppForm>
+          <form.SubscribeButton className="w-full">
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </form.SubscribeButton>
           <Button
             type="button"
             variant="ghost"
@@ -99,7 +93,7 @@ function RouteComponent() {
             {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
           </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

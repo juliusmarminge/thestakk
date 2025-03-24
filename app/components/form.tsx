@@ -1,17 +1,41 @@
-import * as Headless from "@headlessui/react";
-import type React from "react";
-import { useFieldContext, useFormContext } from "~/lib/form-context";
+import type { FormApi } from "@tanstack/react-form";
+import { Slot as SlotPrimitive } from "radix-ui";
+import * as React from "react";
+import { LoadingSpinner } from "~/components/icons";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Text } from "~/components/ui/text";
+import { FormItemContext, useFieldContext, useFormContext } from "~/lib/form-context";
 import { cn } from "~/lib/utils";
-import { LoadingSpinner } from "./icons";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 
-export function Fieldset({
-  className,
+// FIXME: TYPES
+
+type AppFormApi = FormApi<any, any, any, any, any, any, any, any, any, any> & {
+  AppForm: React.ComponentType<any>;
+};
+
+export function Form<TForm extends AppFormApi>({
+  form,
   ...props
-}: { className?: string } & Omit<Headless.FieldsetProps, "as" | "className">) {
+}: React.ComponentPropsWithoutRef<"form"> & { form: TForm }) {
   return (
-    <Headless.Fieldset
+    <form.AppForm>
+      <form
+        {...props}
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          form.handleSubmit();
+        }}
+      />
+    </form.AppForm>
+  );
+}
+
+export function Fieldset({ className, ...props }: React.ComponentPropsWithoutRef<"fieldset">) {
+  return (
+    <fieldset
       {...props}
       className={cn(className, "*:data-[slot=text]:mt-1 [&>*+[data-slot=control]]:mt-6")}
     />
@@ -21,14 +45,14 @@ export function Fieldset({
 export function Legend({
   className,
   ...props
-}: { className?: string } & Omit<Headless.LegendProps, "as" | "className">) {
+}: { className?: string } & React.ComponentPropsWithoutRef<"legend">) {
   return (
-    <Headless.Legend
+    <legend
       data-slot="legend"
       {...props}
       className={cn(
         className,
-        "font-semibold text-base/6 text-zinc-950 data-disabled:opacity-50 sm:text-sm/6 dark:text-white",
+        "font-semibold text-base/6 text-foreground data-disabled:opacity-50 sm:text-sm/6",
       )}
     />
   );
@@ -38,70 +62,76 @@ export function FieldGroup({ className, ...props }: React.ComponentPropsWithRef<
   return <div data-slot="control" {...props} className={cn(className, "space-y-8")} />;
 }
 
-export function Field({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.FieldProps, "as" | "className">) {
+export function Field({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+  const id = React.useId();
+  const value = React.useMemo(
+    () => ({
+      formItemId: `${id}-form-item`,
+      formDescriptionId: `${id}-form-description`,
+      formMessageId: `${id}-form-message`,
+    }),
+    [id],
+  );
+
   return (
-    <Headless.Field
-      {...props}
-      className={cn(
-        className,
-        "[&>[data-slot=label]+[data-slot=control]]:mt-3",
-        "[&>[data-slot=label]+[data-slot=description]]:mt-1",
-        "[&>[data-slot=description]+[data-slot=control]]:mt-3",
-        "[&>[data-slot=control]+[data-slot=description]]:mt-3",
-        "[&>[data-slot=control]+[data-slot=error]]:mt-3",
-        "*:data-[slot=label]:font-medium",
-      )}
-    />
+    <FormItemContext value={value}>
+      <div
+        {...props}
+        className={cn(
+          className,
+          "[&>[data-slot=label]+[data-slot=control]]:mt-3",
+          "[&>[data-slot=label]+[data-slot=description]]:mt-1",
+          "[&>[data-slot=description]+[data-slot=control]]:mt-3",
+          "[&>[data-slot=control]+[data-slot=description]]:mt-3",
+          "[&>[data-slot=control]+[data-slot=error]]:mt-3",
+          "*:data-[slot=label]:font-medium",
+        )}
+      />
+    </FormItemContext>
   );
 }
 
-export function Label({
+export function FormDescription({
   className,
   ...props
-}: { className?: string } & Omit<Headless.LabelProps, "as" | "className">) {
-  return (
-    <Headless.Label
-      data-slot="label"
-      {...props}
-      className={cn(
-        className,
-        "select-none text-base/6 text-zinc-950 data-disabled:opacity-50 sm:text-sm/6 dark:text-white",
-      )}
-    />
-  );
-}
+}: React.ComponentPropsWithoutRef<typeof Text>) {
+  const { formDescriptionId } = React.use(FormItemContext);
 
-export function Description({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.DescriptionProps, "as" | "className">) {
   return (
-    <Headless.Description
+    <Text
+      {...props}
       data-slot="description"
-      {...props}
-      className={cn(
-        className,
-        "text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400",
-      )}
+      id={formDescriptionId}
+      className={cn(className, "text-muted-foreground data-disabled:opacity-50")}
     />
   );
 }
 
-export function ErrorMessage({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.DescriptionProps, "as" | "className">) {
+export function FormMessage({ className, ...props }: React.ComponentPropsWithoutRef<typeof Text>) {
+  const { formMessageId } = React.use(FormItemContext);
+
   return (
-    <Headless.Description
+    <Text
+      id={formMessageId}
       data-slot="error"
+      className={cn(className, "text-destructive data-disabled:opacity-50")}
       {...props}
-      className={cn(
-        className,
-        "text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500",
-      )}
+    />
+  );
+}
+
+function FormControl({ ...props }: React.ComponentProps<typeof SlotPrimitive.Slot>) {
+  const { formItemId, formDescriptionId, formMessageId } = React.use(FormItemContext);
+  const field = useFieldContext<string>();
+  const invalid = field.state.meta.errors.length > 0;
+
+  return (
+    <SlotPrimitive.Slot
+      data-slot="form-control"
+      id={formItemId}
+      aria-describedby={!invalid ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-invalid={invalid}
+      {...props}
     />
   );
 }
@@ -109,26 +139,30 @@ export function ErrorMessage({
 export function TextField(
   props: React.ComponentProps<typeof Input> & { label: string; description?: string },
 ) {
+  const { formItemId } = React.use(FormItemContext);
   const field = useFieldContext<string>();
+  const invalid = field.state.meta.errors.length > 0;
 
   return (
     <Field>
-      <Label htmlFor={field.name}>{props.label}</Label>
-      <Description>{props.description}</Description>
-      <Input
-        data-slot="control"
-        value={field.state.value}
-        onChange={(e) => field.handleChange(e.target.value)}
-        type={props.type}
-        name={field.name}
-        className={cn(
-          field.state.meta.errors.length > 0 && "border-red-600 dark:border-red-500",
-          props.className,
-        )}
-      />
-      {field.state.meta.errors.length > 0 && (
-        <ErrorMessage>{field.state.meta.errors[0].message}</ErrorMessage>
-      )}
+      <Label htmlFor={formItemId} className={cn(invalid && "text-destructive")}>
+        {props.label}
+      </Label>
+      {props.description && <FormDescription>{props.description}</FormDescription>}
+
+      <FormControl>
+        <Input
+          id={formItemId}
+          data-slot="control"
+          name={field.name}
+          type={props.type}
+          value={field.state.value}
+          onChange={(e) => field.handleChange(e.target.value)}
+          className={cn(invalid && "border-destructive", props.className)}
+        />
+      </FormControl>
+
+      {invalid && <FormMessage>{field.state.meta.errors[0].message}</FormMessage>}
     </Field>
   );
 }
