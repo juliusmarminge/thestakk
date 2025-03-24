@@ -3,8 +3,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
-import { AppSidebar } from "~/components/app-sidebar";
-import { SiteHeader } from "~/components/site-header";
 import {
   EAGER_SET_SYSTEM_THEME_SCRIPT,
   getModeCookie,
@@ -12,7 +10,6 @@ import {
   useSystemTheme,
   useThemeStore,
 } from "~/components/themes";
-import { SidebarInset, SidebarProvider, getSidebarCookie } from "~/components/ui/sidebar";
 import { Toaster } from "~/components/ui/sonner";
 import { cn } from "~/lib/utils";
 import stylesUrl from "~/styles/index.css?url";
@@ -30,40 +27,15 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  loader: () => Promise.all([getModeCookie(), getThemeCookie(), getSidebarCookie()]),
+  loader: () => Promise.all([getModeCookie(), getThemeCookie()]),
   component: RootComponent,
 });
 
 function RootComponent() {
   return (
     <RootDocument>
-      <AppLayout>
-        <Outlet />
-      </AppLayout>
+      <Outlet />
     </RootDocument>
-  );
-}
-
-function AppLayout(props: {
-  children: React.ReactNode;
-}) {
-  const [, , sidebarDefaultOpen] = Route.useLoaderData();
-
-  return (
-    <SidebarProvider
-      defaultOpen={sidebarDefaultOpen}
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">{props.children}</div>
-      </SidebarInset>
-    </SidebarProvider>
   );
 }
 
@@ -76,7 +48,7 @@ function RootDocument(props: { children: React.ReactNode }) {
   useSystemTheme();
 
   return (
-    <html lang="en" {...(mode === "dark" && { className: "dark" })}>
+    <html lang="en" className={cn(mode === "dark" && "dark", "md:bg-sidebar")}>
       <head>
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: needed for immediate theme application
@@ -87,8 +59,8 @@ function RootDocument(props: { children: React.ReactNode }) {
       <body
         className={cn(
           "overscroll-none bg-background font-sans antialiased",
-          theme ? `theme-${theme}` : "",
-          scaled ? "theme-scaled" : "",
+          theme && `theme-${theme}`,
+          scaled && "theme-scaled",
           // fontVariables,
         )}
       >

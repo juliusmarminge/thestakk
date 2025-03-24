@@ -1,11 +1,10 @@
 import { type } from "arktype";
-import { countItems, db, getItems } from "~/db/client";
-import { createTRPCRouter, publicProcedure } from "./init";
+import { eq } from "drizzle-orm";
+import { db } from "~/db/client";
+import { ItemTable } from "~/db/schema";
+import { createTRPCRouter, publicProcedure } from "~/trpc/init";
 
 export const trpcRouter = createTRPCRouter({
-  test: publicProcedure.query(() => {
-    return "Hello, World!";
-  }),
   getItems: publicProcedure
     .input(
       type({
@@ -13,9 +12,16 @@ export const trpcRouter = createTRPCRouter({
         pageSize: type("number"),
       }),
     )
-    .query((opts) => {
-      const itemsCount = countItems();
-      const items = getItems(opts.input.pageIndex, opts.input.pageSize);
+    .query(async (opts) => {
+      const [itemsCount, items] = await Promise.all([
+        db.$count(ItemTable),
+        db
+          .select()
+          .from(ItemTable)
+          .orderBy(ItemTable.order)
+          .limit(opts.input.pageSize)
+          .offset(opts.input.pageIndex * opts.input.pageSize),
+      ]);
 
       return {
         items,
@@ -31,8 +37,12 @@ export const trpcRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      db.prepare("UPDATE items SET `order` = ? WHERE `id` = ?").run(input.order, input.id);
-      return { ok: true };
+      await db
+        .update(ItemTable)
+        .set({
+          order: input.order,
+        })
+        .where(eq(ItemTable.id, input.id));
     }),
 });
 

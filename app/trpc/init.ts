@@ -1,5 +1,5 @@
 import { initTRPC } from "@trpc/server";
-import { transformer } from "./transformer";
+import { transformer } from "~/trpc/transformer";
 
 const t = initTRPC.create({
   transformer,

@@ -1,7 +1,7 @@
+import { ModeToggle, ThemeSelector } from "~/components/themes";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { SidebarTrigger } from "~/components/ui/sidebar";
-import { ModeToggle, ThemeSelector } from "./themes";
 
 export function SiteHeader() {
   return (

@@ -26,7 +26,7 @@ export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(ro
 
   const setFilters = (partialFilters: Partial<typeof filters>) => {
     navigate({
-      search: (prev) => cleanEmptyParams({ ...prev, ...partialFilters }),
+      search: (prev: any) => cleanEmptyParams({ ...prev, ...partialFilters }),
       to: ".",
     });
   };

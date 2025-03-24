@@ -76,10 +76,25 @@ const updateThemeCookie = createServerFn({ method: "POST" })
 
 // Helper to update <body> class
 function updateThemeClass(mode: typeof Mode.infer, prefers: typeof PrefersMode.infer) {
+  // Add a style element to disable animations during theme transition
+  const css = document.createElement("style");
+  css.appendChild(
+    document.createTextNode(
+      "*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;-ms-transition:none!important;transition:none!important}",
+    ),
+  );
+  document.head.appendChild(css);
+
   document.documentElement.classList.remove("dark");
   if (mode === "dark" || (mode === "system" && prefers === "dark")) {
     document.documentElement.classList.add("dark");
   }
+
+  // Force restyle
+  window.getComputedStyle(document.body);
+
+  // Wait for next tick before removing
+  setTimeout(() => document.head.removeChild(css), 1);
 }
 
 export const EAGER_SET_SYSTEM_THEME_SCRIPT = `
@@ -177,7 +192,7 @@ export function ModeToggle(props: {
     <button
       onClick={handleToggleMode}
       className={cn(
-        "relative flex aspect-[2/1] h-6 cursor-pointer items-center rounded-md bg-accent transition-all",
+        "relative flex aspect-[2/1] h-6 cursor-pointer items-center rounded-md bg-accent",
         props.className,
       )}
     >
@@ -235,42 +250,40 @@ export function ThemeSelector() {
       <Label htmlFor="theme-selector" className="sr-only">
         Theme
       </Label>
-      {mounted ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
-              <span className="block text-muted-foreground sm:hidden">Theme</span>
-              <span className="capitalize">{activeTheme}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={activeTheme}
-                onValueChange={(value) => setActiveTheme(value as typeof Theme.infer, scaled)}
-              >
-                {themeValues.map((theme) => (
-                  <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
-                    {theme}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuGroup>
-            <DropdownMenuGroup>
-              <DropdownMenuCheckboxItem
-                checked={scaled}
-                onCheckedChange={(checked) => setActiveTheme(activeTheme, checked)}
-              >
-                Scaled
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <Skeleton className="h-9 w-44" />
-      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">
+            <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
+            <span className="block text-muted-foreground sm:hidden">Theme</span>
+            <span className="capitalize">
+              <Skeleton loading={!mounted}>{activeTheme}</Skeleton>
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Theme</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={activeTheme}
+              onValueChange={(value) => setActiveTheme(value as typeof Theme.infer, scaled)}
+            >
+              {themeValues.map((theme) => (
+                <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
+                  {theme}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuGroup>
+          <DropdownMenuGroup>
+            <DropdownMenuCheckboxItem
+              checked={scaled}
+              onCheckedChange={(checked) => setActiveTheme(activeTheme, checked)}
+            >
+              Scaled
+            </DropdownMenuCheckboxItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

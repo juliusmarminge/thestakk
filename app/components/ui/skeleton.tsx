@@ -1,13 +1,30 @@
 import { cn } from "~/lib/utils";
 
-function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="skeleton"
-      className={cn("animate-pulse rounded-md bg-accent", className)}
-      {...props}
-    />
-  );
+interface SkeletonProps extends React.ComponentProps<"div"> {
+  loading?: boolean;
+  pulse?: boolean;
 }
 
-export { Skeleton };
+export function Skeleton({
+  className,
+  children,
+  loading = true,
+  pulse = true,
+  ...props
+}: SkeletonProps) {
+  if (!loading) return children;
+
+  return (
+    <div className="relative inline-block">
+      <div
+        className={cn(
+          "absolute inset-0 rounded-md bg-secondary",
+          pulse && "animate-pulse",
+          className,
+        )}
+        {...props}
+      />
+      <div className="invisible">{children}</div>
+    </div>
+  );
+}

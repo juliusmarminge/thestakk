@@ -5,12 +5,16 @@ import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_app/")({
   validateSearch: type({
     pageIndex: type.number.default(0),
     pageSize: type.number.default(10),
   }),
   component: RouteComponent,
+  loaderDeps: ({ search }) => ({ pageIndex: search.pageIndex, pageSize: search.pageSize }),
+  loader: async ({ deps, context: { queryClient, trpc } }) => {
+    await queryClient.ensureQueryData(trpc.getItems.queryOptions(deps));
+  },
 });
 
 function RouteComponent() {

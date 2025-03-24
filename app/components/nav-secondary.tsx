@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { ThemeToggleIcon } from "~/components/icons";
+import { ModeToggle } from "~/components/themes";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -9,8 +11,6 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ThemeToggleIcon } from "./icons";
-import { ModeToggle } from "./themes";
 
 export function NavSecondary({
   items,

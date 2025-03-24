@@ -3,10 +3,10 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { TRPCProvider } from "./lib/trpc";
-import { routeTree } from "./routeTree.gen";
-import type { TRPCRouter } from "./trpc/router";
-import { transformer } from "./trpc/transformer";
+import { TRPCProvider } from "~/lib/trpc";
+import { routeTree } from "~/routeTree.gen";
+import type { TRPCRouter } from "~/trpc/router";
+import { transformer } from "~/trpc/transformer";
 
 function getUrl() {
   const base = (() => {
@@ -49,6 +49,9 @@ export function createRouter() {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: "intent",
+    defaultOnCatch(error, errorInfo) {
+      console.error(error, errorInfo);
+    },
     scrollRestoration: true,
     context: {
       queryClient,

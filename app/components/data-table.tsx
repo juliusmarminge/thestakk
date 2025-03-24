@@ -43,6 +43,7 @@ import {
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
+import { LoaderIcon } from "~/components/icons";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -89,13 +90,13 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import type { Item } from "~/db/schema";
-import { useTRPC } from "~/lib/trpc";
+import { type RouterOutputs, useTRPC } from "~/lib/trpc";
 import { useIsMobile } from "~/lib/use-is-mobile";
 import { sleep } from "~/lib/utils";
-import { LoaderIcon } from "./icons";
 
-const columns: ColumnDef<typeof Item.infer>[] = [
+type RowType = RouterOutputs["getItems"]["items"][number];
+
+const columns: ColumnDef<RowType>[] = [
   {
     id: "drag",
     header: () => null,
@@ -399,7 +400,7 @@ export function DataTable(props: {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <div className="overflow-hidden rounded-lg border">
-          <TableWithDraggableRows table={table} handleDragEnd={handleDragEnd} />
+          <TableWithDraggableRows table={table} data={items} handleDragEnd={handleDragEnd} />
         </div>
         <TablePagination table={table} />
       </TabsContent>
@@ -416,7 +417,7 @@ export function DataTable(props: {
   );
 }
 
-function TableActions({ table }: { table: ReactTable<typeof Item.infer> }) {
+function TableActions({ table }: { table: ReactTable<RowType> }) {
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
@@ -456,16 +457,14 @@ function TableActions({ table }: { table: ReactTable<typeof Item.infer> }) {
 
 function TableWithDraggableRows({
   table,
-
+  data, // need this for DND to work. table.getRowModel().rows is not enough
   handleDragEnd,
 }: {
-  table: ReactTable<typeof Item.infer>;
-
+  table: ReactTable<RowType>;
+  data: RowType[];
   handleDragEnd: (event: DragEndEvent) => void;
 }) {
-  const rows = table.getRowModel().rows;
-  const itemIds = React.useMemo(() => rows.map((row) => row.id), [rows]);
-
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -478,6 +477,7 @@ function TableWithDraggableRows({
       modifiers={[restrictToVerticalAxis]}
       onDragEnd={handleDragEnd}
       sensors={sensors}
+      id={sortableId}
     >
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-muted">
@@ -497,7 +497,7 @@ function TableWithDraggableRows({
         </TableHeader>
         <TableBody className="**:data-[slot=table-cell]:first:w-8">
           {table.getRowModel().rows.length ? (
-            <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+            <SortableContext items={data} strategy={verticalListSortingStrategy}>
               {table.getRowModel().rows.map((row) => (
                 <DraggableRow key={row.id} row={row} />
               ))}
@@ -515,7 +515,7 @@ function TableWithDraggableRows({
   );
 }
 
-function TablePagination({ table }: { table: ReactTable<typeof Item.infer> }) {
+function TablePagination({ table }: { table: ReactTable<RowType> }) {
   return (
     <div className="flex items-center justify-between px-4">
       <div className="hidden flex-1 text-muted-foreground text-sm lg:flex">
@@ -614,7 +614,7 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
-function DraggableRow({ row }: { row: ReactTableRow<typeof Item.infer> }) {
+function DraggableRow({ row }: { row: ReactTableRow<RowType> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   });
@@ -659,7 +659,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function TableCellViewer({ item }: { item: typeof Item.infer }) {
+function TableCellViewer({ item }: { item: RowType }) {
   const isMobile = useIsMobile();
 
   return (
