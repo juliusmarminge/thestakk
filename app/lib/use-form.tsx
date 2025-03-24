@@ -1,6 +1,6 @@
 import { createFormHook } from "@tanstack/react-form";
 import * as React from "react";
-import { fieldContext, formContext, useFormContext } from "./form-context";
+import { fieldContext, formContext } from "./form-context";
 
 const SubscribeButton = React.lazy(() =>
   import("~/components/form").then((mod) => ({ default: mod.SubscribeButton })),
