@@ -1,13 +1,12 @@
-import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
+import { FieldGroup, Fieldset, Legend } from "~/components/form";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { Text } from "~/components/ui/text";
+import { useAppForm } from "~/lib/use-form";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
@@ -16,7 +15,7 @@ export const Route = createFileRoute("/login")({
 function RouteComponent() {
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: "",
       password: "",
@@ -55,117 +54,52 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <Card className="w-full max-w-md bg-gradient-to-t from-primary/5 to-card shadow-xs dark:bg-card">
-        <CardHeader className="space-y-1">
-          <CardTitle className="font-bold @[250px]:text-3xl text-2xl">
-            {isSignUp ? "Create an account" : "Welcome back"}
-          </CardTitle>
-          <CardDescription>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="w-full max-w-lg space-y-6 rounded-xl border bg-gradient-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
+      >
+        <Fieldset>
+          <Legend>{isSignUp ? "Create an account" : "Welcome back"}</Legend>
+          <Text>
             {isSignUp
               ? "Enter your details to create your account"
               : "Enter your email and password to sign in to your account"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
-            }}
-            className="space-y-4"
-          >
+          </Text>
+          <FieldGroup>
             {isSignUp && (
-              <div className="space-y-2">
-                <form.Field name="name">
-                  {(field) => (
-                    <>
-                      <Label htmlFor={field.name}>Name</Label>
-                      <Input
-                        id={field.name}
-                        type="text"
-                        placeholder="John Doe"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                        required
-                        className={field.state.meta.errors.length > 0 ? "border-red-500" : ""}
-                      />
-                      {field.state.meta.errors.length > 0 && (
-                        <p className="text-red-500">{field.state.meta.errors[0]?.message}</p>
-                      )}
-                    </>
-                  )}
-                </form.Field>
-              </div>
+              <form.AppField name="name" children={(field) => <field.TextField label="Name" />} />
             )}
-            <div className="space-y-2">
-              <form.Field name="email">
-                {(field) => (
-                  <>
-                    <Label htmlFor={field.name}>Email</Label>
-                    <Input
-                      id={field.name}
-                      type="email"
-                      placeholder="m@example.com"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      required
-                      className={field.state.meta.errors.length > 0 ? "border-red-500" : ""}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-red-500">{field.state.meta.errors[0]?.message}</p>
-                    )}
-                  </>
-                )}
-              </form.Field>
-            </div>
-            <div className="space-y-2">
-              <form.Field name="password">
-                {(field) => (
-                  <>
-                    <Label htmlFor={field.name}>Password</Label>
-                    <Input
-                      id={field.name}
-                      type="password"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      required
-                      className={field.state.meta.errors.length > 0 ? "border-red-500" : ""}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-red-500">{field.state.meta.errors[0]?.message}</p>
-                    )}
-                  </>
-                )}
-              </form.Field>
-            </div>
-            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-              {([canSubmit, isSubmitting]) => (
-                <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting
-                    ? isSignUp
-                      ? "Creating account..."
-                      : "Signing in..."
-                    : isSignUp
-                      ? "Sign up"
-                      : "Sign in"}
-                </Button>
-              )}
-            </form.Subscribe>
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full"
-              onClick={() => setIsSignUp(!isSignUp)}
-            >
-              {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+            <form.AppField
+              name="email"
+              children={(field) => <field.TextField label="Email" type="email" />}
+            />
+            <form.AppField
+              name="password"
+              children={(field) => <field.TextField label="Password" type="password" />}
+            />
+          </FieldGroup>
+        </Fieldset>
+
+        <div className="space-y-2">
+          <form.AppForm>
+            <form.SubscribeButton className="w-full">
+              {isSignUp ? "Sign Up" : "Sign In"}
+            </form.SubscribeButton>
+          </form.AppForm>
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

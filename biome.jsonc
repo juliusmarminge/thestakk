@@ -26,6 +26,7 @@
         "all": false
       },
       "correctness": {
+        "noChildrenProp": "off",
         "noUnusedVariables": "warn",
         "noUnusedImports": "off",
         "useExhaustiveDependencies": "off"
