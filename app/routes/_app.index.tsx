@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
 import { DataTable } from "~/components/data-table";
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/_app/")({
     pageSize: type.number.default(10),
   }),
   component: RouteComponent,
+  errorComponent: ErrorComponent,
   loaderDeps: ({ search }) => ({ pageIndex: search.pageIndex, pageSize: search.pageSize }),
   loader: async ({ deps, context: { queryClient, trpc } }) => {
     await queryClient.ensureQueryData(trpc.getItems.queryOptions(deps));

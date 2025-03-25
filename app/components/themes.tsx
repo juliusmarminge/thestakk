@@ -255,7 +255,7 @@ export function ThemeSelector() {
           <Button variant="outline">
             <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
             <span className="block text-muted-foreground sm:hidden">Theme</span>
-            <span className="capitalize">
+            <span className="min-w-[7ch] capitalize">
               <Skeleton loading={!mounted}>{activeTheme}</Skeleton>
             </span>
           </Button>
