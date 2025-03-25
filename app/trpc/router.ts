@@ -1,5 +1,6 @@
 import { type } from "arktype";
 import { eq } from "drizzle-orm";
+import { Resource } from "sst";
 import { db } from "~/db/client";
 import { Item, ItemTable } from "~/db/schema";
 import { createTRPCRouter, publicProcedure } from "~/trpc/init";
@@ -65,13 +66,13 @@ export const trpcRouter = createTRPCRouter({
       }),
     )
     .subscription(async function* (opts) {
-      const url = new URL(process.env.TURSO_CONNECTION_URL!.replace("libsql:", "https:"));
+      const url = new URL(Resource.TursoUrl.value.replace("libsql:", "https:"));
       url.pathname = "/beta/listen";
       url.searchParams.set("table", opts.input.table);
 
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+          Authorization: `Bearer ${Resource.TursoToken.value}`,
         },
       });
 

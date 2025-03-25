@@ -1,6 +1,8 @@
-import { seed } from "drizzle-seed";
+import { reset, seed } from "drizzle-seed";
 import { db } from "~/db/client.ts";
 import * as schema from "~/db/schema.ts";
+
+await reset(db as any, { ItemTable: schema.ItemTable });
 
 await seed(db as any, { ItemTable: schema.ItemTable }).refine((funcs) => ({
   ItemTable: {

@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["app/routeTree.gen.ts", "app/styles/animations.css"]
+    "ignore": ["app/routeTree.gen.ts", "app/styles/animations.css", "sst-env.d.ts"]
   },
   "organizeImports": {
     "enabled": true
