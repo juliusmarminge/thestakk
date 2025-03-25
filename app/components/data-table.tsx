@@ -447,18 +447,16 @@ function TableActions({ table }: { table: ReactTable<RowType> }) {
           {table
             .getAllColumns()
             .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
-            .map((column) => {
-              return (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value: unknown) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              );
-            })}
+            .map((column) => (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                className="capitalize"
+                checked={column.getIsVisible()}
+                onCheckedChange={(value: unknown) => column.toggleVisibility(!!value)}
+              >
+                {column.id}
+              </DropdownMenuCheckboxItem>
+            ))}
         </DropdownMenuContent>
       </DropdownMenu>
       <Button variant="outline" size="sm">
@@ -485,6 +483,8 @@ function TableWithDraggableRows({
     useSensor(KeyboardSensor),
   );
 
+  const rows = table.getRowModel().rows;
+
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -497,22 +497,20 @@ function TableWithDraggableRows({
         <TableHeader className="sticky top-0 z-10 bg-muted">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} colSpan={header.colSpan}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody className="**:data-[slot=table-cell]:first:w-8">
-          {table.getRowModel().rows.length ? (
+          {rows.length ? (
             <SortableContext items={data} strategy={verticalListSortingStrategy}>
-              {table.getRowModel().rows.map((row) => (
+              {rows.map((row) => (
                 <DraggableRow key={row.id} row={row} />
               ))}
             </SortableContext>
