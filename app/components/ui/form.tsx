@@ -5,8 +5,20 @@ import { LoadingSpinner } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Text } from "~/components/ui/text";
-import { FormItemContext, useFieldContext, useFormContext } from "~/lib/form-context";
+import {
+  FormItemContext,
+  type FormItemContextValue,
+  useFieldContext,
+  useFormContext,
+} from "~/lib/form-context";
 import { cn } from "~/lib/utils";
 
 // FIXME: TYPES
@@ -18,7 +30,7 @@ type AppFormApi = FormApi<any, any, any, any, any, any, any, any, any, any> & {
 export function Form<TForm extends AppFormApi>({
   form,
   ...props
-}: React.ComponentPropsWithoutRef<"form"> & { form: TForm }) {
+}: Omit<React.ComponentPropsWithoutRef<"form">, "onSubmit"> & { form: TForm }) {
   return (
     <form.AppForm>
       <form
@@ -62,16 +74,20 @@ export function FieldGroup({ className, ...props }: React.ComponentPropsWithRef<
   return <div data-slot="control" {...props} className={cn(className, "space-y-8")} />;
 }
 
-export function Field({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-  const id = React.useId();
-  const value = React.useMemo(
-    () => ({
-      formItemId: `${id}-form-item`,
-      formDescriptionId: `${id}-form-description`,
-      formMessageId: `${id}-form-message`,
-    }),
-    [id],
-  );
+function getFormIds(id: string): FormItemContextValue {
+  return {
+    formItemId: `${id}-form-item`,
+    formDescriptionId: `${id}-form-description`,
+    formMessageId: `${id}-form-message`,
+  };
+}
+
+export function Field({
+  className,
+  fieldId,
+  ...props
+}: React.ComponentPropsWithoutRef<"div"> & { fieldId: string }) {
+  const value = getFormIds(fieldId);
 
   return (
     <FormItemContext value={value}>
@@ -88,6 +104,24 @@ export function Field({ className, ...props }: React.ComponentPropsWithoutRef<"d
         )}
       />
     </FormItemContext>
+  );
+}
+
+export function FormLabel({
+  className,
+  ...props
+}: Omit<React.ComponentPropsWithoutRef<typeof Label>, "htmlFor">) {
+  const { formItemId } = React.use(FormItemContext);
+  const field = useFieldContext<string>();
+  const valid = field.state.meta.errors.length === 0;
+
+  return (
+    <Label
+      {...props}
+      data-invalid={!valid || undefined}
+      htmlFor={formItemId}
+      className={cn("data-invalid:text-destructive", className)}
+    />
   );
 }
 
@@ -120,49 +154,94 @@ export function FormMessage({ className, ...props }: React.ComponentPropsWithout
   );
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof SlotPrimitive.Slot>) {
+export function FormControl({ ...props }: React.ComponentProps<typeof SlotPrimitive.Slot>) {
   const { formItemId, formDescriptionId, formMessageId } = React.use(FormItemContext);
   const field = useFieldContext<string>();
-  const invalid = field.state.meta.errors.length > 0;
+  const valid = field.state.meta.errors.length === 0;
 
   return (
     <SlotPrimitive.Slot
-      data-slot="form-control"
+      data-slot="control"
+      data-invalid={!valid || undefined}
       id={formItemId}
-      aria-describedby={!invalid ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
-      aria-invalid={invalid}
+      aria-describedby={valid ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-invalid={!valid}
       {...props}
     />
   );
 }
 
 export function TextField(
-  props: React.ComponentProps<typeof Input> & { label: string; description?: string },
+  props: Omit<React.ComponentProps<typeof Input>, "className"> & {
+    label: string;
+    labelClassName?: string;
+    inputClassName?: string;
+    description?: string;
+    descriptionClassName?: string;
+    messageClassName?: string;
+  },
 ) {
-  const { formItemId } = React.use(FormItemContext);
+  const fieldId = React.useId();
   const field = useFieldContext<string>();
-  const invalid = field.state.meta.errors.length > 0;
 
   return (
-    <Field>
-      <Label htmlFor={formItemId} className={cn(invalid && "text-destructive")}>
-        {props.label}
-      </Label>
-      {props.description && <FormDescription>{props.description}</FormDescription>}
+    <Field fieldId={fieldId}>
+      <FormLabel className={props.labelClassName}>{props.label}</FormLabel>
+      {props.description && (
+        <FormDescription className={props.descriptionClassName}>
+          {props.description}
+        </FormDescription>
+      )}
 
       <FormControl>
         <Input
-          id={formItemId}
           data-slot="control"
           name={field.name}
           type={props.type}
           value={field.state.value}
           onChange={(e) => field.handleChange(e.target.value)}
-          className={cn(invalid && "border-destructive", props.className)}
+          className={cn("data-invalid:border-destructive", props.inputClassName)}
         />
       </FormControl>
 
-      {invalid && <FormMessage>{field.state.meta.errors[0].message}</FormMessage>}
+      {field.state.meta.errors.length > 0 && (
+        <FormMessage className={props.messageClassName}>
+          {field.state.meta.errors[0].message}
+        </FormMessage>
+      )}
+    </Field>
+  );
+}
+
+export function SelectField(
+  props: React.ComponentProps<typeof Select> & {
+    label: string;
+    placeholder?: string;
+    labelClassName?: string;
+    triggerClassName?: string;
+    options: { label: string; value: string }[];
+  },
+) {
+  const fieldId = React.useId();
+  const field = useFieldContext<string>();
+
+  return (
+    <Field fieldId={fieldId}>
+      <FormLabel className={props.labelClassName}>{props.label}</FormLabel>
+      <Select value={field.state.value} onValueChange={field.handleChange}>
+        <FormControl>
+          <SelectTrigger className={cn("data-invalid:border-destructive", props.triggerClassName)}>
+            <SelectValue placeholder={props.placeholder} />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {props.options.map(({ label, value }) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </Field>
   );
 }
@@ -171,11 +250,11 @@ export function SubscribeButton(props: React.ComponentProps<typeof Button>) {
   const form = useFormContext();
 
   return (
-    <form.Subscribe selector={(state) => state.isSubmitting}>
-      {(isSubmitting) => (
+    <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+      {([canSubmit, isSubmitting]) => (
         <Button
           {...props}
-          {...((isSubmitting || ("disabled" in props && props.disabled)) && {
+          {...((isSubmitting || ("disabled" in props && props.disabled) || !canSubmit) && {
             "data-disabled": true,
           })}
           onClick={props.onClick}

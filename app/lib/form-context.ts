@@ -4,7 +4,7 @@ import * as React from "react";
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
 
-type FormItemContextValue = {
+export type FormItemContextValue = {
   formItemId: string;
   formDescriptionId: string;
   formMessageId: string;

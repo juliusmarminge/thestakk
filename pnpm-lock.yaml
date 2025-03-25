@@ -57,8 +57,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0(@tanstack/react-query@5.69.0(react@19.0.0))(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.0(typescript@5.8.2))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.8.2)
       arktype:
-        specifier: ^2.1.10
-        version: 2.1.10
+        specifier: ^2.1.12
+        version: 2.1.12
       better-auth:
         specifier: ^1.2.4
         version: 1.2.4(typescript@5.8.2)
@@ -142,11 +142,11 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@ark/schema@0.45.0':
-    resolution: {integrity: sha512-3XlMWkZbEjh0YsF92vnnRNCWNRNhRKDTf6XhugyCXH0YRFuM+w1vFLDbB2JLfZloEd7i5cbqsLaDLzyBZbPrSg==}
+  '@ark/schema@0.45.2':
+    resolution: {integrity: sha512-rMzFbO2RuwukEzdBq42D/WS0OS1McpRhaSJHdvuGc/Xfxwn6gw1GwG6+JDNsVuto0TMRwA+zteCDMBW0FXxAPw==}
 
-  '@ark/util@0.45.0':
-    resolution: {integrity: sha512-Z1gHEGbpPzLtPmYb932t2B++6YonlUi1Fa14IQ4vhsGMWhd81Mi1miUmdZXW4fNI/wg1saT7H2/5cAuONgTXhg==}
+  '@ark/util@0.45.2':
+    resolution: {integrity: sha512-atlBhyMEfEB8yFDmYh+m9aHdOwjOoEEOF76k1ZxVpQLUdpuiofBou4JtKBR1fojpnlNhevdlWg9KO/4eTjuRBA==}
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -2658,8 +2658,8 @@ packages:
     resolution: {integrity: sha512-y+CcFFwelSXpLZk/7fMB2mUbGtX9lKycf1MWJ7CaTIERyitVlyQx6C+sxcROU2BAJ24OiZyK+8wj2i8AlBoS3A==}
     engines: {node: '>=10'}
 
-  arktype@2.1.10:
-    resolution: {integrity: sha512-KqbrzI9qIGrQUClifyS1HpUp/oTSRtGDvnMKzwg2TAvxRpynY1mn/ubXaxAAdGPOM8V3pBqwb01Z6TcXqhBxzQ==}
+  arktype@2.1.12:
+    resolution: {integrity: sha512-FdPoK/i+xQTehWfBBBSyCOZSN7ZMUjPdwkJR03/My+ckeuyaEGNi2tII1GIZ5WJep3i6vmFJ7PK1+4wNRDHKFw==}
 
   asn1js@3.0.5:
     resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
@@ -4919,11 +4919,11 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@ark/schema@0.45.0':
+  '@ark/schema@0.45.2':
     dependencies:
-      '@ark/util': 0.45.0
+      '@ark/util': 0.45.2
 
-  '@ark/util@0.45.0': {}
+  '@ark/util@0.45.2': {}
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -7541,10 +7541,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  arktype@2.1.10:
+  arktype@2.1.12:
     dependencies:
-      '@ark/schema': 0.45.0
-      '@ark/util': 0.45.0
+      '@ark/schema': 0.45.2
+      '@ark/util': 0.45.2
 
   asn1js@3.0.5:
     dependencies:

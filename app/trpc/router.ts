@@ -1,7 +1,7 @@
 import { type } from "arktype";
 import { eq } from "drizzle-orm";
 import { db } from "~/db/client";
-import { ItemTable } from "~/db/schema";
+import { Item, ItemTable } from "~/db/schema";
 import { createTRPCRouter, publicProcedure } from "~/trpc/init";
 
 export async function* readableStreamToAsyncIterable(
@@ -84,6 +84,15 @@ export const trpcRouter = createTRPCRouter({
         }
       }
     }),
+
+  updateItem: publicProcedure.input(Item).mutation(async ({ input }) => {
+    const { id, ...rest } = input;
+    await db.update(ItemTable).set(rest).where(eq(ItemTable.id, id));
+  }),
+
+  deleteItem: publicProcedure.input(type({ id: "number" })).mutation(async ({ input }) => {
+    await db.delete(ItemTable).where(eq(ItemTable.id, input.id));
+  }),
 
   moveItem: publicProcedure
     .input(

@@ -3,18 +3,23 @@ import * as React from "react";
 import { fieldContext, formContext } from "./form-context";
 
 const SubscribeButton = React.lazy(() =>
-  import("~/components/form").then((mod) => ({ default: mod.SubscribeButton })),
+  import("~/components/ui/form").then((mod) => ({ default: mod.SubscribeButton })),
 );
 
 const TextField = React.lazy(() =>
-  import("~/components/form").then((mod) => ({ default: mod.TextField })),
+  import("~/components/ui/form").then((mod) => ({ default: mod.TextField })),
 );
 
-export const { useAppForm } = createFormHook({
+const SelectField = React.lazy(() =>
+  import("~/components/ui/form").then((mod) => ({ default: mod.SelectField })),
+);
+
+export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: {
     TextField,
+    SelectField,
   },
   formComponents: {
     SubscribeButton,

@@ -10,10 +10,14 @@ await seed(db as any, { ItemTable: schema.ItemTable }).refine((funcs) => ({
       header: funcs.companyName(),
       order: funcs.intPrimaryKey(),
       type: funcs.valuesFromArray({
-        values: ["Cover page", "Table of contents", "Narrative", "Technical content"],
+        values: schema.ItemType.select("unit").map((unit) =>
+          unit.serializedValue.replace(/"/g, ""),
+        ),
       }),
       status: funcs.valuesFromArray({
-        values: ["Triage", "Next up", "In Process", "Done"],
+        values: schema.ItemStatus.select("unit").map((unit) =>
+          unit.serializedValue.replace(/"/g, ""),
+        ),
       }),
       target: funcs.int({ minValue: 1, maxValue: 30 }),
       limit: funcs.int({ minValue: 1, maxValue: 40 }),
