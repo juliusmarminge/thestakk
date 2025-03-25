@@ -40,6 +40,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useSubscription } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
@@ -308,6 +309,19 @@ export function DataTable(props: {
         });
       },
     }),
+  );
+
+  /**
+   * Subscribe to changes on the items table
+   * and refetch the items query when a change is detected
+   */
+  useSubscription(
+    trpc.observe.subscriptionOptions(
+      { table: "items" },
+      {
+        onData: () => qc.invalidateQueries(trpc.getItems.pathFilter()),
+      },
+    ),
   );
 
   /**

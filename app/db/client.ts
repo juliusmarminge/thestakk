@@ -1,10 +1,10 @@
-import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "~/db/schema";
 
 export const db = drizzle({
-  client: createClient({
-    url: "file:db.sqlite",
-  }),
+  connection: {
+    url: process.env.TURSO_CONNECTION_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN!,
+  },
   schema,
 });

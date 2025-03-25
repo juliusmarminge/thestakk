@@ -7,6 +7,9 @@ function handler({ request }: { request: Request }) {
     req: request,
     router: trpcRouter,
     endpoint: "/api/trpc",
+    onError: (ctx) => {
+      console.error("❌ TRPC Error", ctx);
+    },
   });
 }
 

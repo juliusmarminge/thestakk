@@ -4,6 +4,35 @@ import { db } from "~/db/client";
 import { ItemTable } from "~/db/schema";
 import { createTRPCRouter, publicProcedure } from "~/trpc/init";
 
+export async function* readableStreamToAsyncIterable(
+  body: ReadableStream,
+): AsyncGenerator<Uint8Array> {
+  // Get a lock on the stream.
+  const reader = body.getReader();
+
+  try {
+    while (true) {
+      // Read from the stream.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { done, value } = await reader.read();
+      // Exit if we're done.
+      if (done) {
+        return;
+      }
+
+      if (Buffer.isBuffer(value) || value instanceof Uint8Array) {
+        yield value;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        yield Buffer.from(value);
+      }
+    }
+  } finally {
+    // release the lock for reading from this stream.
+    reader.releaseLock();
+  }
+}
+
 export const trpcRouter = createTRPCRouter({
   getItems: publicProcedure
     .input(
@@ -27,6 +56,33 @@ export const trpcRouter = createTRPCRouter({
         items,
         pageCount: Math.ceil(itemsCount / opts.input.pageSize),
       };
+    }),
+
+  observe: publicProcedure
+    .input(
+      type({
+        table: "string",
+      }),
+    )
+    .subscription(async function* (opts) {
+      const url = new URL(process.env.TURSO_CONNECTION_URL!.replace("libsql:", "https:"));
+      url.pathname = "/beta/listen";
+      url.searchParams.set("table", opts.input.table);
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+        },
+      });
+
+      const decoder = new TextDecoder();
+
+      for await (const chunk of readableStreamToAsyncIterable(response.body!)) {
+        const data = decoder.decode(chunk);
+        if (data !== ":keep-alive") {
+          yield { ack: true };
+        }
+      }
     }),
 
   moveItem: publicProcedure

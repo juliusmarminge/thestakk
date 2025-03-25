@@ -8,8 +8,8 @@
     "check:fix": "biome check --write --unsafe",
     "check": "biome check && tsc --noEmit",
     "dev": "vinxi dev",
-    "push": "drizzle-kit push --schema=app/db/schema.ts --dialect=sqlite --url=file:db.sqlite",
-    "seed": "node --experimental-strip-types app/db/seed.ts",
+    "push": "drizzle-kit push",
+    "seed": "bun run app/db/seed.ts",
     "start": "vinxi start"
   },
   "dependencies": {
