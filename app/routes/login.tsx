@@ -3,8 +3,8 @@ import { type } from "arktype";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
-import { FieldGroup, Fieldset, Form, Legend } from "~/components/form";
 import { Button } from "~/components/ui/button";
+import { FieldGroup, Fieldset, Form, Legend } from "~/components/ui/form";
 import { Text } from "~/components/ui/text";
 import { useAppForm } from "~/lib/use-form";
 
