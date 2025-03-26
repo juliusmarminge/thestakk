@@ -1,8 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getHeader } from "@tanstack/react-start/server";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
+import { toast } from "sonner";
 import {
   EAGER_SET_SYSTEM_THEME_SCRIPT,
   getModeCookie,
@@ -14,6 +17,14 @@ import { Toaster } from "~/components/ui/sonner";
 import { cn } from "~/lib/utils";
 import stylesUrl from "~/styles/index.css?url";
 import type { TRPCRouter } from "~/trpc/router";
+
+const readViewerLocation = createServerFn().handler(async () => {
+  const city = getHeader("CloudFront-Viewer-City");
+  const country = getHeader("CloudFront-Viewer-Country");
+  const region = getHeader("CloudFront-Viewer-Country-Region");
+  const regionName = getHeader("CloudFront-Viewer-Country-Region-Name");
+  return { city, country, region, regionName };
+});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -27,7 +38,7 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  loader: () => Promise.all([getModeCookie(), getThemeCookie()]),
+  loader: () => Promise.all([getModeCookie(), getThemeCookie(), readViewerLocation()]),
   component: RootComponent,
 });
 
@@ -40,10 +51,14 @@ function RootComponent() {
 }
 
 function RootDocument(props: { children: React.ReactNode }) {
-  const [mode, { theme, scaled }] = Route.useLoaderData();
+  const [mode, { theme, scaled }, viewer] = Route.useLoaderData();
 
   React.useEffect(() => {
     useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
+
+    toast.info(`You are in ${viewer.city}, ${viewer.country}`, {
+      description: `${viewer.region} (${viewer.regionName})`,
+    });
   }, []);
   useSystemTheme();
 

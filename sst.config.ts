@@ -35,9 +35,9 @@ export default $config({
       loadBalancer: {
         ports: [{ listen: "443/https", forward: "3000/http" }],
         domain: {
-          name: "thestakk.jumr.dev",
+          name: "lb.thestakk.jumr.dev",
           dns: false,
-          cert: "arn:aws:acm:eu-north-1:060795933320:certificate/04537370-bb73-4190-8d4d-a75a37aba6e1",
+          cert: "arn:aws:acm:eu-north-1:060795933320:certificate/6fa34d50-3762-4c85-be83-99d38cd512f9",
         },
       },
       dev: {
@@ -47,7 +47,13 @@ export default $config({
 
     const router =
       $app.stage === "production"
-        ? new sst.aws.Router("TheStakkRouter", {})
+        ? new sst.aws.Router("TheStakkRouter", {
+            domain: {
+              name: "thestakk.jumr.dev",
+              cert: "arn:aws:acm:us-east-1:060795933320:certificate/1412861d-0687-4c42-abcc-75e04d525177",
+              dns: false,
+            },
+          })
         : sst.aws.Router.get("TheStakkRouter", "EZ95MUR96JU1W");
     router.route("/", $app.stage === "production" ? service.url : "https://unused.jumr.dev");
   },
