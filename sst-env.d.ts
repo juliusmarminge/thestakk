@@ -5,16 +5,16 @@
 
 declare module "sst" {
   export interface Resource {
-    "MyRouter": {
+    "TheStakkRouter": {
       "type": "sst.aws.Router"
       "url": string
     }
-    "MyService": {
+    "TheStakkService": {
       "service": string
       "type": "sst.aws.Service"
       "url": string
     }
-    "MyVpc": {
+    "TheStakkVpc": {
       "bastion": string
       "type": "sst.aws.Vpc"
     }

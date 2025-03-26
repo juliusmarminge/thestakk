@@ -1,9 +1,8 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 export default $config({
   app(input) {
     return {
-      name: "the-stack",
+      name: "thestakk",
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
       providers: {
@@ -14,8 +13,8 @@ export default $config({
     };
   },
   async run() {
-    const vpc = new sst.aws.Vpc("MyVpc", { bastion: true });
-    const cluster = new sst.aws.Cluster("MyCluster", { vpc });
+    const vpc = new sst.aws.Vpc("TheStakkVpc", { bastion: true });
+    const cluster = new sst.aws.Cluster("TheStakkCluster", { vpc });
 
     const tursoUrl = new sst.Secret("TursoUrl");
     const tursoToken = new sst.Secret("TursoToken");
@@ -27,25 +26,29 @@ export default $config({
       },
     });
 
-    const service = new sst.aws.Service("MyService", {
+    const service = new sst.aws.Service("TheStakkService", {
+      capacity: "spot",
+      cpu: "1 vCPU",
+      memory: "2 GB",
       cluster,
       link: [tursoUrl, tursoToken],
       loadBalancer: {
-        ports: [{ listen: "80/http", forward: "3000/http" }],
+        ports: [{ listen: "443/https", forward: "3000/http" }],
+        domain: {
+          name: "thestakk.jumr.dev",
+          dns: false,
+          cert: "arn:aws:acm:eu-north-1:060795933320:certificate/04537370-bb73-4190-8d4d-a75a37aba6e1",
+        },
       },
       dev: {
         command: "pnpm vinxi dev",
-      },
-      environment: {
-        TURSO_CONNECTION_URL: tursoUrl.value,
-        TURSO_AUTH_TOKEN: tursoToken.value,
       },
     });
 
     const router =
       $app.stage === "production"
-        ? new sst.aws.Router("MyRouter", {})
-        : sst.aws.Router.get("MyRouter", "E39O4F0DRS8XXG");
+        ? new sst.aws.Router("TheStakkRouter", {})
+        : sst.aws.Router.get("TheStakkRouter", "EZ95MUR96JU1W");
     router.route("/", $app.stage === "production" ? service.url : "https://unused.jumr.dev");
   },
 });
