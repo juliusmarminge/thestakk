@@ -11,7 +11,7 @@
     "deploy-prod": "sst deploy --stage production",
     "push": "sst shell drizzle-kit push",
     "seed": "sst shell bun run app/db/seed.ts",
-    "start": "vinxi start"
+    "start": "sst shell vinxi start"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

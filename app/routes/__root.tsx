@@ -51,19 +51,46 @@ function RootComponent() {
 }
 
 function RootDocument(props: { children: React.ReactNode }) {
-  const [mode, { theme, scaled }, viewer] = Route.useLoaderData();
+  const [mode, { theme, scaled, baseColor }, viewer] = Route.useLoaderData();
 
   React.useEffect(() => {
-    useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
-
     toast.info(`You are in ${viewer.city}, ${viewer.country}`, {
       description: `${viewer.region} (${viewer.regionName})`,
     });
+
+    useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
+    const match = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function handleChange(event: MediaQueryListEvent) {
+      if (useThemeStore.getState().resolvedMode === "system") {
+        useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
+      }
+    }
+    match.addEventListener("change", handleChange);
+    return () => match.removeEventListener("change", handleChange);
   }, []);
-  useSystemTheme();
+
+  const themeClass = {
+    default: "theme-default",
+    amber: "theme-amber",
+    blue: "theme-blue",
+    green: "theme-green",
+    mono: "theme-mono",
+  }[theme];
+  const baseColorClass = {
+    neutral: "theme-neutral",
+    stone: "theme-stone",
+    zinc: "theme-zinc",
+    gray: "theme-gray",
+    slate: "theme-slate",
+  }[baseColor];
 
   return (
-    <html lang="en" className={cn(mode === "dark" && "dark", "md:bg-sidebar")}>
+    <html
+      lang="en"
+      className={cn(mode === "dark" && "dark", "md:bg-sidebar")}
+      suppressHydrationWarning
+    >
       <head>
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: needed for immediate theme application
@@ -74,7 +101,8 @@ function RootDocument(props: { children: React.ReactNode }) {
       <body
         className={cn(
           "overscroll-none bg-background font-sans antialiased",
-          theme && `theme-${theme}`,
+          themeClass,
+          baseColorClass,
           scaled && "theme-scaled",
           // fontVariables,
         )}

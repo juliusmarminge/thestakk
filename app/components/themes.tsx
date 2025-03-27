@@ -13,6 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Label } from "~/components/ui/label";
@@ -21,11 +22,15 @@ import { cn } from "~/lib/utils";
 
 const MODE_COOKIE_NAME = "mode";
 const THEME_COOKIE_NAME = "theme";
+const DEFAULT_MODE = "system";
+const DEFAULT_THEME = "default";
+const DEFAULT_BASE_COLOR = "neutral";
+const DEFAULT_SCALED = false;
 
 const Mode = type('"light" | "dark" | "system"');
 const PrefersMode = type('"light" | "dark"');
-const Theme = type('"default" | "blue" | "green" | "amber" | "mono"');
-const themeValues = ["default", "blue", "green", "amber", "mono"];
+const BaseColor = type('"neutral" | "stone" | "zinc" | "gray" | "slate"');
+const Theme = type('"default" | "amber" | "blue" | "green" | "mono"');
 
 interface ThemeStore {
   resolvedMode: typeof Mode.infer;
@@ -33,21 +38,33 @@ interface ThemeStore {
   toggleMode: () => void;
   setPreferredMode: (mode: typeof PrefersMode.infer) => void;
   activeTheme: typeof Theme.infer;
-  setActiveTheme: (theme: typeof Theme.infer, scaled: boolean) => void;
+  baseColor: typeof BaseColor.infer;
   scaled: boolean;
+  setActiveTheme: (options: {
+    baseColor: typeof BaseColor.infer;
+    activeTheme: typeof Theme.infer;
+    scaled: boolean;
+  }) => void;
 }
 
 export const getModeCookie = createServerFn().handler(() => {
-  let resolved = Mode(getCookie(MODE_COOKIE_NAME) ?? "null");
-  if (resolved instanceof ArkErrors) resolved = "system";
+  let resolved = Mode(getCookie(MODE_COOKIE_NAME));
+  if (resolved instanceof ArkErrors) resolved = DEFAULT_MODE;
   return resolved;
 });
 
 export const getThemeCookie = createServerFn().handler(() => {
-  const [theme = "default", scaled] = (getCookie(THEME_COOKIE_NAME) ?? "null").split("-");
-  let resolved = Theme(theme);
-  if (resolved instanceof ArkErrors) resolved = "default";
-  return { theme: resolved, scaled: !!scaled };
+  const [baseColor = DEFAULT_BASE_COLOR, theme = DEFAULT_THEME, scaled] = (
+    getCookie(THEME_COOKIE_NAME) ?? "null"
+  ).split("-");
+
+  let resolvedBaseColor = BaseColor(baseColor);
+  if (resolvedBaseColor instanceof ArkErrors) resolvedBaseColor = DEFAULT_BASE_COLOR;
+
+  let resolvedTheme = Theme(theme);
+  if (resolvedTheme instanceof ArkErrors) resolvedTheme = DEFAULT_THEME;
+
+  return { theme: resolvedTheme, scaled: !!scaled, baseColor: resolvedBaseColor };
 });
 
 const updateModeCookie = createServerFn({ method: "POST" })
@@ -63,9 +80,16 @@ const updateModeCookie = createServerFn({ method: "POST" })
   });
 
 const updateThemeCookie = createServerFn({ method: "POST" })
-  .validator(type("string"))
-  .handler((ctx) => {
-    setCookie(THEME_COOKIE_NAME, ctx.data, {
+  .validator(
+    type({
+      baseColor: BaseColor,
+      activeTheme: Theme,
+      scaled: "boolean",
+    }),
+  )
+  .handler(({ data }) => {
+    const cookie = `${data.baseColor}-${data.activeTheme}${data.scaled ? "-scaled" : ""}`;
+    setCookie(THEME_COOKIE_NAME, cookie, {
       httpOnly: false,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
@@ -84,6 +108,8 @@ function updateThemeClass(mode: typeof Mode.infer, prefers: typeof PrefersMode.i
     ),
   );
   document.head.appendChild(css);
+
+  console.trace("updateThemeClass", mode, prefers);
 
   document.documentElement.classList.remove("dark");
   if (mode === "dark" || (mode === "system" && prefers === "dark")) {
@@ -112,7 +138,7 @@ export const EAGER_SET_SYSTEM_THEME_SCRIPT = `
 `;
 
 export const useThemeStore = create<ThemeStore>((set, get) => ({
-  resolvedMode: "system",
+  resolvedMode: DEFAULT_MODE,
   preferredMode: (() => {
     if (typeof document !== "undefined") {
       return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -122,8 +148,13 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
   })(),
   toggleMode: () =>
     set((s) => {
-      const newMode =
-        s.resolvedMode === "system" ? "light" : s.resolvedMode === "light" ? "dark" : "system";
+      const newMode = (
+        {
+          system: "light",
+          light: "dark",
+          dark: "system",
+        } as const
+      )[s.resolvedMode];
 
       updateThemeClass(newMode, s.preferredMode);
       updateModeCookie({ data: newMode });
@@ -137,19 +168,21 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     updateThemeClass(get().resolvedMode, preferredMode);
   },
 
-  activeTheme: "default",
-  scaled: false,
-  setActiveTheme: (theme, scaled) => {
-    set({ activeTheme: theme, scaled });
+  activeTheme: DEFAULT_THEME,
+  baseColor: DEFAULT_BASE_COLOR,
+  scaled: DEFAULT_SCALED,
+  setActiveTheme: (input) => {
+    set(input);
 
-    updateThemeCookie({ data: `${theme}${scaled ? "-scaled" : ""}` });
+    updateThemeCookie({ data: input });
     for (const className of Array.from(document.body.classList)) {
       if (className.startsWith("theme-")) {
         document.body.classList.remove(className);
       }
     }
-    document.body.classList.add(`theme-${theme}`);
-    if (scaled) {
+    document.body.classList.add(`theme-${input.baseColor}`);
+    document.body.classList.add(`theme-${input.activeTheme}`);
+    if (input.scaled) {
       document.body.classList.add("theme-scaled");
     }
   },
@@ -237,6 +270,7 @@ export function ModeToggle(props: {
 
 export function ThemeSelector() {
   const activeTheme = useThemeStore((s) => s.activeTheme);
+  const baseColor = useThemeStore((s) => s.baseColor);
   const scaled = useThemeStore((s) => s.scaled);
   const setActiveTheme = useThemeStore((s) => s.setActiveTheme);
 
@@ -255,29 +289,70 @@ export function ThemeSelector() {
           <Button variant="outline">
             <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
             <span className="block text-muted-foreground sm:hidden">Theme</span>
-            <span className="min-w-[8ch] capitalize">
-              <Skeleton loading={!mounted}>{activeTheme}</Skeleton>
+            <span className="min-w-[15ch] capitalize">
+              <Skeleton loading={!mounted}>
+                {activeTheme} {baseColor}
+              </Skeleton>
             </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Theme</DropdownMenuLabel>
+            <DropdownMenuLabel>Base Color</DropdownMenuLabel>
             <DropdownMenuRadioGroup
-              value={activeTheme}
-              onValueChange={(value) => setActiveTheme(value as typeof Theme.infer, scaled)}
+              value={baseColor}
+              onValueChange={(value) =>
+                setActiveTheme({
+                  activeTheme,
+                  baseColor: value as typeof BaseColor.infer,
+                  scaled,
+                })
+              }
             >
-              {themeValues.map((theme) => (
-                <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
-                  {theme}
-                </DropdownMenuRadioItem>
-              ))}
+              {BaseColor.select("unit").map((unit) => {
+                const theme = unit.serializedValue.replace(/"/g, "");
+                return (
+                  <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
+                    {theme}
+                  </DropdownMenuRadioItem>
+                );
+              })}
             </DropdownMenuRadioGroup>
           </DropdownMenuGroup>
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Color Scheme</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={activeTheme}
+              onValueChange={(value) =>
+                setActiveTheme({
+                  activeTheme: value as typeof Theme.infer,
+                  baseColor,
+                  scaled,
+                })
+              }
+            >
+              {Theme.select("unit").map((unit) => {
+                const theme = unit.serializedValue.replace(/"/g, "");
+                return (
+                  <DropdownMenuRadioItem key={theme} value={theme} className="capitalize">
+                    {theme}
+                  </DropdownMenuRadioItem>
+                );
+              })}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuCheckboxItem
               checked={scaled}
-              onCheckedChange={(checked) => setActiveTheme(activeTheme, checked)}
+              onCheckedChange={(checked) =>
+                setActiveTheme({
+                  activeTheme,
+                  baseColor,
+                  scaled: checked,
+                })
+              }
             >
               Scaled
             </DropdownMenuCheckboxItem>

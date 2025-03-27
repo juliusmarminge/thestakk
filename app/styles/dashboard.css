@@ -1,9 +1,4 @@
-body {
-  @apply overscroll-none bg-transparent;
-}
-
 :root {
-  --font-sans: var(--font-inter);
   --header-height: calc(var(--spacing) * 12 + 1px);
 }
 
