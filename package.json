@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "build": "vinxi build",
-    "check:fix": "biome check --write --unsafe",
     "check": "biome check && tsc --noEmit",
-    "dev": "vinxi dev",
-    "push": "drizzle-kit push",
-    "seed": "bun run app/db/seed.ts",
+    "check:fix": "biome check --write --unsafe",
+    "dev": "sst dev",
+    "deploy-prod": "sst deploy --stage production",
+    "push": "sst shell drizzle-kit push",
+    "seed": "sst shell bun run app/db/seed.ts",
     "start": "vinxi start"
   },
   "dependencies": {
@@ -53,6 +54,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "drizzle-kit": "^0.30.5",
     "drizzle-seed": "^0.3.1",
+    "sst": "3.10.13",
     "tailwindcss": "^4.0.15",
     "typescript": "5.8.2",
     "vinxi": "0.5.3",
@@ -61,5 +63,8 @@
   "packageManager": "pnpm@10.6.5",
   "engines": {
     "node": ">=22.14.0"
+  },
+  "overrides": {
+    "nitropack": "npm:nitropack-nightly@latest"
   }
 }

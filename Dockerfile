@@ -24,4 +24,4 @@ COPY --from=builder --chown=tss:nodejs /app/.output /app/.output
 # Run app as non-root user
 USER tss
 EXPOSE $PORT
-CMD [ "/bin/bash", "-c", "node .output/server/index.mjs" ]
+CMD [ "node", ".output/server/index.mjs" ]

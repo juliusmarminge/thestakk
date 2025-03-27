@@ -1,9 +1,9 @@
 .output
+.sst
 .vinxi
 .vscode
 node_modules
 
-.env
 biome.jsonc
 drizzle.config.ts
 README.md
