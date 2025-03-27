@@ -254,6 +254,7 @@ export function ModeToggle(props: {
             </span>
           </div>
           <div
+            data-slot="theme-toggle-knob"
             className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all duration-300 ease-in-out dark:bg-accent-foreground"
             style={{
               left: mode === "system" ? "50%" : mode === "light" ? "100%" : "0%",

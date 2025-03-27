@@ -404,6 +404,7 @@
   --font-sans: var(--font-mono);
   --primary: var(--color-neutral-600);
   --primary-foreground: var(--color-neutral-50);
+  --radius: 0 !important;
 
   @variant dark {
     --primary: var(--color-neutral-500);
@@ -428,7 +429,8 @@
   }
 
   [data-slot="toggle-group"],
-  [data-slot="toggle-group-item"] {
+  [data-slot="toggle-group-item"],
+  [data-slot="theme-toggle-knob"] {
     @apply !rounded-none !shadow-none;
   }
 }
