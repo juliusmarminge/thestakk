@@ -7,3 +7,4 @@ node_modules
 biome.jsonc
 drizzle.config.ts
 README.md
+sst.config.ts
