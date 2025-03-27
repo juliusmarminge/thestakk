@@ -9,11 +9,12 @@ export const Route = createFileRoute("/_app")({
 });
 
 function AppLayout() {
-  const sidebarDefaultOpen = Route.useLoaderData();
+  const { open: sidebarDefaultOpen, side: sidebarDefaultSide } = Route.useLoaderData();
 
   return (
     <SidebarProvider
       defaultOpen={sidebarDefaultOpen}
+      defaultSide={sidebarDefaultSide}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",

@@ -319,7 +319,7 @@ export function ThemeSelector() {
               })}
             </DropdownMenuRadioGroup>
           </DropdownMenuGroup>
-
+          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuLabel>Color Scheme</DropdownMenuLabel>
             <DropdownMenuRadioGroup

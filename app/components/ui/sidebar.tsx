@@ -30,14 +30,24 @@ const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 export const getSidebarCookie = createServerFn().handler(() => {
-  const resolved = getCookie(SIDEBAR_COOKIE_NAME) ?? "true";
-  return resolved === "true";
+  const [open, side] = (getCookie(SIDEBAR_COOKIE_NAME) ?? "open-left").split("-");
+
+  return {
+    open: open === "open",
+    side: side === "right" ? "right" : "left",
+  };
 });
 
 const updateSidebarCookie = createServerFn({ method: "POST" })
-  .validator(type("boolean"))
-  .handler((ctx) => {
-    setCookie(SIDEBAR_COOKIE_NAME, ctx.data ? "true" : "false", {
+  .validator(
+    type({
+      open: "boolean",
+      side: "'left' | 'right'",
+    }),
+  )
+  .handler(({ data }) => {
+    const cookie = `${data.open ? "open" : "collapsed"}-${data.side}`;
+    setCookie(SIDEBAR_COOKIE_NAME, cookie, {
       httpOnly: false,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
@@ -49,7 +59,9 @@ const updateSidebarCookie = createServerFn({ method: "POST" })
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
   open: boolean;
+  side: "left" | "right";
   setOpen: (open: boolean) => void;
+  setSide: (side: "left" | "right") => void;
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
@@ -69,6 +81,7 @@ function useSidebar() {
 
 function SidebarProvider({
   defaultOpen = true,
+  defaultSide = "left",
   open: openProp,
   onOpenChange: setOpenProp,
   className,
@@ -77,6 +90,7 @@ function SidebarProvider({
   ...props
 }: React.ComponentProps<"div"> & {
   defaultOpen?: boolean;
+  defaultSide?: "left" | "right";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
@@ -86,6 +100,7 @@ function SidebarProvider({
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen);
+  const [side, _setSide] = React.useState(defaultSide);
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -97,9 +112,17 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      updateSidebarCookie({ data: openState });
+      updateSidebarCookie({ data: { open: openState, side } });
     },
-    [setOpenProp, open],
+    [setOpenProp, open, side],
+  );
+
+  const setSide = React.useCallback(
+    (value: "left" | "right") => {
+      _setSide(value);
+      updateSidebarCookie({ data: { open, side: value } });
+    },
+    [open],
   );
 
   // Helper to toggle the sidebar.
@@ -128,6 +151,8 @@ function SidebarProvider({
     () => ({
       state,
       open,
+      side,
+      setSide,
       setOpen,
       isMobile,
       openMobile,
@@ -150,7 +175,7 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar",
+            "group/sidebar-wrapper flex min-h-svh w-full has-data-[side=right]:flex-row-reverse has-data-[variant=inset]:bg-sidebar",
             className,
           )}
           {...props}
@@ -163,7 +188,7 @@ function SidebarProvider({
 }
 
 function Sidebar({
-  side = "left",
+  side: sideProp,
   variant = "sidebar",
   collapsible = "offcanvas",
   className,
@@ -174,7 +199,8 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile, side: sideContext } = useSidebar();
+  const side = sideProp ?? sideContext;
 
   if (collapsible === "none") {
     return (
@@ -317,7 +343,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
       data-slot="sidebar-inset"
       className={cn(
         "relative flex w-full flex-1 flex-col bg-background",
-        "md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm",
+        "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm",
         className,
       )}
       {...props}
