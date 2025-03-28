@@ -1,5 +1,7 @@
 "use client";
 
+import type { LinkProps, RegisteredRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { type } from "arktype";
@@ -569,6 +571,22 @@ function SidebarMenuButton({
   );
 }
 
+function SidebarMenuLink({
+  className,
+  ...props
+}: React.ComponentProps<typeof SidebarMenuButton> & LinkProps<"a", RegisteredRouter>) {
+  return (
+    <SidebarMenuButton asChild {...props}>
+      <Link
+        data-slot="sidebar-menu-link"
+        data-sidebar="menu-link"
+        className={cn(className)}
+        {...(props as any)}
+      />
+    </SidebarMenuButton>
+  );
+}
+
 function SidebarMenuAction({
   className,
   asChild = false,
@@ -726,6 +744,7 @@ export {
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
+  SidebarMenuLink,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,

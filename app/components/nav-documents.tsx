@@ -6,6 +6,7 @@ import {
   ShareIcon,
   TrashIcon,
 } from "@heroicons/react/16/solid";
+import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuLink,
   useSidebar,
 } from "~/components/ui/sidebar";
 
@@ -27,8 +29,8 @@ export function NavDocuments({
   items,
 }: {
   items: {
-    name: string;
-    url: string;
+    title: string;
+    to: ValidateToPath<RegisteredRouter>;
     icon: React.ElementType;
   }[];
 }) {
@@ -39,13 +41,11 @@ export function NavDocuments({
       <SidebarGroupLabel>Documents</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuLink to={item.to} activeProps={{ className: "bg-sidebar-accent" }}>
+              <item.icon />
+              <span>{item.title}</span>
+            </SidebarMenuLink>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover className="rounded-sm data-[state=open]:bg-accent">

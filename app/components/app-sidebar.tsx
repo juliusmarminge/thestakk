@@ -14,6 +14,12 @@ import {
   SparklesIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
+import {
+  Link,
+  type RegisteredRouter,
+  type ToPathOption,
+  linkOptions,
+} from "@tanstack/react-router";
 import { NavDocuments } from "~/components/nav-documents";
 import { NavMain } from "~/components/nav-main";
 import { NavSecondary } from "~/components/nav-secondary";
@@ -28,117 +34,125 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 
+export type NavItem = {
+  title: string;
+  to: ToPathOption<RegisteredRouter>;
+  icon?: React.ElementType;
+  isActive?: boolean;
+  items?: NavItem[];
+};
+
 const data = {
-  navMain: [
+  navMain: linkOptions([
     {
       title: "Dashboard",
-      url: "#",
+      to: "/",
       icon: RocketLaunchIcon,
     },
     {
       title: "Lifecycle",
-      url: "#",
+      to: "/placeholder",
       icon: ListBulletIcon,
     },
     {
       title: "Analytics",
-      url: "#",
+      to: "/placeholder",
       icon: ChartBarIcon,
     },
     {
       title: "Projects",
-      url: "#",
+      to: "/placeholder",
       icon: FolderIcon,
     },
     {
       title: "Team",
-      url: "#",
+      to: "/placeholder",
       icon: UsersIcon,
     },
-  ],
-  navClouds: [
+  ]),
+  navClouds: linkOptions([
     {
       title: "Capture",
       icon: CameraIcon,
       isActive: true,
-      url: "#",
+      to: "/placeholder",
       items: [
         {
           title: "Active Proposals",
-          url: "#",
+          to: "#",
         },
         {
           title: "Archived",
-          url: "#",
+          to: "#",
         },
       ],
     },
     {
       title: "Proposal",
       icon: DocumentTextIcon,
-      url: "#",
+      to: "/placeholder",
       items: [
         {
           title: "Active Proposals",
-          url: "#",
+          to: "#",
         },
         {
           title: "Archived",
-          url: "#",
+          to: "#",
         },
       ],
     },
     {
       title: "Prompts",
       icon: SparklesIcon,
-      url: "#",
+      to: "/placeholder",
       items: [
         {
           title: "Active Proposals",
-          url: "#",
+          to: "#",
         },
         {
           title: "Archived",
-          url: "#",
+          to: "#",
         },
       ],
     },
-  ],
-  navSecondary: [
+  ]),
+  navSecondary: linkOptions([
     {
       title: "Settings",
-      url: "#",
+      to: "/settings",
       icon: Cog6ToothIcon,
     },
     {
       title: "Get Help",
-      url: "#",
+      to: "/placeholder",
       icon: QuestionMarkCircleIcon,
     },
     {
       title: "Search",
-      url: "#",
+      to: "/placeholder",
       icon: MagnifyingGlassIcon,
     },
-  ],
-  documents: [
+  ]),
+  documents: linkOptions([
     {
-      name: "Data Library",
-      url: "#",
+      title: "Data Library",
+      to: "/placeholder",
       icon: CircleStackIcon,
     },
     {
-      name: "Reports",
-      url: "#",
+      title: "Reports",
+      to: "/placeholder",
       icon: DocumentTextIcon,
     },
     {
-      name: "Word Assistant",
-      url: "#",
+      title: "Word Assistant",
+      to: "/placeholder",
       icon: DocumentTextIcon,
     },
-  ],
-};
+  ]),
+} satisfies Record<string, NavItem[]>;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -147,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
+              <Link to="/" activeProps={{ className: "bg-sidebar-accent" }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="size-5 fill-none stroke-2 stroke-current"
@@ -160,7 +174,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <path d="M6 12a6 6 0 0 1 6 -6" />
                 </svg>
                 <span className="font-semibold text-base">Acme Inc.</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

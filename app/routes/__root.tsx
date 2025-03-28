@@ -6,11 +6,11 @@ import { getHeader } from "@tanstack/react-start/server";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { toast } from "sonner";
+import { ErrorComponent, NotFoundComponent } from "~/components/error-component";
 import {
   EAGER_SET_SYSTEM_THEME_SCRIPT,
   getModeCookie,
   getThemeCookie,
-  useSystemTheme,
   useThemeStore,
 } from "~/components/themes";
 import { Toaster } from "~/components/ui/sonner";
@@ -40,6 +40,8 @@ export const Route = createRootRouteWithContext<{
   }),
   loader: () => Promise.all([getModeCookie(), getThemeCookie(), readViewerLocation()]),
   component: RootComponent,
+  errorComponent: ErrorComponent,
+  notFoundComponent: NotFoundComponent,
 });
 
 function RootComponent() {

@@ -1,5 +1,6 @@
 "use client";
 
+import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
 import type * as React from "react";
 import { ThemeToggleIcon } from "~/components/icons";
 import { ModeToggle } from "~/components/themes";
@@ -9,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuLink,
 } from "~/components/ui/sidebar";
 
 export function NavSecondary({
@@ -17,7 +19,7 @@ export function NavSecondary({
 }: {
   items: {
     title: string;
-    url: string;
+    to: ValidateToPath<RegisteredRouter>;
     icon: React.ElementType;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
@@ -27,12 +29,10 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
+              <SidebarMenuLink to={item.to} activeProps={{ className: "bg-sidebar-accent" }}>
+                <item.icon />
+                <span>{item.title}</span>
+              </SidebarMenuLink>
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem className="group-data-[collapsible=icon]:hidden">

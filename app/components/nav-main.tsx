@@ -1,6 +1,7 @@
 "use client";
 
 import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
+import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";
 import {
   SidebarGroup,
@@ -8,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuLink,
 } from "~/components/ui/sidebar";
 
 export function NavMain({
@@ -15,7 +17,7 @@ export function NavMain({
 }: {
   items: {
     title: string;
-    url: string;
+    to: ValidateToPath<RegisteredRouter>;
     icon?: React.ElementType;
   }[];
 }) {
@@ -44,10 +46,14 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuLink
+                tooltip={item.title}
+                to={item.to}
+                activeProps={{ className: "bg-sidebar-accent" }}
+              >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-              </SidebarMenuButton>
+              </SidebarMenuLink>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

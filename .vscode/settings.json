@@ -15,6 +15,7 @@
     "**/routeTree.gen.ts": true
   },
   "search.exclude": {
+    "**/node_modules": true,
     "**/routeTree.gen.ts": true
   },
   "tailwindCSS.experimental.classRegex": [

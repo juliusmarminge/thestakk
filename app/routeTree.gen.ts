@@ -11,11 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PlaceholderImport } from './routes/placeholder'
 import { Route as LoginImport } from './routes/login'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app.index'
+import { Route as AppSettingsImport } from './routes/_app.settings'
 
 // Create/Update Routes
+
+const PlaceholderRoute = PlaceholderImport.update({
+  id: '/placeholder',
+  path: '/placeholder',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -31,6 +39,12 @@ const AppRoute = AppImport.update({
 const AppIndexRoute = AppIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppSettingsRoute = AppSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -52,6 +66,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/placeholder': {
+      id: '/placeholder'
+      path: '/placeholder'
+      fullPath: '/placeholder'
+      preLoaderRoute: typeof PlaceholderImport
+      parentRoute: typeof rootRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsImport
+      parentRoute: typeof AppImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
@@ -65,10 +93,12 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteChildren {
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -77,11 +107,15 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/placeholder': typeof PlaceholderRoute
+  '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/placeholder': typeof PlaceholderRoute
+  '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
 }
 
@@ -89,26 +123,36 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/placeholder': typeof PlaceholderRoute
+  '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/'
+  fullPaths: '' | '/login' | '/placeholder' | '/settings' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/'
-  id: '__root__' | '/_app' | '/login' | '/_app/'
+  to: '/login' | '/placeholder' | '/settings' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/login'
+    | '/placeholder'
+    | '/_app/settings'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PlaceholderRoute: typeof PlaceholderRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  PlaceholderRoute: PlaceholderRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,17 +166,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_app",
-        "/login"
+        "/login",
+        "/placeholder"
       ]
     },
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/settings",
         "/_app/"
       ]
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/placeholder": {
+      "filePath": "placeholder.tsx"
+    },
+    "/_app/settings": {
+      "filePath": "_app.settings.tsx",
+      "parent": "/_app"
     },
     "/_app/": {
       "filePath": "_app.index.tsx",

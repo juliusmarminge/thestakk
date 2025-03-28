@@ -19,6 +19,8 @@ import {
 import { Label } from "~/components/ui/label";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn } from "~/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 const MODE_COOKIE_NAME = "mode";
 const THEME_COOKIE_NAME = "theme";
@@ -29,8 +31,22 @@ const DEFAULT_SCALED = false;
 
 const Mode = type('"light" | "dark" | "system"');
 const PrefersMode = type('"light" | "dark"');
-const BaseColor = type('"neutral" | "stone" | "zinc" | "gray" | "slate"');
+const BaseColor = type('"neutral" | "stone" | "zinc" | "slate"');
 const Theme = type('"default" | "amber" | "blue" | "green" | "mono"');
+
+export const THEME_CLASSNAMES: Record<typeof Theme.infer, string> = {
+  default: "theme-default",
+  amber: "theme-amber",
+  blue: "theme-blue",
+  green: "theme-green",
+  mono: "theme-mono",
+};
+export const BASE_COLOR_CLASSNAMES: Record<typeof BaseColor.infer, string> = {
+  neutral: "theme-neutral",
+  stone: "theme-stone",
+  zinc: "theme-zinc",
+  slate: "theme-slate",
+};
 
 interface ThemeStore {
   resolvedMode: typeof Mode.infer;
@@ -361,5 +377,84 @@ export function ThemeSelector() {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
+  );
+}
+
+export function ThemePreview() {
+  const activeTheme = useThemeStore((s) => s.activeTheme);
+  const baseColor = useThemeStore((s) => s.baseColor);
+  const scaled = useThemeStore((s) => s.scaled);
+  const setActiveTheme = useThemeStore((s) => s.setActiveTheme);
+
+  return (
+    <RadioGroup
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      value={`${baseColor}-${activeTheme}`}
+      onValueChange={(value) => {
+        const [baseColor, activeTheme] = value.split("-");
+        setActiveTheme({
+          activeTheme: activeTheme as typeof Theme.infer,
+          baseColor: baseColor as typeof BaseColor.infer,
+          scaled,
+        });
+      }}
+    >
+      {(
+        [
+          { baseColor: "neutral", activeTheme: "default" },
+          { baseColor: "stone", activeTheme: "amber" },
+          { baseColor: "slate", activeTheme: "blue" },
+          { baseColor: "zinc", activeTheme: "green" },
+          { baseColor: "neutral", activeTheme: "mono" },
+        ] as const
+      ).map(({ baseColor, activeTheme }) => {
+        const key = `${baseColor}-${activeTheme}`;
+        return (
+          <div key={key} className="group/theme-card">
+            <RadioGroupItem value={key} id={key} className="peer sr-only" />
+            <Label htmlFor={`${baseColor}-${activeTheme}`} className="block">
+              <Card
+                className={cn(
+                  "transition-colors hover:bg-accent/50 group-has-data-[state=checked]/theme-card:border-primary",
+                )}
+              >
+                <CardHeader>
+                  <CardTitle className="capitalize">{activeTheme}</CardTitle>
+                  <CardDescription>Click to select this theme</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {/* Mini App Skeleton */}
+                  <div
+                    className={cn(
+                      "flex h-[100px] overflow-hidden rounded-md border",
+                      THEME_CLASSNAMES[activeTheme],
+                      BASE_COLOR_CLASSNAMES[baseColor],
+                    )}
+                    style={{ "--radius": "0.625rem !important" } as React.CSSProperties}
+                  >
+                    {/* Sidebar */}
+                    <div className="w-16 border-r bg-sidebar p-2">
+                      <div className="mb-2 h-3 w-full rounded-md bg-sidebar-accent" />
+                      <div className="h-3 w-full rounded-md bg-sidebar-accent" />
+                    </div>
+                    {/* Main Content */}
+                    <div className="flex-1 bg-background p-2">
+                      {/* Header */}
+                      <div className="mb-2 h-3 w-1/3 rounded-md bg-primary" />
+                      {/* Content */}
+                      <div className="space-y-2">
+                        <div className="h-3 w-full rounded-md bg-muted" />
+                        <div className="h-3 w-4/5 rounded-md bg-muted" />
+                        <div className="h-3 w-2/3 rounded-md bg-muted" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Label>
+          </div>
+        );
+      })}
+    </RadioGroup>
   );
 }
