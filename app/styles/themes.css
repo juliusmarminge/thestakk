@@ -337,14 +337,6 @@
     --primary-foreground: var(--color-neutral-50);
   }
 
-  .rounded-xs,
-  .rounded-sm,
-  .rounded-md,
-  .rounded-lg,
-  .rounded-xl {
-    @apply rounded-none;
-  }
-
   .shadow-xs,
   .shadow-sm,
   .shadow-md,

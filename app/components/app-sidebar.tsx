@@ -161,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <Link to="/" activeProps={{ className: "bg-sidebar-accent" }}>
+              <Link to="/">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="size-5 fill-none stroke-2 stroke-current"

@@ -313,7 +313,7 @@ export function ThemeSelector() {
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Base Color</DropdownMenuLabel>
             <DropdownMenuRadioGroup
@@ -430,7 +430,6 @@ export function ThemePreview() {
                       THEME_CLASSNAMES[activeTheme],
                       BASE_COLOR_CLASSNAMES[baseColor],
                     )}
-                    style={{ "--radius": "0.625rem !important" } as React.CSSProperties}
                   >
                     {/* Sidebar */}
                     <div className="w-16 border-r bg-sidebar p-2">
