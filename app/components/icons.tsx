@@ -1,17 +1,13 @@
 import { cn } from "~/lib/utils";
 
-export function LoaderIcon(props: React.ComponentProps<"svg">) {
+export function LoaderIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={cn("size-6 fill-none stroke-2 stroke-current", className)}
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -27,18 +23,14 @@ export function LoaderIcon(props: React.ComponentProps<"svg">) {
   );
 }
 
-export function ThemeToggleIcon(props: React.ComponentProps<"svg">) {
+export function ThemeToggleIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={cn("size-6 fill-none stroke-2 stroke-current", className)}
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -51,14 +43,12 @@ export function ThemeToggleIcon(props: React.ComponentProps<"svg">) {
   );
 }
 
-export function PanelLeftIcon(props: React.ComponentProps<"svg">) {
+export function PanelLeftIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      className={cn("size-6 fill-current", className)}
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -67,14 +57,12 @@ export function PanelLeftIcon(props: React.ComponentProps<"svg">) {
   );
 }
 
-export function PanelRightIcon(props: React.ComponentProps<"svg">) {
+export function PanelRightIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      className={cn("size-6 fill-current", className)}
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -93,14 +81,13 @@ export function LoadingSpinner(props: {
       <svg
         aria-hidden="true"
         className={cn(
-          "animate-spin",
+          "animate-spin fill-none",
           props.invert
             ? "fill-primary-foreground/75 text-primary dark:fill-background/75"
             : "fill-primary text-primary-background dark:text-background",
           props.className,
         )}
         viewBox="0 0 100 101"
-        fill="none"
         xmlns="http://www.w3.org/2000/svg"
         width={size}
         height={size}

@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getHeader } from "@tanstack/react-start/server";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
@@ -113,6 +114,7 @@ function RootDocument(props: { children: React.ReactNode }) {
         <Toaster />
         <Scripts />
         <ReactQueryDevtools />
+        <TanStackRouterDevtools />
       </body>
     </html>
   );

@@ -32,13 +32,13 @@ const DEFAULT_SCALED = false;
 const Mode = type('"light" | "dark" | "system"');
 const PrefersMode = type('"light" | "dark"');
 const BaseColor = type('"neutral" | "stone" | "zinc" | "slate"');
-const Theme = type('"default" | "amber" | "blue" | "green" | "mono"');
+const Theme = type('"default" | "amber" | "sapphire" | "emerald" | "mono"');
 
 export const THEME_CLASSNAMES: Record<typeof Theme.infer, string> = {
   default: "theme-default",
   amber: "theme-amber",
-  blue: "theme-blue",
-  green: "theme-green",
+  sapphire: "theme-sapphire",
+  emerald: "theme-emerald",
   mono: "theme-mono",
 };
 export const BASE_COLOR_CLASSNAMES: Record<typeof BaseColor.infer, string> = {
@@ -403,8 +403,8 @@ export function ThemePreview() {
         [
           { baseColor: "neutral", activeTheme: "default" },
           { baseColor: "stone", activeTheme: "amber" },
-          { baseColor: "slate", activeTheme: "blue" },
-          { baseColor: "zinc", activeTheme: "green" },
+          { baseColor: "slate", activeTheme: "sapphire" },
+          { baseColor: "zinc", activeTheme: "emerald" },
           { baseColor: "neutral", activeTheme: "mono" },
         ] as const
       ).map(({ baseColor, activeTheme }) => {

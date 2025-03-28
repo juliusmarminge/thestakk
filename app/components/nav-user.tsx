@@ -47,6 +47,19 @@ export function NavUser() {
     );
   }
 
+  const UserAvatar = (
+    <Avatar className="h-8 w-8 rounded-lg [.theme-mono_&]:grayscale">
+      <AvatarImage src={session.user.image ?? undefined} alt={session.user.name} />
+      <AvatarFallback className="rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-6 fill-current">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 2a5 5 0 1 1 -5 5l.005 -.217a5 5 0 0 1 4.995 -4.783z" />
+          <path d="M14 14a5 5 0 0 1 5 5v1a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-1a5 5 0 0 1 5 -5h4z" />
+        </svg>
+      </AvatarFallback>
+    </Avatar>
+  );
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -56,13 +69,7 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg [.theme-mono_&]:grayscale">
-                <AvatarImage
-                  src={session.user.image ?? "https://github.com/shadcn.png"}
-                  alt={session.user.name}
-                />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
+              {UserAvatar}
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{session.user.name}</span>
                 <span className="truncate text-muted-foreground text-xs">{session.user.email}</span>
@@ -78,13 +85,7 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage
-                    src={session.user.image ?? "https://github.com/shadcn.png"}
-                    alt={session.user.name}
-                  />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
+                {UserAvatar}
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{session.user.name}</span>
                   <span className="truncate text-muted-foreground text-xs">

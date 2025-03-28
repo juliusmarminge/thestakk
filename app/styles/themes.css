@@ -292,8 +292,8 @@
   }
 }
 
-.theme-blue,
-.theme-blue-scaled {
+.theme-sapphire,
+.theme-sapphire-scaled {
   --primary: var(--color-blue-600);
   --primary-foreground: var(--color-blue-50);
 
@@ -303,8 +303,8 @@
   }
 }
 
-.theme-green,
-.theme-green-scaled {
+.theme-emerald,
+.theme-emerald-scaled {
   --primary: var(--color-lime-600);
   --primary-foreground: var(--color-lime-50);
 
