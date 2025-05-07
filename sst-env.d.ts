@@ -5,27 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "TheStakkRouter": {
-      "type": "sst.aws.Router"
-      "url": string
-    }
-    "TheStakkService": {
-      "service": string
-      "type": "sst.aws.Service"
-      "url": string
-    }
-    "TheStakkVpc": {
-      "bastion": string
-      "type": "sst.aws.Vpc"
-    }
-    "TursoToken": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "TursoUrl": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />
