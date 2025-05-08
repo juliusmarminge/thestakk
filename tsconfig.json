@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "libReplacement": false,
-    "erasableSyntaxOnly": true,
+    // "erasableSyntaxOnly": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "paths": {

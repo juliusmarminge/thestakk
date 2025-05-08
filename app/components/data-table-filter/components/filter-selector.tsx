@@ -33,9 +33,9 @@ interface FilterSelectorProps<TData> {
   locale?: Locale;
 }
 
-export const FilterSelector = memo(__FilterSelector) as typeof __FilterSelector;
+export const FilterSelector = memo(FilterSelector_) as typeof FilterSelector_;
 
-function __FilterSelector<TData>({
+function FilterSelector_<TData>({
   filters,
   columns,
   actions,
@@ -105,7 +105,7 @@ function __FilterSelector<TData>({
           </CommandList>
         </Command>
       ),
-    [property, column, filter, filters, columns, actions, value],
+    [property, column, filter, filters, columns, actions, value, locale, strategy],
   );
 
   return (
@@ -203,9 +203,9 @@ interface QuickSearchFiltersProps<TData> {
   locale?: Locale;
 }
 
-export const QuickSearchFilters = memo(__QuickSearchFilters) as typeof __QuickSearchFilters;
+export const QuickSearchFilters = memo(QuickSearchFilters_) as typeof QuickSearchFilters_;
 
-function __QuickSearchFilters<TData>({
+function QuickSearchFilters_<TData>({
   search,
   filters,
   columns,
@@ -213,12 +213,12 @@ function __QuickSearchFilters<TData>({
   strategy,
   locale = "en",
 }: QuickSearchFiltersProps<TData>) {
-  if (!search || search.trim().length < 2) return null;
-
   const cols = useMemo(
     () => columns.filter((c) => Array.contains(["option", "multiOption"], c.type)),
     [columns],
   );
+
+  if (!search || search.trim().length < 2) return null;
 
   return (
     <>

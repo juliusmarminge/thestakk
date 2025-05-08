@@ -457,6 +457,9 @@ export function FilterValueOptionController<TData>({
       initialSelected: filter?.values.includes(o.value),
       count: counts?.get(o.value) ?? 0,
     }));
+    // Only run once
+    // eslint-disable-next-line react-hooks/react-compiler
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [options, setOptions] = useState(initialOptions);
@@ -524,6 +527,9 @@ export function FilterValueMultiOptionController<TData>({
         count: counts?.get(o.value) ?? 0,
       };
     });
+    // Only run once
+    // eslint-disable-next-line react-hooks/react-compiler
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [options, setOptions] = useState(initialOptions);
@@ -705,7 +711,7 @@ export function FilterValueNumberController<TData>({
       actions.setFilterOperator(column.id, newOperator);
       actions.setFilterValue(column, newValues);
     },
-    [values, column, actions, minMax],
+    [values, column, actions, minMax, setFilterOperatorDebounced, setFilterValueDebounced],
   );
 
   return (

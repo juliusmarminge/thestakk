@@ -159,7 +159,7 @@ function SidebarProvider({
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [state, open, setOpen, setSide, side, isMobile, openMobile, setOpenMobile, toggleSidebar],
   );
 
   return (

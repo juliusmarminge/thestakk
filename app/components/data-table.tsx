@@ -92,7 +92,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Item, ItemStatus, ItemType } from "~/db/schema";
+import { Item, ItemStatus, ItemType } from "~/lib/data-models";
 import { useAppForm } from "~/lib/use-form";
 import { useIsMobile } from "~/lib/use-mobile";
 import { api } from "../../convex/_generated/api";

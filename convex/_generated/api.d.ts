@@ -10,6 +10,7 @@
 
 import type * as betterAuth from "../betterAuth.js";
 import type * as helpers from "../helpers.js";
+import type * as init from "../init.js";
 import type * as items from "../items.js";
 
 import type {
@@ -29,6 +30,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   betterAuth: typeof betterAuth;
   helpers: typeof helpers;
+  init: typeof init;
   items: typeof items;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

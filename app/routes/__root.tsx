@@ -86,6 +86,9 @@ function RootDocument(props: { children: React.ReactNode }) {
       { signal: ac.signal },
     );
     return () => ac.abort();
+    // Only run once
+    // eslint-disable-next-line react-hooks/react-compiler
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const themeClass = {

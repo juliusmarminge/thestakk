@@ -1,9 +1,5 @@
-import {
-  type RegisteredRouter,
-  type RouteIds,
-  getRouteApi,
-  useNavigate,
-} from "@tanstack/react-router";
+import { getRouteApi, useSearch } from "@tanstack/react-router";
+import { type RegisteredRouter, type RouteIds, useNavigate } from "@tanstack/react-router";
 
 function cleanEmptyParams<T extends Record<string, unknown>>(search: T) {
   const newSearch = { ...search };
@@ -20,9 +16,10 @@ function cleanEmptyParams<T extends Record<string, unknown>>(search: T) {
 }
 
 export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(routeId: T) {
-  const routeApi = getRouteApi<T>(routeId);
   const navigate = useNavigate();
-  const filters = routeApi.useSearch();
+  const filters = useSearch({
+    from: routeId,
+  });
 
   const setFilters = (partialFilters: Partial<typeof filters>) => {
     navigate({

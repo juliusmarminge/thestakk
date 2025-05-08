@@ -21,7 +21,7 @@ export default $config({
 
     new sst.x.DevCommand("Convex", {
       dev: {
-        command: "pnpm dlx convex dev --run items:seed",
+        command: "pnpm dlx convex dev --run init:items",
       },
     });
 

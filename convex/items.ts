@@ -1,36 +1,14 @@
 import { ShardedCounter } from "@convex-dev/sharded-counter";
-import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { Array } from "effect";
 import { components, internal } from "./_generated/api";
-import type { Id } from "./_generated/dataModel";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { withoutSystemFields } from "./helpers";
 import schema from "./schema";
 
 const itemCounter = new ShardedCounter(components.shardedCounter, {
   shards: { items: 100 },
 }).for("items");
-
-export const seed = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const allItems = await ctx.db.query("items").collect();
-    if (allItems.length > 0) {
-      return;
-    }
-
-    await ctx.db.insert("items", {
-      header: "Executive Summary",
-      type: "Executive Summary",
-      status: "Triage",
-      target: 1n,
-      limit: 1n,
-      reviewer: "John Doe",
-      order: 1,
-    });
-  },
-});
 
 export const getAll = query({
   args: {
