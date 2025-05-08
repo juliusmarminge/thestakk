@@ -14,11 +14,9 @@ import { routeTree } from "~/routeTree.gen";
 // };
 
 export function createRouter() {
-  const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL!;
-  console.log("CONVEX_URL", CONVEX_URL);
-  if (!CONVEX_URL) {
-    console.error("missing envar VITE_CONVEX_URL");
-  }
+  const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
+  if (!CONVEX_URL) console.error("Missing required VITE_CONVEX_URL");
+
   const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
 
   const queryClient = new QueryClient({
