@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui";
 import type * as React from "react";

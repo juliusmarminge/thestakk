@@ -5,6 +5,22 @@
 
 declare module "sst" {
   export interface Resource {
+    "AuthSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "ConvexDeployment": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "ConvexUrl": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "TheStakkApp": {
+      "type": "sst.aws.TanstackStart"
+      "url": string
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />

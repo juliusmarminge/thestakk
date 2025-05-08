@@ -16,6 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app.index'
 import { Route as AppSettingsImport } from './routes/_app.settings'
+import { Route as AppAccountImport } from './routes/_app.account'
 
 // Create/Update Routes
 
@@ -48,6 +49,12 @@ const AppSettingsRoute = AppSettingsImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppAccountRoute = AppAccountImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AppRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -73,6 +80,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaceholderImport
       parentRoute: typeof rootRoute
     }
+    '/_app/account': {
+      id: '/_app/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AppAccountImport
+      parentRoute: typeof AppImport
+    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -93,11 +107,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteChildren {
+  AppAccountRoute: typeof AppAccountRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountRoute: AppAccountRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
 }
@@ -108,6 +124,7 @@ export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/placeholder': typeof PlaceholderRoute
+  '/account': typeof AppAccountRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
 }
@@ -115,6 +132,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/placeholder': typeof PlaceholderRoute
+  '/account': typeof AppAccountRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
 }
@@ -124,20 +142,22 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/placeholder': typeof PlaceholderRoute
+  '/_app/account': typeof AppAccountRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/placeholder' | '/settings' | '/'
+  fullPaths: '' | '/login' | '/placeholder' | '/account' | '/settings' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/placeholder' | '/settings' | '/'
+  to: '/login' | '/placeholder' | '/account' | '/settings' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/login'
     | '/placeholder'
+    | '/_app/account'
     | '/_app/settings'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -173,6 +193,7 @@ export const routeTree = rootRoute
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/account",
         "/_app/settings",
         "/_app/"
       ]
@@ -182,6 +203,10 @@ export const routeTree = rootRoute
     },
     "/placeholder": {
       "filePath": "placeholder.tsx"
+    },
+    "/_app/account": {
+      "filePath": "_app.account.tsx",
+      "parent": "/_app"
     },
     "/_app/settings": {
       "filePath": "_app.settings.tsx",

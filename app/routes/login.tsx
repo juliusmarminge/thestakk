@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
-import { useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
+import { PasskeyIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { FieldGroup, Fieldset, Form, Legend } from "~/components/ui/form";
 import { Text } from "~/components/ui/text";
@@ -14,6 +15,8 @@ export const Route = createFileRoute("/login")({
 
 function RouteComponent() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const navigate = Route.useNavigate();
 
   const form = useAppForm({
     defaultValues: {
@@ -52,13 +55,30 @@ function RouteComponent() {
     },
   });
 
+  useEffect(() => {
+    if (
+      !PublicKeyCredential.isConditionalMediationAvailable ||
+      !PublicKeyCredential.isConditionalMediationAvailable()
+    ) {
+      return;
+    }
+
+    authClient.signIn.passkey({ autoFill: true }).then((result) => {
+      if (result?.error != null) {
+        if (result.error.message !== "auth cancelled") {
+          toast.error(result.error.message);
+        }
+      } else navigate({ to: "/" });
+    });
+  }, [navigate]);
+
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
       <Form
         form={form as never}
         className="w-full max-w-lg space-y-6 rounded-xl border bg-gradient-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
       >
-        <Fieldset>
+        <Fieldset disabled={isPending || form.state.isSubmitting}>
           <Legend>{isSignUp ? "Create an account" : "Welcome back"}</Legend>
           <Text>
             {isSignUp
@@ -71,23 +91,54 @@ function RouteComponent() {
             )}
             <form.AppField
               name="email"
-              children={(field) => <field.TextField label="Email" type="email" />}
+              children={(field) => (
+                <field.TextField autoComplete="username webauthn" label="Email" type="email" />
+              )}
             />
             <form.AppField
               name="password"
-              children={(field) => <field.TextField label="Password" type="password" />}
+              children={(field) => (
+                <field.TextField
+                  autoComplete="current-password webauthn"
+                  label="Password"
+                  type="password"
+                />
+              )}
             />
           </FieldGroup>
         </Fieldset>
 
         <div className="space-y-2">
-          <form.SubscribeButton className="w-full">
+          <form.SubscribeButton className="w-full" disabled={isPending}>
             {isSignUp ? "Sign Up" : "Sign In"}
           </form.SubscribeButton>
           <Button
             type="button"
+            variant="outline"
+            className="w-full"
+            disabled={isPending || form.state.isSubmitting}
+            onClick={() =>
+              startTransition(async () => {
+                const toastId = toast.loading("Signing in with passkey...");
+                await authClient.signIn.passkey().then((result) => {
+                  if (result?.error != null) {
+                    toast.error(result.error.message, { id: toastId });
+                  } else {
+                    toast.dismiss(toastId);
+                    navigate({ to: "/" });
+                  }
+                });
+              })
+            }
+          >
+            <PasskeyIcon className="size-4" />
+            Sign in with passkey
+          </Button>
+          <Button
+            type="button"
             variant="ghost"
             className="w-full"
+            disabled={isPending || form.state.isSubmitting}
             onClick={() => setIsSignUp(!isSignUp)}
           >
             {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}

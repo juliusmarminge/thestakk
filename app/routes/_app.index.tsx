@@ -1,9 +1,11 @@
+import { convexQuery } from "@convex-dev/react-query";
 import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
 import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
+import { api } from "../../convex/_generated/api";
 
 export const Route = createFileRoute("/_app/")({
   validateSearch: type({
@@ -13,8 +15,8 @@ export const Route = createFileRoute("/_app/")({
   component: RouteComponent,
   errorComponent: ErrorComponent,
   loaderDeps: ({ search }) => ({ pageIndex: search.pageIndex, pageSize: search.pageSize }),
-  loader: async ({ deps, context: { queryClient, trpc } }) => {
-    await queryClient.ensureQueryData(trpc.getItems.queryOptions(deps));
+  loader: async ({ deps, context: { queryClient } }) => {
+    await queryClient.ensureQueryData(convexQuery(api.items.getAll, deps));
   },
 });
 

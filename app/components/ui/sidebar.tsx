@@ -1,5 +1,3 @@
-"use client";
-
 import type { LinkProps, RegisteredRouter } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
@@ -21,7 +19,7 @@ import {
 } from "~/components/ui/sheet";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-import { useIsMobile } from "~/lib/use-is-mobile";
+import { useIsMobile } from "~/lib/use-mobile";
 import { cn } from "~/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -297,7 +295,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 
   return (
     <Tooltip delayDuration={500}>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <Button
           data-sidebar="trigger"
           data-slot="sidebar-trigger"
@@ -315,7 +313,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
         </Button>
       </TooltipTrigger>
       <TooltipContent align="start">
-        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium font-mono text-[10px] opacity-100">
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium font-mono text-[10px] text-muted-foreground opacity-100">
           <span className="text-xs">⌘</span>K
         </kbd>{" "}
         to toggle, right-click to select side

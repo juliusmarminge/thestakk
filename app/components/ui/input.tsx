@@ -1,6 +1,8 @@
+import { useDebouncedCallback } from "@tanstack/react-pacer";
+import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+export function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <input
       type={type}
@@ -16,4 +18,36 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export { Input };
+export function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounceMs = 500, // This is the wait time, not the function
+  ...props
+}: {
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounceMs?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  const [value, setValue] = useState(initialValue);
+
+  // Sync with initialValue when it changes
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  // Define the debounced function with useCallback
+  const debouncedOnChange = useDebouncedCallback(
+    (newValue: string | number) => {
+      onChange(newValue);
+    },
+    { wait: debounceMs },
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue); // Update local state immediately
+    debouncedOnChange(newValue); // Call debounced version
+  };
+
+  return <Input {...props} value={value} onChange={handleChange} />;
+}

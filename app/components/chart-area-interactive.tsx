@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
@@ -25,7 +23,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { useIsMobile } from "~/lib/use-is-mobile";
+import { useIsMobile } from "~/lib/use-mobile";
 
 export const description = "An interactive area chart";
 

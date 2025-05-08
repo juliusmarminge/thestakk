@@ -1,24 +1,21 @@
+import { convexAdapter } from "@better-auth-kit/convex";
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { passkey } from "better-auth/plugins/passkey";
-import { db } from "~/db/client";
-import * as schema from "~/db/schema";
+import { reactStartCookies } from "better-auth/react-start";
+import { ConvexHttpClient } from "convex/browser";
+import { Resource } from "sst";
+
+const convexClient = new ConvexHttpClient(Resource.ConvexUrl.value);
 
 export const auth = betterAuth({
-  secret: "L35HPPlH6iPBZ01fb40B0Tl0zPhNi7x7", // TODO: load from env
-  database: drizzleAdapter(db, {
-    provider: "sqlite",
-    schema: {
-      user: schema.UserTable,
-      session: schema.SessionTable,
-      account: schema.AccountTable,
-      verification: schema.VerificationTable,
-      passkey: schema.PasskeyTable,
-    },
-  }),
+  secret: Resource.AuthSecret.value,
+  database: convexAdapter(convexClient),
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
   },
-  plugins: [passkey()],
+  plugins: [
+    passkey(),
+    reactStartCookies(), // make sure this is the last plugin in the array
+  ],
 });

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ArrowLeftEndOnRectangleIcon,
   BellIcon,
@@ -7,8 +5,9 @@ import {
   EllipsisVerticalIcon,
   UserCircleIcon,
 } from "@heroicons/react/16/solid";
-import { Link } from "@tanstack/react-router";
-import { authClient } from "~/auth/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { authClient, sessionQuery } from "~/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { buttonVariants } from "~/components/ui/button";
 import {
@@ -29,7 +28,11 @@ import {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { data: session } = authClient.useSession();
+  const { data: session, isLoading } = useQuery(sessionQuery);
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  if (isLoading) {
+  }
 
   if (!session) {
     return (
@@ -96,21 +99,22 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserCircleIcon />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
+              <DropdownMenuItem asChild>
+                <Link to="/account">
+                  <UserCircleIcon />
+                  Account
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => authClient.signOut()}>
+            <DropdownMenuItem
+              onClick={() => {
+                authClient
+                  .signOut()
+                  .then(() => qc.invalidateQueries())
+                  .then(() => navigate({ to: "/login" }));
+              }}
+            >
               <ArrowLeftEndOnRectangleIcon />
               Log out
             </DropdownMenuItem>

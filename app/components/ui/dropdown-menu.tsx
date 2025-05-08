@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 

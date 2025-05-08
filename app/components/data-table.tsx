@@ -1,5 +1,4 @@
-"use client";
-
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import {
   DndContext,
   type DragEndEvent,
@@ -25,7 +24,7 @@ import {
   ViewColumnsIcon,
 } from "@heroicons/react/16/solid";
 import { formOptions } from "@tanstack/react-form";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import {
   type ColumnDef,
   type OnChangeFn,
@@ -41,10 +40,10 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
+import { sessionTokenQuery } from "~/auth/client";
 import { LoaderIcon } from "~/components/icons";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -94,24 +93,100 @@ import {
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Item, ItemStatus, ItemType } from "~/db/schema";
-import { type RouterOutputs, useTRPC, useTRPCClient } from "~/lib/trpc";
 import { useAppForm } from "~/lib/use-form";
-import { useIsMobile } from "~/lib/use-is-mobile";
+import { useIsMobile } from "~/lib/use-mobile";
+import { api } from "../../convex/_generated/api";
+import type { Doc, Id } from "../../convex/_generated/dataModel";
 
-type RowType = RouterOutputs["getItems"]["items"][number];
+type RowType = Doc<"items">;
 
-const updateItemForm = (item: RowType, client: ReturnType<typeof useTRPCClient>) =>
+function useUpdateItem() {
+  const mutationFn = useConvexMutation(api.items.update).withOptimisticUpdate(
+    (localStore, args) => {
+      // Find query that contains the item
+      const queries = localStore.getAllQueries(api.items.getAll);
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args._id));
+      if (!query?.value) return;
+
+      // Find the item in the query
+      const item = query.value?.items.find((i) => i._id === args._id);
+      if (!item) return;
+
+      const items = query.value.items.map((i) => (i._id === args._id ? args : i));
+      localStore.setQuery(api.items.getAll, query.args, {
+        ...query.value,
+        items,
+      });
+    },
+  );
+
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      toast.success("Item saved");
+    },
+  });
+}
+
+function useMoveItem() {
+  const mutationFn = useConvexMutation(api.items.moveItem).withOptimisticUpdate(
+    (localStore, args) => {
+      const queries = localStore.getAllQueries(api.items.getAll);
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args.id));
+      if (!query?.value) return;
+
+      const item = query.value.items.find((i) => i._id === args.id);
+      if (!item) return;
+
+      // Update the moved item's order and re-sort
+      item.order = args.order;
+      const sortedItems = query.value.items.toSorted((a, b) => a.order - b.order);
+
+      localStore.setQuery(api.items.getAll, query.args, { ...query.value, items: sortedItems });
+    },
+  );
+
+  return useMutation({ mutationFn });
+}
+
+function useDeleteItem() {
+  const mutationFn = useConvexMutation(api.items.deleteOne).withOptimisticUpdate(
+    (localStore, args) => {
+      const queries = localStore.getAllQueries(api.items.getAll);
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args.id));
+      if (!query?.value) return;
+
+      const items = query.value.items.filter((i) => i._id !== args.id);
+      localStore.setQuery(api.items.getAll, query.args, { ...query.value, items });
+    },
+  );
+
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      toast.success("Item deleted");
+    },
+  });
+}
+
+const updateItemForm = (
+  item: RowType,
+  sessionToken: string | undefined,
+  updateItem: ReturnType<typeof useUpdateItem>,
+) =>
   formOptions({
     defaultValues: item,
     validators: {
       onSubmit: Item,
     },
-    onSubmit: async ({ value }) => {
-      await client.updateItem.mutate({
+    onSubmit: ({ value }) => {
+      if (!sessionToken) return;
+      updateItem.mutate({
         ...item,
-        ...value,
+        ...Item.assert(value),
+        _id: item._id,
+        sessionToken,
       });
-      toast.success(`Saved ${item.header}`);
     },
   });
 
@@ -122,7 +197,7 @@ const columns: ColumnDef<RowType>[] = [
       return null;
     },
     cell: function DragCell({ row }) {
-      return <DragHandle id={row.original.id} />;
+      return <DragHandle id={row.original._id} />;
     },
   },
   {
@@ -196,8 +271,8 @@ const columns: ColumnDef<RowType>[] = [
     accessorKey: "target",
     header: "Target",
     cell: function TargetCell({ row }) {
-      const client = useTRPCClient();
-      const form = useAppForm(updateItemForm(row.original, client));
+      const { data: sessionToken } = useQuery(sessionTokenQuery);
+      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
 
       return (
         <Form form={form as never}>
@@ -206,7 +281,9 @@ const columns: ColumnDef<RowType>[] = [
             children={(field) => (
               <field.TextField
                 label="Target"
+                onBlur={() => field.form.handleSubmit()}
                 labelClassName="sr-only"
+                fieldClassName="[&>[data-slot=label]+[data-slot=control]]:mt-0"
                 inputClassName="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:focus-visible:bg-input/30 dark:hover:bg-input/30"
               />
             )}
@@ -219,8 +296,8 @@ const columns: ColumnDef<RowType>[] = [
     accessorKey: "limit",
     header: "Limit",
     cell: function LimitCell({ row }) {
-      const client = useTRPCClient();
-      const form = useAppForm(updateItemForm(row.original, client));
+      const { data: sessionToken } = useQuery(sessionTokenQuery);
+      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
 
       return (
         <Form form={form as never}>
@@ -229,7 +306,9 @@ const columns: ColumnDef<RowType>[] = [
             children={(field) => (
               <field.TextField
                 label="Limit"
+                onBlur={() => field.form.handleSubmit()}
                 labelClassName="sr-only"
+                fieldClassName="[&>[data-slot=label]+[data-slot=control]]:mt-0"
                 inputClassName="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:focus-visible:bg-input/30 dark:hover:bg-input/30"
               />
             )}
@@ -243,9 +322,8 @@ const columns: ColumnDef<RowType>[] = [
     header: "Reviewer",
     cell: function ReviewerCell({ row }) {
       const isAssigned = row.original.reviewer !== "Assign reviewer";
-
-      const client = useTRPCClient();
-      const form = useAppForm(updateItemForm(row.original, client));
+      const { data: sessionToken } = useQuery(sessionTokenQuery);
+      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
 
       if (isAssigned) {
         return row.original.reviewer;
@@ -274,14 +352,8 @@ const columns: ColumnDef<RowType>[] = [
   {
     id: "actions",
     cell: function ActionCell({ row }) {
-      const trpc = useTRPC();
-      const deleteItem = useMutation(
-        trpc.deleteItem.mutationOptions({
-          onSuccess: () => {
-            toast.success("Item deleted");
-          },
-        }),
-      );
+      const { data: sessionToken } = useQuery(sessionTokenQuery);
+      const deleteItem = useDeleteItem();
 
       return (
         <DropdownMenu>
@@ -302,7 +374,11 @@ const columns: ColumnDef<RowType>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              onClick={() => deleteItem.mutate({ id: row.original.id })}
+              disabled={!sessionToken}
+              onClick={() => {
+                if (!sessionToken) return; // unreachable
+                deleteItem.mutate({ id: row.original._id, sessionToken });
+              }}
             >
               Delete
             </DropdownMenuItem>
@@ -321,53 +397,21 @@ export function DataTable(props: {
   paginationState: PaginationState;
   onPaginationChange: OnChangeFn<PaginationState>;
 }) {
-  const trpc = useTRPC();
-  const qc = useQueryClient();
+  const { data: sessionToken } = useQuery(sessionTokenQuery);
 
   /**
    * Fetch the items for the current page
    */
-  const itemsQuery = trpc.getItems.queryOptions({
-    pageIndex: props.paginationState.pageIndex,
-    pageSize: props.paginationState.pageSize,
-  });
   const {
     data: { items, pageCount },
-  } = useSuspenseQuery(itemsQuery);
-
-  /**
-   * Optimistic update for the moved item
-   */
-  const moveItemMutation = useMutation(
-    trpc.moveItem.mutationOptions({
-      onMutate: async (variables) => {
-        await qc.cancelQueries();
-        qc.setQueryData(itemsQuery.queryKey, (old) => {
-          const movedItem = old?.items.find((item) => item.id === variables.id);
-          if (!old || !movedItem) return undefined;
-
-          // Update the moved item's order and re-sort
-          movedItem.order = variables.order;
-          const sortedItems = old.items.toSorted((a, b) => a.order - b.order);
-
-          return { ...old, items: sortedItems };
-        });
-      },
+  } = useSuspenseQuery(
+    convexQuery(api.items.getAll, {
+      pageIndex: props.paginationState.pageIndex,
+      pageSize: props.paginationState.pageSize,
     }),
   );
 
-  /**
-   * Subscribe to changes on the items table
-   * and refetch the items query when a change is detected
-   */
-  useSubscription(
-    trpc.observe.subscriptionOptions(
-      { table: "items" },
-      {
-        onData: () => qc.invalidateQueries(trpc.getItems.pathFilter()),
-      },
-    ),
-  );
+  const moveItemMutation = useMoveItem();
 
   /**
    * Handle the drag end event by calculating the new order of the items
@@ -376,10 +420,10 @@ export function DataTable(props: {
    */
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (!active || !over || active.id === over.id) return;
+    if (!active || !over || active.id === over.id || !sessionToken) return;
 
-    const activeItemIndex = items.findIndex((i) => i.id === Number(active.id));
-    const overItemIndex = items.findIndex((i) => i.id === Number(over.id));
+    const activeItemIndex = items.findIndex((i) => i._id === active.id);
+    const overItemIndex = items.findIndex((i) => i._id === over.id);
     const overItem = items[overItemIndex];
 
     let newOrder: number;
@@ -396,8 +440,9 @@ export function DataTable(props: {
     }
 
     moveItemMutation.mutate({
-      id: Number(active.id),
+      id: active.id as Id<"items">,
       order: newOrder,
+      sessionToken,
     });
   }
 
@@ -414,7 +459,7 @@ export function DataTable(props: {
     },
     manualPagination: true,
     pageCount,
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => row._id.toString(),
     onPaginationChange: props.onPaginationChange,
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
@@ -554,7 +599,10 @@ function TableWithDraggableRows({
         </TableHeader>
         <TableBody className="**:data-[slot=table-cell]:first:w-8">
           {rows.length ? (
-            <SortableContext items={data} strategy={verticalListSortingStrategy}>
+            <SortableContext
+              items={data.map((row) => row._id)}
+              strategy={verticalListSortingStrategy}
+            >
               {rows.map((row) => (
                 <DraggableRow key={row.id} row={row} />
               ))}
@@ -652,7 +700,7 @@ function TablePagination({ table }: { table: ReactTable<RowType> }) {
 }
 
 // Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }) {
+function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
     id,
   });
@@ -673,7 +721,7 @@ function DragHandle({ id }: { id: number }) {
 
 function DraggableRow({ row }: { row: ReactTableRow<RowType> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
+    id: row.original._id,
   });
 
   return (
@@ -718,9 +766,9 @@ const chartConfig = {
 
 function TableCellViewer({ item }: { item: RowType }) {
   const isMobile = useIsMobile();
-  const client = useTRPCClient();
 
-  const form = useAppForm(updateItemForm(item, client));
+  const { data: sessionToken } = useQuery(sessionTokenQuery);
+  const form = useAppForm(updateItemForm(item, sessionToken, useUpdateItem()));
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"} onClose={() => form.reset()}>
@@ -831,11 +879,15 @@ function TableCellViewer({ item }: { item: RowType }) {
               <div className="grid grid-cols-2 gap-4">
                 <form.AppField
                   name="target"
-                  children={(field) => <field.TextField label="Target" />}
+                  children={(field) => (
+                    <field.TextField label="Target" type="number" inputMode="numeric" />
+                  )}
                 />
                 <form.AppField
                   name="limit"
-                  children={(field) => <field.TextField label="Limit" />}
+                  children={(field) => (
+                    <field.TextField label="Limit" type="number" inputMode="numeric" />
+                  )}
                 />
               </div>
               <form.AppField

@@ -1,5 +1,3 @@
-"use client";
-
 import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
 import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";

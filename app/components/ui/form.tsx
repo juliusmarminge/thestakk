@@ -2,7 +2,7 @@ import type { FormApi } from "@tanstack/react-form";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { LoadingSpinner } from "~/components/icons";
-import { Button } from "~/components/ui/button";
+import { type Button, LoadingButton } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
@@ -94,13 +94,13 @@ export function Field({
       <div
         {...props}
         className={cn(
-          className,
           "[&>[data-slot=label]+[data-slot=control]]:mt-3",
           "[&>[data-slot=label]+[data-slot=description]]:mt-1",
           "[&>[data-slot=description]+[data-slot=control]]:mt-3",
           "[&>[data-slot=control]+[data-slot=description]]:mt-3",
           "[&>[data-slot=control]+[data-slot=error]]:mt-3",
           "*:data-[slot=label]:font-medium",
+          className,
         )}
       />
     </FormItemContext>
@@ -171,71 +171,82 @@ export function FormControl({ ...props }: React.ComponentProps<typeof SlotPrimit
   );
 }
 
-export function TextField(
-  props: Omit<React.ComponentProps<typeof Input>, "className"> & {
-    label: string;
-    labelClassName?: string;
-    inputClassName?: string;
-    description?: string;
-    descriptionClassName?: string;
-    messageClassName?: string;
-  },
-) {
+export function TextField({
+  label,
+  labelClassName,
+  inputClassName,
+  description,
+  descriptionClassName,
+  fieldClassName,
+  messageClassName,
+  ...props
+}: Omit<React.ComponentProps<typeof Input>, "className"> & {
+  label: string;
+  labelClassName?: string;
+  inputClassName?: string;
+  description?: string;
+  descriptionClassName?: string;
+  messageClassName?: string;
+  fieldClassName?: string;
+}) {
   const fieldId = React.useId();
   const field = useFieldContext<string>();
 
   return (
-    <Field fieldId={fieldId}>
-      <FormLabel className={props.labelClassName}>{props.label}</FormLabel>
-      {props.description && (
-        <FormDescription className={props.descriptionClassName}>
-          {props.description}
-        </FormDescription>
+    <Field fieldId={fieldId} className={fieldClassName}>
+      <FormLabel className={labelClassName}>{label}</FormLabel>
+      {description && (
+        <FormDescription className={descriptionClassName}>{description}</FormDescription>
       )}
 
       <FormControl>
         <Input
           data-slot="control"
+          {...props}
           name={field.name}
-          type={props.type}
           value={field.state.value}
           onChange={(e) => field.handleChange(e.target.value)}
-          className={cn("data-invalid:border-destructive", props.inputClassName)}
+          className={cn("data-invalid:border-destructive", inputClassName)}
         />
       </FormControl>
 
       {field.state.meta.errors.length > 0 && (
-        <FormMessage className={props.messageClassName}>
-          {field.state.meta.errors[0].message}
-        </FormMessage>
+        <FormMessage className={messageClassName}>{field.state.meta.errors[0].message}</FormMessage>
       )}
     </Field>
   );
 }
 
-export function SelectField(
-  props: React.ComponentProps<typeof Select> & {
-    label: string;
-    placeholder?: string;
-    labelClassName?: string;
-    triggerClassName?: string;
-    options: { label: string; value: string }[];
-  },
-) {
+export function SelectField({
+  label,
+  placeholder,
+  labelClassName,
+  triggerClassName,
+  fieldClassName,
+  options,
+  ...props
+}: React.ComponentProps<typeof Select> & {
+  label: string;
+  placeholder?: string;
+  labelClassName?: string;
+  triggerClassName?: string;
+  fieldClassName?: string;
+  options: { label: string; value: string }[];
+}) {
   const fieldId = React.useId();
   const field = useFieldContext<string>();
 
   return (
-    <Field fieldId={fieldId}>
-      <FormLabel className={props.labelClassName}>{props.label}</FormLabel>
-      <Select value={field.state.value} onValueChange={field.handleChange}>
+    <Field fieldId={fieldId} className={fieldClassName}>
+      <FormLabel className={labelClassName}>{label}</FormLabel>
+      <Select {...props} value={field.state.value} onValueChange={field.handleChange}>
         <FormControl>
-          <SelectTrigger className={cn("data-invalid:border-destructive", props.triggerClassName)}>
-            <SelectValue placeholder={props.placeholder} />
+          <SelectTrigger className={cn("data-invalid:border-destructive", triggerClassName)}>
+            <SelectValue placeholder={placeholder} />
           </SelectTrigger>
         </FormControl>
         <SelectContent>
-          {props.options.map(({ label, value }) => (
+          {options.map(({ label, value }) => (
             <SelectItem key={value} value={value}>
               {label}
             </SelectItem>
@@ -252,33 +263,9 @@ export function SubscribeButton(props: React.ComponentProps<typeof Button>) {
   return (
     <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
       {([canSubmit, isSubmitting]) => (
-        <Button
-          {...props}
-          {...((isSubmitting || ("disabled" in props && props.disabled) || !canSubmit) && {
-            "data-disabled": true,
-          })}
-          onClick={props.onClick}
-          className={cn("relative overflow-hidden px-5 transition", props.className)}
-        >
-          <span
-            aria-hidden={isSubmitting}
-            className={cn(
-              "flex items-center transition duration-300",
-              isSubmitting && "translate-y-1.5 opacity-0",
-            )}
-          >
-            {props.children}
-          </span>
-          <span
-            aria-hidden={!isSubmitting}
-            className={cn(
-              "absolute inset-0 flex items-center justify-center transition duration-300",
-              !isSubmitting && "-translate-y-1.5 opacity-0",
-            )}
-          >
-            <LoadingSpinner size={16} />
-          </span>
-        </Button>
+        <LoadingButton isLoading={isSubmitting} disabled={!canSubmit} {...props}>
+          {props.children}
+        </LoadingButton>
       )}
     </form.Subscribe>
   );

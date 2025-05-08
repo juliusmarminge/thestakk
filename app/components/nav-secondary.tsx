@@ -1,5 +1,3 @@
-"use client";
-
 import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
 import type * as React from "react";
 import { ThemeToggleIcon } from "~/components/icons";

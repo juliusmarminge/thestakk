@@ -6,7 +6,12 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["app/routeTree.gen.ts", "app/styles/animations.css", "sst-env.d.ts"]
+    "ignore": [
+      "app/routeTree.gen.ts",
+      "app/styles/animations.css",
+      "convex/_generated/**",
+      "sst-env.d.ts"
+    ]
   },
   "organizeImports": {
     "enabled": true
@@ -63,5 +68,17 @@
     "linter": {
       "enabled": false
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["app/components/data-table-filter/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
 }

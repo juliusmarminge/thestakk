@@ -1,5 +1,3 @@
-"use client";
-
 import { Label as LabelPrimitive } from "radix-ui";
 import { cn } from "~/lib/utils";
 

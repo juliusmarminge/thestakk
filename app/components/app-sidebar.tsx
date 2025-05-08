@@ -1,18 +1,8 @@
-"use client";
-
 import {
-  CameraIcon,
-  ChartBarIcon,
   CircleStackIcon,
   Cog6ToothIcon,
-  DocumentTextIcon,
-  FolderIcon,
-  ListBulletIcon,
   MagnifyingGlassIcon,
-  QuestionMarkCircleIcon,
   RocketLaunchIcon,
-  SparklesIcon,
-  UsersIcon,
 } from "@heroicons/react/24/outline";
 import {
   Link,
@@ -20,7 +10,6 @@ import {
   type ToPathOption,
   linkOptions,
 } from "@tanstack/react-router";
-import { NavDocuments } from "~/components/nav-documents";
 import { NavMain } from "~/components/nav-main";
 import { NavSecondary } from "~/components/nav-secondary";
 import { NavUser } from "~/components/nav-user";
@@ -50,72 +39,9 @@ const data = {
       icon: RocketLaunchIcon,
     },
     {
-      title: "Lifecycle",
+      title: "Data Library",
       to: "/placeholder",
-      icon: ListBulletIcon,
-    },
-    {
-      title: "Analytics",
-      to: "/placeholder",
-      icon: ChartBarIcon,
-    },
-    {
-      title: "Projects",
-      to: "/placeholder",
-      icon: FolderIcon,
-    },
-    {
-      title: "Team",
-      to: "/placeholder",
-      icon: UsersIcon,
-    },
-  ]),
-  navClouds: linkOptions([
-    {
-      title: "Capture",
-      icon: CameraIcon,
-      isActive: true,
-      to: "/placeholder",
-      items: [
-        {
-          title: "Active Proposals",
-          to: "#",
-        },
-        {
-          title: "Archived",
-          to: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: DocumentTextIcon,
-      to: "/placeholder",
-      items: [
-        {
-          title: "Active Proposals",
-          to: "#",
-        },
-        {
-          title: "Archived",
-          to: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: SparklesIcon,
-      to: "/placeholder",
-      items: [
-        {
-          title: "Active Proposals",
-          to: "#",
-        },
-        {
-          title: "Archived",
-          to: "#",
-        },
-      ],
+      icon: CircleStackIcon,
     },
   ]),
   navSecondary: linkOptions([
@@ -125,31 +51,9 @@ const data = {
       icon: Cog6ToothIcon,
     },
     {
-      title: "Get Help",
-      to: "/placeholder",
-      icon: QuestionMarkCircleIcon,
-    },
-    {
       title: "Search",
       to: "/placeholder",
       icon: MagnifyingGlassIcon,
-    },
-  ]),
-  documents: linkOptions([
-    {
-      title: "Data Library",
-      to: "/placeholder",
-      icon: CircleStackIcon,
-    },
-    {
-      title: "Reports",
-      to: "/placeholder",
-      icon: DocumentTextIcon,
-    },
-    {
-      title: "Word Assistant",
-      to: "/placeholder",
-      icon: DocumentTextIcon,
     },
   ]),
 } satisfies Record<string, NavItem[]>;
@@ -181,7 +85,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

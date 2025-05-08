@@ -1,5 +1,3 @@
-"use client";
-
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { Dialog as SheetPrimitive } from "radix-ui";
 import { cn } from "~/lib/utils";

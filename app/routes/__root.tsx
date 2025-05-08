@@ -4,7 +4,6 @@ import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanst
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { getHeader } from "@tanstack/react-start/server";
-import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import * as React from "react";
 import { toast } from "sonner";
 import { ErrorComponent, NotFoundComponent } from "~/components/error-component";
@@ -17,7 +16,6 @@ import {
 import { Toaster } from "~/components/ui/sonner";
 import { cn } from "~/lib/utils";
 import stylesUrl from "~/styles/index.css?url";
-import type { TRPCRouter } from "~/trpc/router";
 
 const readViewerLocation = createServerFn().handler(async () => {
   const city = getHeader("CloudFront-Viewer-City");
@@ -27,9 +25,15 @@ const readViewerLocation = createServerFn().handler(async () => {
   return { city, country, region, regionName };
 });
 
+// const getServerSession = createServerFn().handler(async () => {
+//   const session = await auth.api.getSession({
+//     headers: getWebRequest()?.headers ?? new Headers(),
+//   });
+//   return session;
+// });
+
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  trpc: TRPCOptionsProxy<TRPCRouter>;
 }>()({
   head: () => ({
     meta: [
@@ -39,6 +43,14 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
+  // TODO: Preferably don't block on this, but start fetch eagerly
+  // beforeLoad: async ({ context }) => {
+  //   const serverSession = await getServerSession();
+  //   if (serverSession) {
+  //     context.queryClient.setQueryData(sessionQuery.queryKey, serverSession);
+  //   }
+  //   return { session: serverSession };
+  // },
   loader: () => Promise.all([getModeCookie(), getThemeCookie(), readViewerLocation()]),
   component: RootComponent,
   errorComponent: ErrorComponent,
@@ -62,21 +74,25 @@ function RootDocument(props: { children: React.ReactNode }) {
     });
 
     useThemeStore.setState({ resolvedMode: mode, activeTheme: theme, scaled });
-    const match = window.matchMedia("(prefers-color-scheme: dark)");
 
-    function handleChange(event: MediaQueryListEvent) {
-      if (useThemeStore.getState().resolvedMode === "system") {
-        useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
-      }
-    }
-    match.addEventListener("change", handleChange);
-    return () => match.removeEventListener("change", handleChange);
+    const ac = new AbortController();
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener(
+      "change",
+      (event) => {
+        if (useThemeStore.getState().resolvedMode === "system") {
+          useThemeStore.getState().setPreferredMode(event.matches ? "dark" : "light");
+        }
+      },
+      { signal: ac.signal },
+    );
+    return () => ac.abort();
   }, []);
 
   const themeClass = {
     default: "theme-default",
     amber: "theme-amber",
-    blue: "theme-blue",
+    sapphire: "theme-sapphire",
+    emerald: "theme-emerald",
     green: "theme-green",
     mono: "theme-mono",
   }[theme];
@@ -114,7 +130,7 @@ function RootDocument(props: { children: React.ReactNode }) {
         <Toaster />
         <Scripts />
         <ReactQueryDevtools />
-        <TanStackRouterDevtools />
+        <TanStackRouterDevtools position="bottom-right" />
       </body>
     </html>
   );

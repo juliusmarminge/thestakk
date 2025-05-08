@@ -1,7 +1,4 @@
 import { type } from "arktype";
-import { sqliteTable } from "drizzle-orm/sqlite-core";
-
-export * from "./auth-schema";
 
 export const ItemType = type.enumerated(
   "Table of Contents",
@@ -16,24 +13,19 @@ export const ItemType = type.enumerated(
 
 export const ItemStatus = type.enumerated("Triage", "Next up", "In Progress", "Done");
 
+/**
+ * A number or a string coerced as a number
+ */
+const EnvBigInt = type.string.pipe((s) => BigInt(s)).or("bigint");
+
 export const Item = type({
-  id: "number",
+  _id: "string",
+  _creationTime: "number",
   header: "string",
   type: ItemType,
   status: ItemStatus,
-  target: "number",
-  limit: "number",
+  target: EnvBigInt,
+  limit: EnvBigInt,
   reviewer: "string",
   order: "number",
 });
-
-export const ItemTable = sqliteTable("items", (d) => ({
-  id: d.integer("id").primaryKey(),
-  header: d.text("header").notNull(),
-  type: d.text("type").$type<typeof ItemType.infer>().notNull(),
-  status: d.text("status").$type<typeof ItemStatus.infer>().notNull(),
-  target: d.integer("target").notNull(),
-  limit: d.integer("limit").notNull(),
-  reviewer: d.text("reviewer").notNull(),
-  order: d.integer("order").notNull(),
-}));
