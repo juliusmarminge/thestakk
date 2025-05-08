@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { authClient, sessionQuery } from "~/auth/client";
+import { sessionQuery } from "~/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { buttonVariants } from "~/components/ui/button";
 import {
@@ -29,8 +29,8 @@ import {
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { data: session, isLoading } = useQuery(sessionQuery);
-  const qc = useQueryClient();
-  const navigate = useNavigate();
+  const _qc = useQueryClient();
+  const _navigate = useNavigate();
   if (isLoading) {
   }
 
@@ -107,14 +107,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                authClient
-                  .signOut()
-                  .then(() => qc.invalidateQueries())
-                  .then(() => navigate({ to: "/login" }));
-              }}
-            >
+            <DropdownMenuItem>
               <ArrowLeftEndOnRectangleIcon />
               Log out
             </DropdownMenuItem>

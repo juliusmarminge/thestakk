@@ -1,11 +1,8 @@
-import { convexQuery } from "@convex-dev/react-query";
 import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
-import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
-import { api } from "../../convex/_generated/api";
 
 export const Route = createFileRoute("/_app/")({
   validateSearch: type({
@@ -16,13 +13,13 @@ export const Route = createFileRoute("/_app/")({
   errorComponent: ErrorComponent,
   loaderDeps: ({ search }) => ({ pageIndex: search.pageIndex, pageSize: search.pageSize }),
   loader: async ({ deps, context: { queryClient } }) => {
-    await queryClient.ensureQueryData(convexQuery(api.items.getAll, deps));
+    await new Promise((resolve) => setTimeout(resolve, 250)); // data loading
   },
 });
 
 function RouteComponent() {
   const { filters, setFilters } = useFilters(Route.id);
-  const paginationState = {
+  const _paginationState = {
     pageIndex: filters.pageIndex,
     pageSize: filters.pageSize,
   };
@@ -34,12 +31,6 @@ function RouteComponent() {
         <div className="px-4 lg:px-6">
           <ChartAreaInteractive />
         </div>
-        <DataTable
-          paginationState={paginationState}
-          onPaginationChange={(pagination) => {
-            setFilters(typeof pagination === "function" ? pagination(paginationState) : pagination);
-          }}
-        />
       </div>
     </div>
   );

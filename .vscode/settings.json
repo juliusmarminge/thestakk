@@ -12,11 +12,9 @@
     "**/*.css": "tailwindcss"
   },
   "files.readonlyInclude": {
-    "**/sst-env.d.ts": true,
     "**/routeTree.gen.ts": true
   },
   "files.watcherExclude": {
-    "**/sst-env.d.ts": true,
     "**/routeTree.gen.ts": true
   },
   "search.exclude": {
