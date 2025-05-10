@@ -51,7 +51,7 @@ export function NavUser() {
   }
 
   const UserAvatar = (
-    <Avatar className="h-8 w-8 rounded-lg [.theme-mono_&]:grayscale">
+    <Avatar className="h-8 w-8 rounded-lg in-[.theme-mono]:grayscale">
       <AvatarImage src={session.user.image ?? undefined} alt={session.user.name} />
       <AvatarFallback className="rounded-lg">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-6 fill-current">

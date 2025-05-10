@@ -241,7 +241,7 @@ export function ModeToggle(props: {
     <button
       onClick={handleToggleMode}
       className={cn(
-        "relative flex aspect-[2/1] h-6 cursor-pointer items-center rounded-md bg-accent",
+        "relative flex aspect-2/1 h-6 cursor-pointer items-center rounded-md bg-accent",
         props.className,
       )}
     >
@@ -313,7 +313,7 @@ export function ThemeSelector() {
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+        <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Base Color</DropdownMenuLabel>
             <DropdownMenuRadioGroup

@@ -76,7 +76,7 @@ function RouteComponent() {
     <div className="flex min-h-[80vh] items-center justify-center px-4">
       <Form
         form={form as never}
-        className="w-full max-w-lg space-y-6 rounded-xl border bg-gradient-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
+        className="w-full max-w-lg space-y-6 rounded-xl border bg-linear-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
       >
         <Fieldset disabled={isPending || form.state.isSubmitting}>
           <Legend>{isSignUp ? "Create an account" : "Welcome back"}</Legend>

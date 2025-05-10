@@ -117,7 +117,7 @@ function FilterSelector_<TData>({
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("h-7", hasFilters && "!px-2 w-fit")}>
+        <Button variant="outline" className={cn("h-7", hasFilters && "w-fit px-2!")}>
           <FunnelIcon className="size-4" />
           {!hasFilters && <span>{t("filter", locale)}</span>}
         </Button>

@@ -15,7 +15,7 @@ export function ErrorComponent() {
 
       <Card className="relative w-full max-w-md space-y-4 p-8 text-center backdrop-blur-sm">
         <div className="mb-6 animate-bounce text-8xl">😅</div>
-        <Heading className="bg-gradient-to-r from-primary to-primary-foreground bg-clip-text font-semibold text-3xl text-transparent">
+        <Heading className="bg-linear-to-r from-primary to-primary-foreground bg-clip-text font-semibold text-3xl text-transparent">
           Oops! Something went wrong
         </Heading>
         <Text className="text-lg text-muted-foreground">
@@ -56,7 +56,7 @@ export function NotFoundComponent() {
 
       <Card className="relative w-full max-w-md space-y-4 p-8 text-center backdrop-blur-sm">
         <div className="mb-6 animate-[bounce_2s_ease-in-out_infinite] text-8xl">🔍</div>
-        <Heading className="bg-gradient-to-r from-primary to-primary-foreground bg-clip-text font-semibold text-3xl text-transparent">
+        <Heading className="bg-linear-to-r from-primary to-primary-foreground bg-clip-text font-semibold text-3xl text-transparent">
           Page Not Found
         </Heading>
         <Text className="text-lg text-muted-foreground">

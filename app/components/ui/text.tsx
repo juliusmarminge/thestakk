@@ -42,7 +42,7 @@ export function TextLink({ className, ...props }: React.ComponentProps<typeof Li
     <Link
       {...props}
       className={cn(
-        "text-foreground underline decoration-foreground/50 data-[hover]:decoration-foreground",
+        "text-foreground underline decoration-foreground/50 data-hover:decoration-foreground",
         className,
       )}
     />
@@ -58,7 +58,7 @@ export function Code({ className, ...props }: React.ComponentProps<"code">) {
     <code
       {...props}
       className={cn(
-        "rounded border border-foreground/10 bg-foreground/[2.5%] px-0.5 font-medium text-foreground text-sm sm:text-[0.8125rem]",
+        "rounded border border-foreground/10 bg-foreground/2.5 px-0.5 font-medium text-foreground text-sm sm:text-[0.8125rem]",
         className,
       )}
     />
@@ -70,7 +70,7 @@ export function Pre({ className, ...props }: React.ComponentPropsWithoutRef<"pre
     <pre
       {...props}
       className={cn(
-        "rounded border border-foreground/10 bg-foreground/[2.5%] px-0.5 font-medium text-foreground text-sm sm:text-[0.8125rem]",
+        "rounded border border-foreground/10 bg-foreground/2.5 px-0.5 font-medium text-foreground text-sm sm:text-[0.8125rem]",
         className,
       )}
     />

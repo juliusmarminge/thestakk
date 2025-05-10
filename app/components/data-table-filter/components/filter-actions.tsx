@@ -15,7 +15,7 @@ export const FilterActions = memo(__FilterActions);
 function __FilterActions({ hasFilters, actions, locale = "en" }: FilterActionsProps) {
   return (
     <Button
-      className={cn("!px-2 h-7", !hasFilters && "hidden")}
+      className={cn("h-7 px-2!", !hasFilters && "hidden")}
       variant="destructive"
       onClick={actions?.removeAllFilters}
     >
