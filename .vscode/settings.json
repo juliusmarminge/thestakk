@@ -11,6 +11,9 @@
   "files.associations": {
     "**/*.css": "tailwindcss"
   },
+  "files.exclude": {
+    "app.config.timestamp*": true
+  },
   "files.readonlyInclude": {
     "**/sst-env.d.ts": true,
     "**/routeTree.gen.ts": true

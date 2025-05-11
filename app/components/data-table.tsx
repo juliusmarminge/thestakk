@@ -24,7 +24,7 @@ import {
   ViewColumnsIcon,
 } from "@heroicons/react/16/solid";
 import { formOptions } from "@tanstack/react-form";
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import {
   type ColumnDef,
   type OnChangeFn,
@@ -43,7 +43,6 @@ import {
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
-import { sessionTokenQuery } from "~/auth/client";
 import { LoaderIcon } from "~/components/icons";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -169,23 +168,17 @@ function useDeleteItem() {
   });
 }
 
-const updateItemForm = (
-  item: RowType,
-  sessionToken: string | undefined,
-  updateItem: ReturnType<typeof useUpdateItem>,
-) =>
+const updateItemForm = (item: RowType, updateItem: ReturnType<typeof useUpdateItem>) =>
   formOptions({
     defaultValues: item,
     validators: {
       onSubmit: Item,
     },
     onSubmit: ({ value }) => {
-      if (!sessionToken) return;
+      const { _id, ...update } = Item.assert(value);
       updateItem.mutate({
         ...item,
-        ...Item.assert(value),
-        _id: item._id,
-        sessionToken,
+        ...update,
       });
     },
   });
@@ -271,8 +264,7 @@ const columns: ColumnDef<RowType>[] = [
     accessorKey: "target",
     header: "Target",
     cell: function TargetCell({ row }) {
-      const { data: sessionToken } = useQuery(sessionTokenQuery);
-      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
+      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
 
       return (
         <Form form={form as never}>
@@ -296,8 +288,7 @@ const columns: ColumnDef<RowType>[] = [
     accessorKey: "limit",
     header: "Limit",
     cell: function LimitCell({ row }) {
-      const { data: sessionToken } = useQuery(sessionTokenQuery);
-      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
+      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
 
       return (
         <Form form={form as never}>
@@ -322,8 +313,7 @@ const columns: ColumnDef<RowType>[] = [
     header: "Reviewer",
     cell: function ReviewerCell({ row }) {
       const isAssigned = row.original.reviewer !== "Assign reviewer";
-      const { data: sessionToken } = useQuery(sessionTokenQuery);
-      const form = useAppForm(updateItemForm(row.original, sessionToken, useUpdateItem()));
+      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
 
       if (isAssigned) {
         return row.original.reviewer;
@@ -352,7 +342,6 @@ const columns: ColumnDef<RowType>[] = [
   {
     id: "actions",
     cell: function ActionCell({ row }) {
-      const { data: sessionToken } = useQuery(sessionTokenQuery);
       const deleteItem = useDeleteItem();
 
       return (
@@ -374,10 +363,8 @@ const columns: ColumnDef<RowType>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              disabled={!sessionToken}
               onClick={() => {
-                if (!sessionToken) return; // unreachable
-                deleteItem.mutate({ id: row.original._id, sessionToken });
+                deleteItem.mutate({ id: row.original._id });
               }}
             >
               Delete
@@ -397,8 +384,6 @@ export function DataTable(props: {
   paginationState: PaginationState;
   onPaginationChange: OnChangeFn<PaginationState>;
 }) {
-  const { data: sessionToken } = useQuery(sessionTokenQuery);
-
   /**
    * Fetch the items for the current page
    */
@@ -420,7 +405,7 @@ export function DataTable(props: {
    */
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (!active || !over || active.id === over.id || !sessionToken) return;
+    if (!active || !over || active.id === over.id) return;
 
     const activeItemIndex = items.findIndex((i) => i._id === active.id);
     const overItemIndex = items.findIndex((i) => i._id === over.id);
@@ -442,7 +427,6 @@ export function DataTable(props: {
     moveItemMutation.mutate({
       id: active.id as Id<"items">,
       order: newOrder,
-      sessionToken,
     });
   }
 
@@ -767,8 +751,7 @@ const chartConfig = {
 function TableCellViewer({ item }: { item: RowType }) {
   const isMobile = useIsMobile();
 
-  const { data: sessionToken } = useQuery(sessionTokenQuery);
-  const form = useAppForm(updateItemForm(item, sessionToken, useUpdateItem()));
+  const form = useAppForm(updateItemForm(item, useUpdateItem()));
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"} onClose={() => form.reset()}>

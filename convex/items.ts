@@ -1,16 +1,15 @@
 import { ShardedCounter } from "@convex-dev/sharded-counter";
 import { v } from "convex/values";
 import { Array } from "effect";
-import { components, internal } from "./_generated/api";
-import { mutation, query } from "./_generated/server";
-import { withoutSystemFields } from "./helpers";
+import { components } from "./_generated/api";
+import { authedMutation, authedQuery, withoutSystemFields } from "./helpers";
 import schema from "./schema";
 
 const itemCounter = new ShardedCounter(components.shardedCounter, {
   shards: { items: 100 },
 }).for("items");
 
-export const getAll = query({
+export const getAll = authedQuery({
   args: {
     pageIndex: v.number(),
     pageSize: v.number(),
@@ -29,46 +28,34 @@ export const getAll = query({
   },
 });
 
-export const moveItem = mutation({
+export const moveItem = authedMutation({
   args: {
     id: v.id("items"),
     order: v.number(),
-    sessionToken: v.string(),
   },
-  handler: async (ctx, { sessionToken, ...args }) => {
-    const session = await ctx.runQuery(internal.betterAuth.getSession, { sessionToken });
-    if (!session) throw new Error("Session not found");
-
+  handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
       order: args.order,
     });
   },
 });
 
-export const update = mutation({
+export const update = authedMutation({
   args: {
     _id: v.id("items"),
     _creationTime: v.number(),
-    sessionToken: v.string(),
     ...schema.tables.items.validator.fields,
   },
-  handler: async (ctx, { sessionToken, ...args }) => {
-    const session = await ctx.runQuery(internal.betterAuth.getSession, { sessionToken });
-    if (!session) throw new Error("Session not found");
-
+  handler: async (ctx, args) => {
     await ctx.db.patch(args._id, withoutSystemFields(args));
   },
 });
 
-export const deleteOne = mutation({
+export const deleteOne = authedMutation({
   args: {
     id: v.id("items"),
-    sessionToken: v.string(),
   },
-  handler: async (ctx, { sessionToken, id }) => {
-    const session = await ctx.runQuery(internal.betterAuth.getSession, { sessionToken });
-    if (!session) throw new Error("Session not found");
-
-    await ctx.db.delete(id);
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
   },
 });
