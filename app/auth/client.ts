@@ -1,4 +1,4 @@
-import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { jwtClient, oidcClient, passkeyClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import type { ConvexProviderWithAuth } from "convex/react";
@@ -45,7 +45,7 @@ export function useAuthForConvex(): ReturnType<
   React.ComponentProps<typeof ConvexProviderWithAuth>["useAuth"]
 > {
   const queryClient = useQueryClient();
-  const query = useQuery(jwtQuery);
+  const query = useSuspenseQuery(jwtQuery);
 
   const fetchAccessToken = useCallback(
     async (args: { forceRefreshToken: boolean }) => {
@@ -58,7 +58,7 @@ export function useAuthForConvex(): ReturnType<
   );
 
   return {
-    isLoading: query.isPending,
+    isLoading: false,
     isAuthenticated: query.data !== null,
     fetchAccessToken,
   };
