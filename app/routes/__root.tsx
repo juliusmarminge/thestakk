@@ -1,11 +1,19 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRouteWithContext,
+  redirect,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
-import { getHeader } from "@tanstack/react-start/server";
+import { getHeader, getWebRequest } from "@tanstack/react-start/server";
 import * as React from "react";
 import { toast } from "sonner";
+import { jwtQuery, sessionQuery } from "~/auth/client";
+import { auth } from "~/auth/server";
 import { ErrorComponent, NotFoundComponent } from "~/components/error-component";
 import {
   EAGER_SET_SYSTEM_THEME_SCRIPT,
@@ -25,12 +33,12 @@ const readViewerLocation = createServerFn().handler(async () => {
   return { city, country, region, regionName };
 });
 
-// const getServerSession = createServerFn().handler(async () => {
-//   const session = await auth.api.getSession({
-//     headers: getWebRequest()?.headers ?? new Headers(),
-//   });
-//   return session;
-// });
+const getServerSession = createServerFn().handler(async () => {
+  const session = await auth.api.getSession({
+    headers: getWebRequest()?.headers ?? new Headers(),
+  });
+  return session;
+});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -43,14 +51,19 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  // TODO: Preferably don't block on this, but start fetch eagerly
-  // beforeLoad: async ({ context }) => {
-  //   const serverSession = await getServerSession();
-  //   if (serverSession) {
-  //     context.queryClient.setQueryData(sessionQuery.queryKey, serverSession);
-  //   }
-  //   return { session: serverSession };
-  // },
+  beforeLoad: async ({ context }) => {
+    const serverSession = await getServerSession();
+    console.log("SERVER SESSION", serverSession);
+    if (!serverSession) {
+      throw redirect({ to: "/login" });
+    }
+
+    context.queryClient.setQueryData(sessionQuery.queryKey, serverSession);
+    const jwt = await context.queryClient.ensureQueryData(jwtQuery);
+    console.log("JWT", jwt);
+
+    return { session: serverSession };
+  },
   loader: () => Promise.all([getModeCookie(), getThemeCookie(), readViewerLocation()]),
   component: RootComponent,
   errorComponent: ErrorComponent,
