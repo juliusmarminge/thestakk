@@ -57,7 +57,7 @@ async function mintTokenForConvex(user: User) {
   })
     .setProtectedHeader({ alg: Resource.AppConfig.convexIdToken.algorithm, kid: keyId })
     .setIssuedAt()
-    .setIssuer(Resource.AppConfig.domain)
+    .setIssuer(`https://${Resource.AppConfig.domain}/api/auth`)
     .setAudience(Resource.AppConfig.convexIdToken.audience)
     .setExpirationTime("1h")
     .sign(privateKey);
