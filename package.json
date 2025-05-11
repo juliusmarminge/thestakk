@@ -32,8 +32,8 @@
     "better-auth": "^1.2.7",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
-    "convex": "1.23.0",
-    "convex-helpers": "0.1.82-alpha.4",
+    "convex": "1.24.1",
+    "convex-helpers": "0.1.85",
     "effect": "^3.14.20",
     "jose": "^6.0.11",
     "motion": "^12.10.5",
@@ -76,8 +76,6 @@
     "nitropack": "npm:nitropack-nightly@latest"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@tailwindcss/oxide"
-    ]
+    "onlyBuiltDependencies": ["@tailwindcss/oxide"]
   }
 }

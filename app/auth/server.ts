@@ -11,10 +11,6 @@ const convexClient = new ConvexHttpClient(Resource.ConvexUrl.value, {
   logger: false,
 });
 
-console.log("[auth] convexDeployment", Resource.ConvexDeployment.value);
-console.log("[auth] convexUrl", Resource.ConvexUrl.value);
-console.log("[auth] auth issuer", Resource.AppDomain.value);
-
 export const auth = betterAuth({
   secret: Resource.AuthSecret.value,
   database: convexAdapter(convexClient),
@@ -27,12 +23,16 @@ export const auth = betterAuth({
     jwt({
       jwks: {
         keyPairConfig: {
-          alg: "RS256",
+          alg: Resource.AppConfig.convexIdToken.algorithm as any,
         },
       },
     }),
     oidcProvider({
       loginPage: "/login",
+      metadata: {
+        issuer: `https://${Resource.AppConfig.domain}/api/auth`,
+        response_types_supported: ["code", "id_token"] as any,
+      },
     }),
     genericOAuthClient(),
     reactStartCookies(), // make sure this is the last plugin in the array

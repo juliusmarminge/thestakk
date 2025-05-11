@@ -5,9 +5,13 @@
 
 declare module "sst" {
   export interface Resource {
-    "AppDomain": {
+    "AppConfig": {
+      "convexIdToken": {
+        "algorithm": string
+        "audience": string
+      }
+      "domain": string
       "type": "sst.sst.Linkable"
-      "value": string
     }
     "AuthSecret": {
       "type": "sst.sst.Secret"

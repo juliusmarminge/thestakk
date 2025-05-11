@@ -3,7 +3,7 @@ import { jwtClient, oidcClient, passkeyClient } from "better-auth/client/plugins
 import { createAuthClient } from "better-auth/react";
 import type { ConvexProviderWithAuth } from "convex/react";
 import { useCallback } from "react";
-// import { getConvexToken } from "./get-convex-token";
+import { getConvexToken } from "./get-convex-token";
 
 export const authClient = createAuthClient({
   plugins: [passkeyClient(), jwtClient(), oidcClient()],
@@ -18,11 +18,6 @@ export const sessionQuery = queryOptions({
   },
 });
 
-export const sessionTokenQuery = queryOptions({
-  ...sessionQuery,
-  select: (data) => data?.session.token,
-});
-
 export const passkeysQuery = queryOptions({
   queryKey: ["passkeys"],
   queryFn: async () => {
@@ -35,15 +30,13 @@ export const passkeysQuery = queryOptions({
 export const jwtQuery = queryOptions({
   queryKey: ["jwt"],
   queryFn: async () => {
-    return "";
-    // const jwt = await getConvexToken();
-    // console.log("[auth] jwtQuery", jwt);
-    // if (jwt.error) {
-    //   throw new Error(jwt.error, {
-    //     cause: jwt.details,
-    //   });
-    // }
-    // return jwt.idToken;
+    const jwt = await getConvexToken();
+    if (jwt.error) {
+      throw new Error(jwt.error, {
+        cause: jwt.details,
+      });
+    }
+    return jwt.idToken;
   },
   staleTime: 30_000,
 });

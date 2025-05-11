@@ -15,16 +15,10 @@ export function withoutSystemFields<T extends { _creationTime: number; _id: Id<a
   return rest;
 }
 
-async function getUser(ctx: MutationCtx | QueryCtx, sessionId: string) {
-  const session = await ctx.db
-    .query("session")
-    .withIndex("byToken", (q) => q.eq("token", sessionId))
-    .unique();
-  if (!session) return null;
-
+async function getUser(ctx: MutationCtx | QueryCtx, userId: string) {
   const user = await ctx.db
     .query("user")
-    .withIndex("by_id", (q) => q.eq("_id", session.userId))
+    .withIndex("by_id", (q) => q.eq("_id", userId as any))
     .unique();
   if (!user) return null;
 
@@ -34,10 +28,12 @@ async function getUser(ctx: MutationCtx | QueryCtx, sessionId: string) {
 export const authedMutation = customMutation(baseMutation, {
   args: {},
   input: async (ctx, args) => {
-    const user = await ctx.auth.getUserIdentity();
-    // const user = await getUser(ctx, args.sessionId);
-    // if (!user) throw new Error("Unauthorized");
+    const identity = await ctx.auth.getUserIdentity();
+    console.log("IDENTITY", identity);
+    if (!identity) throw new Error("Unauthorized");
 
+    const user = await getUser(ctx, identity?.subject);
+    if (!user) throw new Error("Unauthorized");
     console.log("USER", user);
 
     return { ctx: { ...ctx, user }, args };
@@ -47,10 +43,12 @@ export const authedMutation = customMutation(baseMutation, {
 export const authedQuery = customQuery(baseQuery, {
   args: {},
   input: async (ctx, args) => {
-    const user = await ctx.auth.getUserIdentity();
-    // const user = await getUser(ctx, args.sessionId);
-    // if (!user) throw new Error("Unauthorized");
+    const identity = await ctx.auth.getUserIdentity();
+    console.log("IDENTITY", identity);
+    if (!identity) throw new Error("Unauthorized");
 
+    const user = await getUser(ctx, identity?.subject);
+    if (!user) throw new Error("Unauthorized");
     console.log("USER", user);
 
     return { ctx: { ...ctx, user }, args };
