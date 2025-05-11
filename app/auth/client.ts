@@ -1,4 +1,4 @@
-import { queryOptions, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { jwtClient, oidcClient, passkeyClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import type { ConvexProviderWithAuth } from "convex/react";
@@ -9,7 +9,7 @@ export const authClient = createAuthClient({
   plugins: [passkeyClient(), jwtClient(), oidcClient()],
 });
 
-export const sessionQuery = queryOptions({
+export const sessionQueryOptions = queryOptions({
   queryKey: ["session"],
   queryFn: async () => {
     const session = await authClient.getSession();
@@ -18,7 +18,7 @@ export const sessionQuery = queryOptions({
   },
 });
 
-export const passkeysQuery = queryOptions({
+export const passkeysQueryOptions = queryOptions({
   queryKey: ["passkeys"],
   queryFn: async () => {
     const passkeys = await authClient.passkey.listUserPasskeys();
@@ -27,15 +27,11 @@ export const passkeysQuery = queryOptions({
   },
 });
 
-export const jwtQuery = queryOptions({
+export const jwtQueryOptions = queryOptions({
   queryKey: ["jwt"],
   queryFn: async () => {
     const jwt = await getConvexToken();
-    if (jwt.error) {
-      throw new Error(jwt.error, {
-        cause: jwt.details,
-      });
-    }
+    if (jwt.error) return null;
     return jwt.idToken;
   },
   staleTime: 30_000,
@@ -45,21 +41,24 @@ export function useAuthForConvex(): ReturnType<
   React.ComponentProps<typeof ConvexProviderWithAuth>["useAuth"]
 > {
   const queryClient = useQueryClient();
-  const query = useSuspenseQuery(jwtQuery);
+  const sessionQuery = useQuery(sessionQueryOptions);
+  const jwtQuery = useQuery(jwtQueryOptions);
 
   const fetchAccessToken = useCallback(
     async (args: { forceRefreshToken: boolean }) => {
+      if (!sessionQuery.data) return null;
+
       if (args.forceRefreshToken) {
-        return queryClient.fetchQuery(jwtQuery);
+        return queryClient.fetchQuery(jwtQueryOptions);
       }
-      return queryClient.ensureQueryData(jwtQuery);
+      return queryClient.ensureQueryData(jwtQueryOptions);
     },
-    [queryClient],
+    [queryClient, sessionQuery.data],
   );
 
   return {
-    isLoading: false,
-    isAuthenticated: query.data !== null,
+    isLoading: sessionQuery.isPending || jwtQuery.isPending,
+    isAuthenticated: sessionQuery.data !== null,
     fetchAccessToken,
   };
 }

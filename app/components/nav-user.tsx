@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { authClient, sessionQuery } from "~/auth/client";
+import { authClient, sessionQueryOptions } from "~/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { buttonVariants } from "~/components/ui/button";
 import {
@@ -28,7 +28,7 @@ import {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { data: session, isLoading } = useQuery(sessionQuery);
+  const { data: session, isLoading } = useQuery(sessionQueryOptions);
   const qc = useQueryClient();
   const navigate = useNavigate();
   if (isLoading) {

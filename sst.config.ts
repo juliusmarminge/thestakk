@@ -33,6 +33,11 @@ export default $config({
       },
     });
 
+    /**
+     * TODO: Figure out how to keep environment variables
+     * in sync between SST and Convex.
+     * Right now we must set to both...
+     */
     new sst.x.DevCommand("Convex", {
       dev: {
         command: "pnpm convex dev --run init:items",

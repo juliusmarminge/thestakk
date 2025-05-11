@@ -1,9 +1,31 @@
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
+import { jwtQueryOptions, sessionQueryOptions } from "~/auth/client";
+import { auth } from "~/auth/server";
 import { AppSidebar } from "~/components/app-sidebar";
 import { SiteHeader } from "~/components/site-header";
 import { SidebarInset, SidebarProvider, getSidebarCookie } from "~/components/ui/sidebar";
 
+const getServerSession = createServerFn().handler(async () => {
+  const session = await auth.api.getSession({
+    headers: getWebRequest()?.headers ?? new Headers(),
+  });
+  return session;
+});
+
 export const Route = createFileRoute("/_app")({
+  beforeLoad: async ({ context }) => {
+    const serverSession = await getServerSession();
+    if (!serverSession) {
+      throw redirect({ to: "/login" });
+    }
+
+    context.queryClient.setQueryData(sessionQueryOptions.queryKey, serverSession);
+    await context.queryClient.ensureQueryData(jwtQueryOptions);
+
+    return { session: serverSession };
+  },
   loader: () => getSidebarCookie(),
   component: AppLayout,
 });

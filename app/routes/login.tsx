@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { type } from "arktype";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
 import { PasskeyIcon } from "~/components/icons";

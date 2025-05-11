@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import type { Passkey } from "better-auth/plugins/passkey";
 import { useState } from "react";
 import { toast } from "sonner";
-import { authClient, passkeysQuery } from "~/auth/client";
+import { authClient, passkeysQueryOptions } from "~/auth/client";
 import { PasskeyIcon } from "~/components/icons";
 import { Button, LoadingButton } from "~/components/ui/button";
 import {
@@ -30,7 +30,7 @@ export function AddPasskeyDialog() {
       if (passkey?.error) {
         toast.error(passkey.error.message);
       } else {
-        await qc.invalidateQueries(passkeysQuery);
+        await qc.invalidateQueries(passkeysQueryOptions);
         toast.success("Passkey created");
         setIsOpen(false);
       }
@@ -72,7 +72,7 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
   const { mutate: deletePasskey, isPending } = useMutation({
     mutationFn: () => authClient.passkey.deletePasskey({ id: passkey.id }),
     onSuccess: async () => {
-      await qc.invalidateQueries(passkeysQuery);
+      await qc.invalidateQueries(passkeysQueryOptions);
       toast.success("Passkey deleted");
     },
   });
@@ -123,7 +123,7 @@ export function PasskeyItemSkeleton(props: {
 }
 
 export function PasskeysList() {
-  const { data: passkeys } = useSuspenseQuery(passkeysQuery);
+  const { data: passkeys } = useSuspenseQuery(passkeysQueryOptions);
 
   if (passkeys.length === 0) {
     return (

@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
+import { passkeysQueryOptions } from "~/auth/client";
 import { ErrorComponent } from "~/components/error-component";
 import { PasskeyListSkeleton, PasskeysList } from "~/components/passkeys";
 import { AddPasskeyDialog } from "~/components/passkeys";
 import { Heading, Subheading, Text } from "~/components/ui/text";
 
 export const Route = createFileRoute("/_app/account")({
-  //   loader: async ({ context: { queryClient } }) => {
-  //     await queryClient.ensureQueryData(passkeysQuery);
-  //   },
+  loader: async ({ context: { queryClient } }) => {
+    await queryClient.ensureQueryData(passkeysQueryOptions);
+  },
   component: RouteComponent,
   errorComponent: ErrorComponent,
 });
