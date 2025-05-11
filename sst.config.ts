@@ -19,25 +19,29 @@ export default $config({
     const convexUrl = new sst.Secret("ConvexUrl");
     const authSecret = new sst.Secret("AuthSecret");
 
-    new sst.x.DevCommand("Convex", {
-      dev: {
-        command: "pnpm dlx convex dev --run init:items",
+    const rootDomain = "jumr.dev";
+    const appDomain = new sst.Linkable("AppDomain", {
+      properties: {
+        value:
+          $app.stage === "production"
+            ? `thestakk.${rootDomain}`
+            : `thestakk-${$app.stage}.${rootDomain}`,
       },
     });
 
-    const rootDomain = "jumr.dev";
-    const appDomain =
-      $app.stage === "production"
-        ? `thestakk.${rootDomain}`
-        : `thestakk-${$app.stage}.${rootDomain}`;
+    new sst.x.DevCommand("Convex", {
+      dev: {
+        command: "pnpm convex dev --local --run init:items",
+      },
+    });
 
     /**
      * Serverless AWS Lambda Deployment
      */
     new sst.aws.TanStackStart("TheStakkApp", {
-      link: [convexDeployment, convexUrl, authSecret],
+      link: [convexDeployment, convexUrl, authSecret, appDomain],
       domain: {
-        name: appDomain,
+        name: appDomain.properties.value,
         dns: sst.vercel.dns({
           domain: rootDomain,
         }),
@@ -47,6 +51,7 @@ export default $config({
       },
       environment: {
         VITE_CONVEX_URL: convexUrl.value,
+        VITE_SITE_URL: appDomain.properties.value,
       },
     });
 

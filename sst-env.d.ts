@@ -5,6 +5,10 @@
 
 declare module "sst" {
   export interface Resource {
+    "AppDomain": {
+      "type": "sst.sst.Linkable"
+      "value": string
+    }
     "AuthSecret": {
       "type": "sst.sst.Secret"
       "value": string

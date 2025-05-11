@@ -2,9 +2,10 @@ import { ConvexQueryClient } from "@convex-dev/react-query";
 import { MutationCache, QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import { ConvexProvider } from "convex/react";
+import { ConvexProviderWithAuth } from "convex/react";
 import { toast } from "sonner";
 import { routeTree } from "~/routeTree.gen";
+import { useAuthForConvex } from "./auth/client";
 
 // import { parse, stringify } from "devalue";
 
@@ -28,7 +29,6 @@ export function createRouter() {
       //   deserializeData: transformer.deserialize,
       // },
       queries: {
-        experimental_prefetchInRender: true,
         queryKeyHashFn: convexQueryClient.hashFn(),
         queryFn: convexQueryClient.queryFn(),
       },
@@ -53,7 +53,9 @@ export function createRouter() {
     },
     Wrap: (props) => {
       return (
-        <ConvexProvider client={convexQueryClient.convexClient}>{props.children}</ConvexProvider>
+        <ConvexProviderWithAuth client={convexQueryClient.convexClient} useAuth={useAuthForConvex}>
+          {props.children}
+        </ConvexProviderWithAuth>
       );
     },
   });
