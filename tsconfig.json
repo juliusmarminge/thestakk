@@ -13,8 +13,7 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "paths": {
-      "~/*": ["./app/*"]
-    },
-    "types": ["vinxi/types/client"]
+      "~/*": ["./src/*"]
+    }
   }
 }
