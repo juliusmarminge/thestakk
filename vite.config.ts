@@ -12,6 +12,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "#convex": path.resolve(import.meta.dirname, "./convex"),
       "~": path.resolve(import.meta.dirname, "./src"),
     },
   },

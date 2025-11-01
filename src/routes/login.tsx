@@ -14,6 +14,12 @@ export const Route = createFileRoute("/login")({
   component: RouteComponent,
 });
 
+class LoginSchema extends Schema.Struct({
+  email: Schema.String,
+  password: Schema.String.pipe(Schema.minLength(8)),
+  name: Schema.optional(Schema.String),
+}) {}
+
 function RouteComponent() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -26,13 +32,7 @@ function RouteComponent() {
       name: "",
     },
     validators: {
-      onSubmit: Schema.standardSchemaV1(
-        Schema.Struct({
-          email: Schema.String,
-          password: Schema.String.pipe(Schema.minLength(8)),
-          name: Schema.optional(Schema.String),
-        }),
-      ),
+      onSubmit: Schema.standardSchemaV1(LoginSchema),
     },
     onSubmit: async ({ value }) => {
       if (isSignUp) {

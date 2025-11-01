@@ -2,7 +2,6 @@ import { convexQuery } from "@convex-dev/react-query";
 import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
 import * as Schema from "effect/Schema";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
-import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
 import { api } from "../../convex/_generated/api";
@@ -39,7 +38,7 @@ function RouteComponent() {
         <div className="px-4 lg:px-6">
           <ChartAreaInteractive />
         </div>
-        <DataTable
+        {/* <DataTable
           paginationState={paginationState}
           onPaginationChange={(pagination) => {
             setFilters(
@@ -48,7 +47,7 @@ function RouteComponent() {
                 : pagination,
             );
           }}
-        />
+        /> */}
       </div>
     </div>
   );

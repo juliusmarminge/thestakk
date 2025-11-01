@@ -1,4 +1,4 @@
-import { createAuth } from "~/../convex/auth";
+import { createAuth } from "#convex/auth";
 import {
   fetchSession,
   getCookieName,
@@ -12,7 +12,7 @@ export const { fetchQuery, fetchMutation, fetchAction } =
 
 // Get auth information for SSR using available cookies
 export const fetchAuth = createServerFn({ method: "GET" }).handler(async () => {
-  const { createAuth } = await import("../../convex/auth");
+  const { createAuth } = await import("#convex/auth");
   const { session } = await fetchSession(getRequest());
   const sessionCookieName = getCookieName(createAuth);
   const token = getCookie(sessionCookieName);

@@ -80,7 +80,7 @@ export function ModeToggle(props: { className?: string }) {
           </div>
           <div
             data-slot="theme-toggle-knob"
-            className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all duration-300 ease-in-out dark:bg-accent-foreground"
+            className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all! duration-300 ease-in-out dark:bg-accent-foreground"
             style={{
               left: mode === "auto" ? "50%" : mode === "light" ? "100%" : "0%",
               transform: `translateX(${
@@ -123,7 +123,6 @@ export function ThemeSelector() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
-          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuLabel>Color Scheme</DropdownMenuLabel>
             <DropdownMenuRadioGroup

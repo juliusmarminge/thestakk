@@ -33,6 +33,9 @@ export function getRouter() {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: "intent",
+    defaultOnCatch(error, errorInfo) {
+      console.error("Error in router", error, errorInfo);
+    },
     scrollRestoration: true,
     context: {
       queryClient,
