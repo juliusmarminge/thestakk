@@ -1,8 +1,8 @@
 export default {
   providers: [
     {
-      domain: `https://${process.env.BETTER_AUTH_DOMAIN}/api/auth`,
-      applicationID: process.env.BETTER_AUTH_APPLICATION_ID,
+      domain: process.env.CONVEX_SITE_URL,
+      applicationID: "convex",
     },
   ],
 };
