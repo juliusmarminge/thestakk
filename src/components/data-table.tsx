@@ -1,3 +1,8 @@
+import * as Types from "effect/Types";
+import * as Option from "effect/Option";
+import * as Array from "effect/Array";
+import * as Order from "effect/Order";
+import { pipe } from "effect/Function";
 import * as Schema from "effect/Schema";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import {
@@ -28,7 +33,7 @@ import {
   PlusIcon,
   ViewColumnsIcon,
 } from "@heroicons/react/16/solid";
-import { formOptions } from "@tanstack/react-form";
+import { formOptions, useForm } from "@tanstack/react-form";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import {
   type ColumnDef,
@@ -77,7 +82,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Form } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
 import {
   Select,
@@ -96,11 +100,15 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Item, ItemStatus, ItemType } from "~/lib/data-models";
-import { useAppForm } from "~/lib/use-form";
 import { useIsMobile } from "~/lib/use-mobile";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
+import { GetAllItemsResult, UpdateItemArgs } from "#convex/items.schemas";
+import { ItemStatus, ItemType } from "#convex/schema";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import { Input } from "./ui/input";
+import { useAppForm } from "~/lib/use-form";
+import { Form } from "./ui/form";
 
 function useUpdateItem() {
   const mutationFn = useConvexMutation(api.items.update).withOptimisticUpdate(
@@ -113,12 +121,14 @@ function useUpdateItem() {
       if (!query?.value) return;
 
       // Find the item in the query
-      const item = query.value?.items.find((i) => i._id === args._id);
-      if (!item) return;
-
-      const items = query.value.items.map((i) =>
-        i._id === args._id ? args : i,
+      const item = Array.findFirstIndex(
+        query.value.items,
+        (i) => i._id === args._id,
       );
+      if (Option.isNone(item)) return;
+
+      const items = Array.replace(query.value.items, item.value, args);
+
       localStore.setQuery(api.items.getAll, query.args, {
         ...query.value,
         items,
@@ -143,18 +153,21 @@ function useMoveItem() {
       );
       if (!query?.value) return;
 
-      const item = query.value.items.find((i) => i._id === args.id);
-      if (!item) return;
+      const item = Array.findFirstWithIndex(
+        query.value.items,
+        (i) => i._id === args.id,
+      );
+      if (Option.isNone(item)) return;
 
       // Update the moved item's order and re-sort
-      item.order = args.order;
-      const sortedItems = query.value.items.toSorted(
-        (a, b) => a.order - b.order,
+      const items = pipe(
+        Array.replace(query.value.items, item.value[1], item.value[0]),
+        Array.sortBy(Order.mapInput(Order.number, (a) => a.order)),
       );
 
       localStore.setQuery(api.items.getAll, query.args, {
         ...query.value,
-        items: sortedItems,
+        items,
       });
     },
   );
@@ -187,6 +200,8 @@ function useDeleteItem() {
   });
 }
 
+type Item = GetAllItemsResult["items"][number];
+
 const updateItemForm = (
   item: Item,
   updateItem: ReturnType<typeof useUpdateItem>,
@@ -194,10 +209,10 @@ const updateItemForm = (
   formOptions({
     defaultValues: item,
     validators: {
-      onSubmit: Schema.standardSchemaV1(Item),
+      onSubmit: Schema.standardSchemaV1(UpdateItemArgs),
     },
     onSubmit: ({ value }) => {
-      const { _id, ...update } = Schema.encodeSync(Item)(value);
+      const { _id, ...update } = Schema.encodeSync(UpdateItemArgs)(value);
       updateItem.mutate({
         ...item,
         ...update,
@@ -288,23 +303,39 @@ const columns: ColumnDef<Item>[] = [
     accessorKey: "target",
     header: "Target",
     cell: function TargetCell({ row }) {
-      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
+      const form = useForm(updateItemForm(row.original, useUpdateItem()));
 
       return (
-        <Form form={form as never}>
-          <form.AppField
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <form.Field
             name="target"
-            children={(field) => (
-              <field.TextField
-                label="Target"
-                onBlur={() => field.form.handleSubmit()}
-                labelClassName="sr-only"
-                fieldClassName="[&>[data-slot=label]+[data-slot=control]]:mt-0"
-                inputClassName="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:focus-visible:bg-input/30 dark:hover:bg-input/30"
-              />
-            )}
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel className="sr-only" htmlFor={field.name}>
+                    Target
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value.toString()}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(BigInt(e.target.value))}
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
           />
-        </Form>
+        </form>
       );
     },
   },
@@ -312,23 +343,39 @@ const columns: ColumnDef<Item>[] = [
     accessorKey: "limit",
     header: "Limit",
     cell: function LimitCell({ row }) {
-      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
+      const form = useForm(updateItemForm(row.original, useUpdateItem()));
 
       return (
-        <Form form={form as never}>
-          <form.AppField
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <form.Field
             name="limit"
-            children={(field) => (
-              <field.TextField
-                label="Limit"
-                onBlur={() => field.form.handleSubmit()}
-                labelClassName="sr-only"
-                fieldClassName="[&>[data-slot=label]+[data-slot=control]]:mt-0"
-                inputClassName="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:focus-visible:bg-input/30 dark:hover:bg-input/30"
-              />
-            )}
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel className="sr-only" htmlFor={field.name}>
+                    Limit
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value.toString()}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(BigInt(e.target.value))}
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
           />
-        </Form>
+        </form>
       );
     },
   },
@@ -337,33 +384,52 @@ const columns: ColumnDef<Item>[] = [
     header: "Reviewer",
     cell: function ReviewerCell({ row }) {
       const isAssigned = row.original.reviewer !== "Assign reviewer";
-      const form = useAppForm(updateItemForm(row.original, useUpdateItem()));
+      const form = useForm(updateItemForm(row.original, useUpdateItem()));
 
       if (isAssigned) {
         return row.original.reviewer;
       }
 
       return (
-        <Form form={form as never}>
-          <form.AppField
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <form.Field
             name="reviewer"
-            children={(field) => (
-              <field.SelectField
-                label="Reviewer"
-                labelClassName="sr-only"
-                triggerClassName="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-                options={[
-                  "Eddie Lake",
-                  "Jamik Tashpulatov",
-                  "Emily Whalen",
-                ].map((reviewer) => ({
-                  label: reviewer,
-                  value: reviewer,
-                }))}
-              />
-            )}
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel className="sr-only" htmlFor={field.name}>
+                    Reviewer
+                  </FieldLabel>
+                  <Select
+                    name={field.name}
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value)}
+                    aria-invalid={isInvalid}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a reviewer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
+                      <SelectItem value="Jamik Tashpulatov">
+                        Jamik Tashpulatov
+                      </SelectItem>
+                      <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
           />
-        </Form>
+        </form>
       );
     },
   },
@@ -415,14 +481,13 @@ export function DataTable(props: {
   /**
    * Fetch the items for the current page
    */
-  const {
-    data: { items, pageCount },
-  } = useSuspenseQuery(
+  const { data } = useSuspenseQuery(
     convexQuery(api.items.getAll, {
       pageIndex: props.paginationState.pageIndex,
       pageSize: props.paginationState.pageSize,
     }),
   );
+  const { items, pageCount } = Schema.decodeSync(GetAllItemsResult)(data);
 
   const moveItemMutation = useMoveItem();
 
@@ -466,7 +531,7 @@ export function DataTable(props: {
 
   const table = useReactTable({
     columns,
-    data: items,
+    data: items as Types.Mutable<typeof items>,
     state: {
       columnVisibility,
       rowSelection,
@@ -600,7 +665,7 @@ function TableWithDraggableRows({
   handleDragEnd,
 }: {
   table: ReactTable<Item>;
-  data: Item[];
+  data: readonly Item[];
   handleDragEnd: (event: DragEndEvent) => void;
 }) {
   const sortableId = React.useId();

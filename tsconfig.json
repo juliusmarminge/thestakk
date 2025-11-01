@@ -13,7 +13,8 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "#convex/*": ["./convex/*"]
     }
   }
 }

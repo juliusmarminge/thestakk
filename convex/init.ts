@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
-import { ItemStatus, ItemType } from "~/lib/data-models";
+
 import { internalMutation } from "./_generated/server";
+import { ItemStatus, ItemType } from "./schema";
 
 export const items = internalMutation({
   args: {},
@@ -14,8 +15,8 @@ export const items = internalMutation({
         order: faker.number.int({ min: 1, max: 1000 }),
         type: faker.helpers.arrayElement(ItemType.literals),
         status: faker.helpers.arrayElement(ItemStatus.literals),
-        target: faker.number.bigInt({ min: 1, max: 30 }),
-        limit: faker.number.bigInt({ min: 1, max: 40 }),
+        target: faker.number.bigInt({ min: 1, max: 30 }).toString(),
+        limit: faker.number.bigInt({ min: 1, max: 40 }).toString(),
         reviewer: faker.person.fullName(),
       });
     }

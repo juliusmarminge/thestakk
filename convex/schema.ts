@@ -1,15 +1,36 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineSchema, defineTable } from "@rjdellecese/confect/server";
+import * as Schema from "effect/Schema";
 
-const schema = defineSchema({
-  items: defineTable({
-    header: v.string(),
-    type: v.string(),
-    status: v.string(),
-    target: v.int64(),
-    limit: v.int64(),
-    reviewer: v.string(),
-    order: v.float64(),
-  }),
+export class ItemType extends Schema.Literal(
+  "Table of Contents",
+  "Executive Summary",
+  "Technical Approach",
+  "Design",
+  "Capabilities",
+  "Focus Documents",
+  "Narrative",
+  "Cover Page",
+) {}
+
+export class ItemStatus extends Schema.Literal(
+  "Triage",
+  "Next up",
+  "In Progress",
+  "Done",
+) {}
+
+export const Item = Schema.Struct({
+  header: Schema.String,
+  type: ItemType,
+  status: ItemStatus,
+  target: Schema.BigInt,
+  limit: Schema.BigInt,
+  reviewer: Schema.String,
+  order: Schema.Number,
 });
-export default schema;
+
+export const confectSchema = defineSchema({
+  items: defineTable(Item),
+});
+
+export default confectSchema.convexSchemaDefinition;

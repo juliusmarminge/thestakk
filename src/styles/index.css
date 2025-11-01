@@ -2,7 +2,10 @@
 @import "./animations.css";
 @import "./themes.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:where(.light, .light *));
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant auto (&:where(.auto, .auto *));
+
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

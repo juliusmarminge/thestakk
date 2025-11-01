@@ -8,5 +8,9 @@
       "**/.vercel/**",
       "**/node_modules/**",
       "**/routeTree.gen.ts"
-    ]
+    ],
+    "rules": {
+      "typescript/no-misused-spread": "off",
+      "typescript/unbound-method": "off"
+    }
   }

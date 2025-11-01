@@ -11,15 +11,14 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ConvexReactClient } from "convex/react";
-import { fetchAuth } from "~/auth/server";
 import {
   ErrorComponent,
   NotFoundComponent,
 } from "~/components/error-component";
 import { Toaster } from "~/components/ui/sonner";
 import stylesUrl from "~/styles/index.css?url";
-import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
 import { themeColorMap } from "~/lib/themes";
+import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -35,11 +34,11 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  beforeLoad: async ({ context }) => {
-    const { userId, token } = await fetchAuth();
-    if (token) context.convexQueryClient.serverHttpClient?.setAuth(token);
-    return { userId, token };
-  },
+  // beforeLoad: async ({ context }) => {
+  //   const { userId, token } = await fetchAuth();
+  //   if (token) context.convexQueryClient.serverHttpClient?.setAuth(token);
+  //   return { userId, token };
+  // },
   component: RootComponent,
   errorComponent: ErrorComponent,
   notFoundComponent: NotFoundComponent,
@@ -48,19 +47,25 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <p>RootComponent</p>
-      {/* <Outlet /> */}
+      <Outlet />
     </RootDocument>
   );
 }
 
 function RootDocument(props: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="md:bg-sidebar" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="md:bg-sidebar theme-neutral"
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
-      <body className="overscroll-none bg-background font-sans antialiased">
+      <body
+        className="overscroll-none bg-background font-sans antialiased"
+        suppressHydrationWarning
+      >
         <ThemeProvider themeColorLookup={themeColorMap} />
         {props.children}
         <Toaster />
