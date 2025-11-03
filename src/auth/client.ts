@@ -1,7 +1,7 @@
 import { convexClient } from "@convex-dev/better-auth/client/plugins";
 import { queryOptions } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getCookie, getRequest } from "@tanstack/react-start/server";
+import { getCookie, getRequestHeader } from "@tanstack/react-start/server";
 import { passkeyClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
@@ -10,7 +10,7 @@ export const getConvexToken = createIsomorphicFn()
   .client(() => undefined);
 
 export const getRequestCookie = createIsomorphicFn()
-  .server(() => getRequest().headers.get("Cookie"))
+  .server(() => getRequestHeader("Cookie"))
   .client(() => undefined); // browser handles this
 
 export const authClient = createAuthClient({
