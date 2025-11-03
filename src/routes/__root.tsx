@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import { ConvexQueryClient } from "@convex-dev/react-query";
+import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   HeadContent,
@@ -7,19 +8,16 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ConvexReactClient } from "convex/react";
+import { getConvexToken } from "~/auth/client";
+import { TanstackDevtools } from "~/components/devtools";
 import {
   ErrorComponent,
   NotFoundComponent,
 } from "~/components/error-component";
 import { Toaster } from "~/components/ui/sonner";
-import stylesUrl from "~/styles/index.css?url";
 import { themeColorMap } from "~/lib/themes";
-import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
-import { getConvexToken } from "~/auth/client";
+import stylesUrl from "~/styles/index.css?url";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -72,18 +70,7 @@ function RootDocument(props: { children: React.ReactNode }) {
         {props.children}
         <Toaster />
         <Scripts />
-        <TanStackDevtools
-          plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-            },
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <TanstackDevtools />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 # 🐐 Stack
 
 - Reactive Database using Convex
+  - Write schemas and handlers in Effect using `Confect`
 
 - Powered by the TanStack Empire
   - `@tanstack/react-form`
@@ -18,6 +19,4 @@
   - Serverless AWS Lambda
   - Stateful ECS Service
 
-- Blazingly fast ⚡ linting using `Biome`
-  - Complemented by granular `ESLint` config
-    for e.g. React Compiler plugin
+- Blazingly fast ⚡ linting using `Oxlint` & `Oxfmt`
