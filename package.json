@@ -70,6 +70,9 @@
     "node": "^24.10.0"
   },
   "pnpm": {
+    "overrides": {
+      "@tanstack/react-store": "0.8.0"
+    },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide"
     ]

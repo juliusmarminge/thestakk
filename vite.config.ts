@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { nitro } from "nitro/vite";
+import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
   server: {
@@ -22,5 +23,6 @@ export default defineConfig({
     react(),
     tailwindcss(),
     nitro(),
+    inspect(),
   ],
 });
