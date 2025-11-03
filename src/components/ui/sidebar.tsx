@@ -1,6 +1,6 @@
 import type { LinkProps, RegisteredRouter } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createIsomorphicFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import * as Schema from "effect/Schema";
 import { type VariantProps, cva } from "class-variance-authority";
@@ -26,6 +26,7 @@ import {
 } from "~/components/ui/tooltip";
 import { useIsMobile } from "~/lib/use-mobile";
 import { cn } from "~/lib/utils";
+import * as Cookie from "cookie-es";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -34,16 +35,16 @@ const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
-export const getSidebarCookie = createServerFn().handler(() => {
-  const [open, side] = (getCookie(SIDEBAR_COOKIE_NAME) ?? "open-left").split(
-    "-",
+const getSidebarCookieValue = createIsomorphicFn()
+  .server(() => getCookie(SIDEBAR_COOKIE_NAME) ?? "open-left")
+  .client(
+    () => Cookie.parse(document.cookie)[SIDEBAR_COOKIE_NAME] ?? "open-left",
   );
 
-  return {
-    open: open === "open",
-    side: side === "right" ? ("right" as const) : ("left" as const),
-  };
-});
+const initialSidebarOpenState = () =>
+  getSidebarCookieValue().startsWith("open-");
+const initialSidebarSide = () =>
+  getSidebarCookieValue().endsWith("-left") ? "left" : "right";
 
 const updateSidebarCookie = createServerFn({ method: "POST" })
   .inputValidator(
@@ -89,8 +90,6 @@ function useSidebar() {
 }
 
 function SidebarProvider({
-  defaultOpen = true,
-  defaultSide = "left",
   open: openProp,
   onOpenChange: setOpenProp,
   className,
@@ -98,8 +97,6 @@ function SidebarProvider({
   children,
   ...props
 }: React.ComponentProps<"div"> & {
-  defaultOpen?: boolean;
-  defaultSide?: "left" | "right";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
@@ -108,8 +105,8 @@ function SidebarProvider({
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
-  const [side, _setSide] = React.useState(defaultSide);
+  const [_open, _setOpen] = React.useState<boolean>(initialSidebarOpenState);
+  const [side, _setSide] = React.useState<"left" | "right">(initialSidebarSide);
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {

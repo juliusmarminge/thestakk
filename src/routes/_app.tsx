@@ -1,26 +1,20 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { sessionQueryOptions } from "~/auth/client";
 
 import { AppSidebar } from "~/components/app-sidebar";
 import { SiteHeader } from "~/components/site-header";
-import {
-  SidebarInset,
-  SidebarProvider,
-  getSidebarCookie,
-} from "~/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
 export const Route = createFileRoute("/_app")({
-  loader: () => getSidebarCookie(),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(sessionQueryOptions);
+  },
   component: AppLayout,
 });
 
 function AppLayout() {
-  const { open: sidebarDefaultOpen, side: sidebarDefaultSide } =
-    Route.useLoaderData();
-
   return (
     <SidebarProvider
-      defaultOpen={sidebarDefaultOpen}
-      defaultSide={sidebarDefaultSide}
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",

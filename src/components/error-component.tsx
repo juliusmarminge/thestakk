@@ -3,9 +3,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Heading, Text } from "~/components/ui/text";
 
-export function ErrorComponent(props: ErrorComponentProps) {
-  console.log("error component props", props);
-
+export function ErrorComponent(_props: ErrorComponentProps) {
   return (
     <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden p-4">
       {/* Decorative background elements */}

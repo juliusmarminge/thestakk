@@ -19,6 +19,7 @@ import { Toaster } from "~/components/ui/sonner";
 import stylesUrl from "~/styles/index.css?url";
 import { themeColorMap } from "~/lib/themes";
 import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
+import { getConvexToken } from "~/auth/client";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -34,11 +35,12 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  // beforeLoad: async ({ context }) => {
-  //   const { userId, token } = await fetchAuth();
-  //   if (token) context.convexQueryClient.serverHttpClient?.setAuth(token);
-  //   return { userId, token };
-  // },
+  beforeLoad: async ({ context }) => {
+    const token = getConvexToken();
+    if (token) {
+      context.convexQueryClient.serverHttpClient?.setAuth(token);
+    }
+  },
   component: RootComponent,
   errorComponent: ErrorComponent,
   notFoundComponent: NotFoundComponent,
