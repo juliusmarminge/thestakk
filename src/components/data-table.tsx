@@ -105,7 +105,7 @@ import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { GetAllItemsResult, UpdateItemArgs } from "#convex/items.schemas";
 import { ItemStatus, ItemType } from "#convex/schema";
-import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { useAppForm } from "~/lib/use-form";
 import { Form } from "./ui/form";
@@ -327,7 +327,7 @@ const columns: ColumnDef<Item>[] = [
                     name={field.name}
                     value={field.state.value.toString()}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(BigInt(e.target.value))}
+                    onChange={(e) => field.handleChange(Number(e.target.value))}
                     aria-invalid={isInvalid}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -367,7 +367,7 @@ const columns: ColumnDef<Item>[] = [
                     name={field.name}
                     value={field.state.value.toString()}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(BigInt(e.target.value))}
+                    onChange={(e) => field.handleChange(Number(e.target.value))}
                     aria-invalid={isInvalid}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}

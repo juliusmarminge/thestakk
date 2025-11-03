@@ -23,8 +23,8 @@ export const Item = Schema.Struct({
   header: Schema.String,
   type: ItemType,
   status: ItemStatus,
-  target: Schema.BigInt,
-  limit: Schema.BigInt,
+  target: Schema.Int,
+  limit: Schema.Int,
   reviewer: Schema.String,
   order: Schema.Number,
 });
