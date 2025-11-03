@@ -15,8 +15,8 @@ export const items = internalMutation({
         order: faker.number.int({ min: 1, max: 1000 }),
         type: faker.helpers.arrayElement(ItemType.literals),
         status: faker.helpers.arrayElement(ItemStatus.literals),
-        target: faker.number.bigInt({ min: 1, max: 30 }).toString(),
-        limit: faker.number.bigInt({ min: 1, max: 40 }).toString(),
+        target: faker.number.int({ min: 1, max: 30 }),
+        limit: faker.number.int({ min: 1, max: 40 }),
         reviewer: faker.person.fullName(),
       });
     }

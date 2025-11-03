@@ -17,7 +17,7 @@ export const Route = createFileRoute("/login")({
 class LoginSchema extends Schema.Struct({
   email: Schema.String,
   password: Schema.String.pipe(Schema.minLength(8)),
-  name: Schema.optional(Schema.String),
+  name: Schema.String,
 }) {}
 
 function RouteComponent() {

@@ -1,4 +1,4 @@
-import { getRouteApi, useSearch } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import {
   type RegisteredRouter,
   type RouteIds,

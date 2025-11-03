@@ -5,6 +5,7 @@ import { ChartAreaInteractive } from "~/components/chart-area-interactive";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
 import { api } from "../../convex/_generated/api";
+import { DataTable } from "~/components/data-table";
 
 export const Route = createFileRoute("/_app/")({
   validateSearch: Schema.standardSchemaV1(
@@ -38,7 +39,7 @@ function RouteComponent() {
         <div className="px-4 lg:px-6">
           <ChartAreaInteractive />
         </div>
-        {/* <DataTable
+        <DataTable
           paginationState={paginationState}
           onPaginationChange={(pagination) => {
             setFilters(
@@ -47,7 +48,7 @@ function RouteComponent() {
                 : pagination,
             );
           }}
-        /> */}
+        />
       </div>
     </div>
   );

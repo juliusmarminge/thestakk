@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "check": "oxlint && oxfmt --check && tsc --noEmit",
-    "check:fix": "oxlint --fix && oxfmt && tsc --noEmit",
+    "check:fix": "oxlint --fix-dangerously && oxfmt && tsc --noEmit",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs"
   },
