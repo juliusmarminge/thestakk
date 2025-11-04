@@ -7,6 +7,7 @@
     "build": "vite build",
     "check": "oxlint && oxfmt --check && tsc --noEmit",
     "check:fix": "oxlint --fix-dangerously && oxfmt && tsc --noEmit",
+    "clean": "rm -rf .nitro .output .tanstack node_modules",
     "dev": "vite dev",
     "start": "node .output/server/index.mjs"
   },

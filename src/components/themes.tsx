@@ -28,14 +28,10 @@ import {
   type Register,
 } from "@tanstack-themes/react";
 import { ThemeVariant } from "~/lib/themes";
+import { ClientOnly } from "@tanstack/react-router";
 
 export function ModeToggle(props: { className?: string }) {
   const mode = useTheme((s) => s.themeMode);
-
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleToggleMode = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -53,42 +49,40 @@ export function ModeToggle(props: { className?: string }) {
         props.className,
       )}
     >
-      {mounted && (
-        <>
-          <div className="flex flex-1 items-center justify-between px-1.5">
-            <SunIcon
-              className={cn(
-                "size-4 text-sm transition-opacity",
-                mode !== "auto" ? "opacity-50" : "opacity-0",
-              )}
-            />
-            <MoonIcon
-              className={cn(
-                "size-4 text-sm transition-opacity",
-                mode !== "auto" ? "opacity-50" : "opacity-0",
-              )}
-            />
-            <span
-              className={cn(
-                "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 select-none font-black text-[.6rem] uppercase transition-opacity",
-                mode === "auto" ? "opacity-30 hover:opacity-50" : "opacity-0",
-              )}
-            >
-              Auto
-            </span>
-          </div>
-          <div
-            data-slot="theme-toggle-knob"
-            className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all! duration-300 ease-in-out dark:bg-accent-foreground"
-            style={{
-              left: mode === "auto" ? "50%" : mode === "light" ? "100%" : "0%",
-              transform: `translateX(${
-                mode === "auto" ? "-50%" : mode === "light" ? "-100%" : "0"
-              }) scale(${mode === "auto" ? 0 : 0.8})`,
-            }}
+      <ClientOnly>
+        <div className="flex flex-1 items-center justify-between px-1.5">
+          <SunIcon
+            className={cn(
+              "size-4 text-sm transition-opacity",
+              mode !== "auto" ? "opacity-50" : "opacity-0",
+            )}
           />
-        </>
-      )}
+          <MoonIcon
+            className={cn(
+              "size-4 text-sm transition-opacity",
+              mode !== "auto" ? "opacity-50" : "opacity-0",
+            )}
+          />
+          <span
+            className={cn(
+              "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 select-none font-black text-[.6rem] uppercase transition-opacity",
+              mode === "auto" ? "opacity-30 hover:opacity-50" : "opacity-0",
+            )}
+          >
+            Auto
+          </span>
+        </div>
+        <div
+          data-slot="theme-toggle-knob"
+          className="absolute aspect-square h-full rounded-full bg-white shadow-black/20 shadow-md transition-all! duration-300 ease-in-out dark:bg-accent-foreground"
+          style={{
+            left: mode === "auto" ? "50%" : mode === "light" ? "100%" : "0%",
+            transform: `translateX(${
+              mode === "auto" ? "-50%" : mode === "light" ? "-100%" : "0"
+            }) scale(${mode === "auto" ? 0 : 0.8})`,
+          }}
+        />
+      </ClientOnly>
     </button>
   );
 }
@@ -96,11 +90,6 @@ export function ModeToggle(props: { className?: string }) {
 export function ThemeSelector() {
   const activeTheme = useTheme((s) => s.variant);
   const baseColor = "neutral";
-
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div className="flex items-center gap-2">
@@ -115,9 +104,9 @@ export function ThemeSelector() {
             </span>
             <span className="block text-muted-foreground sm:hidden">Theme</span>
             <span className="min-w-[15ch] capitalize">
-              <Skeleton loading={!mounted}>
+              <ClientOnly fallback={<Skeleton>amber neutral</Skeleton>}>
                 {activeTheme} {baseColor}
-              </Skeleton>
+              </ClientOnly>
             </span>
           </Button>
         </DropdownMenuTrigger>
