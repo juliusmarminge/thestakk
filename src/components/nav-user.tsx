@@ -120,7 +120,7 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                authClient
+                void authClient
                   .signOut()
                   .then(() => qc.invalidateQueries())
                   .then(() => navigate({ to: "/login" }));

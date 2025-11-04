@@ -32,14 +32,14 @@ export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(
   });
 
   const setFilters = (partialFilters: Partial<typeof filters>) => {
-    navigate({
+    void navigate({
       search: (prev: any) => cleanEmptyParams({ ...prev, ...partialFilters }),
       to: ".",
     });
   };
 
   const resetFilters = () => {
-    navigate({
+    void navigate({
       search: {},
       to: ".",
     });
