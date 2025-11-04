@@ -33,6 +33,7 @@ export function getRouter() {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: "intent",
+    defaultPreloadStaleTime: 0, // Let React Query handle caching
     defaultOnCatch(error, errorInfo) {
       console.error("Error in router", error, errorInfo);
     },
