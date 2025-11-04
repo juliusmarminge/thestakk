@@ -66,12 +66,14 @@ function RouteComponent() {
       return;
     }
 
-    authClient.signIn.passkey({ autoFill: true }).then((result) => {
+    void authClient.signIn.passkey({ autoFill: true }).then((result) => {
       if (result?.error != null) {
         if (result.error.message !== "auth cancelled") {
           toast.error(result.error.message);
         }
-      } else navigate({ to: "/" });
+      } else {
+        void navigate({ to: "/" });
+      }
     });
   }, [navigate]);
 
@@ -132,12 +134,12 @@ function RouteComponent() {
             onClick={() =>
               startTransition(async () => {
                 const toastId = toast.loading("Signing in with passkey...");
-                await authClient.signIn.passkey().then((result) => {
+                await authClient.signIn.passkey().then(async (result) => {
                   if (result?.error != null) {
                     toast.error(result.error.message, { id: toastId });
                   } else {
                     toast.dismiss(toastId);
-                    navigate({ to: "/" });
+                    await navigate({ to: "/" });
                   }
                 });
               })

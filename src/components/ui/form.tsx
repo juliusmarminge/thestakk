@@ -55,7 +55,7 @@ export function Form<TForm extends AppFormApi>({
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       />
     </form.AppForm>

@@ -118,7 +118,7 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      updateSidebarCookie({ data: { open: openState, side } });
+      void updateSidebarCookie({ data: { open: openState, side } });
     },
     [setOpenProp, open, side],
   );
@@ -126,7 +126,7 @@ function SidebarProvider({
   const setSide = React.useCallback(
     (value: "left" | "right") => {
       _setSide(value);
-      updateSidebarCookie({ data: { open, side: value } });
+      void updateSidebarCookie({ data: { open, side: value } });
     },
     [open],
   );
