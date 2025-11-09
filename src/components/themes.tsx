@@ -1,5 +1,12 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
-import * as React from "react";
+import { ClientOnly } from "@tanstack/react-router";
+import {
+  type Register,
+  setVariant,
+  toggleMode,
+  useTheme,
+} from "@tanstack-themes/react";
+import type * as React from "react";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -12,6 +19,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Label } from "~/components/ui/label";
 import { Skeleton } from "~/components/ui/skeleton";
+import { ThemeVariant } from "~/lib/themes";
 import { cn } from "~/lib/utils";
 import {
   Card,
@@ -21,14 +29,6 @@ import {
   CardTitle,
 } from "./ui/card";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import {
-  setVariant,
-  toggleMode,
-  useTheme,
-  type Register,
-} from "@tanstack-themes/react";
-import { ThemeVariant } from "~/lib/themes";
-import { ClientOnly } from "@tanstack/react-router";
 
 export function ModeToggle(props: { className?: string }) {
   const mode = useTheme((s) => s.themeMode);
@@ -43,6 +43,7 @@ export function ModeToggle(props: { className?: string }) {
 
   return (
     <button
+      type="button"
       onClick={handleToggleMode}
       className={cn(
         "relative flex aspect-2/1 h-6 cursor-pointer items-center rounded-md bg-accent",

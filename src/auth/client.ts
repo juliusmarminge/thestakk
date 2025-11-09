@@ -9,7 +9,7 @@ export const getConvexToken = createIsomorphicFn()
   .server(() => getCookie("better-auth.convex_jwt"))
   .client(() => undefined);
 
-export const getRequestCookie = createIsomorphicFn()
+const getRequestCookie = createIsomorphicFn()
   .server(() => getRequestHeader("Cookie"))
   .client(() => undefined); // browser handles this
 

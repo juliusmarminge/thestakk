@@ -38,7 +38,7 @@ export function NavSecondary({
           ))}
           <SidebarMenuItem className="group-data-[collapsible=icon]:hidden">
             <SidebarMenuButton asChild>
-              <label>
+              <label htmlFor="theme-toggle">
                 <ThemeToggleIcon />
                 <span>Dark Mode</span>
                 <ModeToggle className="ml-auto" />

@@ -2,8 +2,9 @@ import type { LinkProps, RegisteredRouter } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { createIsomorphicFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as Cookie from "cookie-es";
 import * as Schema from "effect/Schema";
-import { type VariantProps, cva } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { PanelLeftIcon } from "~/components/icons";
@@ -26,7 +27,6 @@ import {
 } from "~/components/ui/tooltip";
 import { useIsMobile } from "~/lib/use-mobile";
 import { cn } from "~/lib/utils";
-import * as Cookie from "cookie-es";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -134,7 +134,7 @@ function SidebarProvider({
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-  }, [isMobile, setOpen, setOpenMobile]);
+  }, [isMobile, setOpen]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -168,17 +168,7 @@ function SidebarProvider({
       setOpenMobile,
       toggleSidebar,
     }),
-    [
-      state,
-      open,
-      setOpen,
-      setSide,
-      side,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    ],
+    [state, open, setOpen, setSide, side, isMobile, openMobile, toggleSidebar],
   );
 
   return (

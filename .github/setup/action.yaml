@@ -1,0 +1,13 @@
+name: Setup Workflow
+description: Composite action that sets up Node and installs dependencies
+runs:
+  using: "composite"
+  steps:
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
+
+    - shell: bash
+      run: pnpm install --ignore-scripts

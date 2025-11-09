@@ -1,8 +1,8 @@
-import { useSearch } from "@tanstack/react-router";
 import {
   type RegisteredRouter,
   type RouteIds,
   useNavigate,
+  useSearch,
 } from "@tanstack/react-router";
 
 function cleanEmptyParams<T extends Record<string, unknown>>(search: T) {

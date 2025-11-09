@@ -1,6 +1,6 @@
+import { Id } from "@rjdellecese/confect/server";
 import * as Schema from "effect/Schema";
 import { Item } from "./schema";
-import { Id } from "@rjdellecese/confect/server";
 
 export class GetAllItemsArgs extends Schema.Class<GetAllItemsArgs>(
   "GetAllItemsArgs",
