@@ -35,4 +35,4 @@ jobs:
         uses: ./.github/setup
 
       - name: Typecheck
-        run: pnpm run typecheck
+        run: pnpm tsgo --noEmit
