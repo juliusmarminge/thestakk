@@ -11,3 +11,6 @@ runs:
 
     - shell: bash
       run: pnpm install --ignore-scripts
+
+    - shell: bash
+      run: cp .env.example .env
