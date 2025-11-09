@@ -74,7 +74,7 @@ export function Field({
   className,
   fieldId,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & { fieldId: string }) {
+}: React.ComponentPropsWithoutRef<"fieldset"> & { fieldId: string }) {
   const value = getFormIds(fieldId);
 
   return (

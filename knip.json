@@ -6,6 +6,11 @@
     "interface": true,
     "type": true
   },
+  "ignoreDependencies": [
+    "@internationalized/date",
+    "cmdk",
+    "react-aria-components"
+  ],
   "tags": [
     "-lintignore"
   ]
