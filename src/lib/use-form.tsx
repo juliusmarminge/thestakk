@@ -16,7 +16,7 @@ const SelectField = React.lazy(() =>
   import("~/components/ui/form").then((mod) => ({ default: mod.SelectField })),
 );
 
-export const { useAppForm, withForm } = createFormHook({
+export const { useAppForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: {

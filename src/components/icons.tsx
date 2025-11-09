@@ -13,6 +13,7 @@ export function LoaderIcon({
       className={cn("size-6 fill-none stroke-2 stroke-current", className)}
       {...props}
     >
+      <title>Loader</title>
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 6l0 -3" />
       <path d="M16.25 7.75l2.15 -2.15" />
@@ -39,6 +40,7 @@ export function ThemeToggleIcon({
       className={cn("size-6 fill-none stroke-2 stroke-current", className)}
       {...props}
     >
+      <title>Theme Toggle</title>
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
       <path d="M12 3l0 18" />
@@ -60,6 +62,7 @@ export function PanelLeftIcon({
       className={cn("size-6 fill-current", className)}
       {...props}
     >
+      <title>Panel Left</title>
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M6 21a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3zm12 -16h-8v14h8a1 1 0 0 0 1 -1v-12a1 1 0 0 0 -1 -1" />
     </svg>
@@ -77,6 +80,7 @@ export function PanelRightIcon({
       className={cn("size-6 fill-current", className)}
       {...props}
     >
+      <title>Panel Right</title>
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M6 21a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3zm8 -16h-8a1 1 0 0 0 -1 1v12a1 1 0 0 0 1 1h8z" />
     </svg>

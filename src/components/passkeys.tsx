@@ -73,7 +73,7 @@ export function AddPasskeyDialog() {
   );
 }
 
-export function PasskeyItem({ passkey }: { passkey: Passkey }) {
+function PasskeyItem({ passkey }: { passkey: Passkey }) {
   const qc = useQueryClient();
   const { mutate: deletePasskey, isPending } = useMutation({
     mutationFn: () => authClient.passkey.deletePasskey({ id: passkey.id }),
@@ -105,7 +105,7 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
   );
 }
 
-export function PasskeyItemSkeleton(props: { pulse?: boolean }) {
+function PasskeyItemSkeleton(props: { pulse?: boolean }) {
   return (
     <li className="flex items-center justify-between p-4">
       <div className="flex items-center gap-3">

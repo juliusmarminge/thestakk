@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Text } from "~/components/ui/text";
+import type { Text } from "~/components/ui/text";
 import {
   FormItemContext,
   type FormItemContextValue,
@@ -20,10 +20,10 @@ import {
 } from "~/lib/form-context";
 import { cn } from "~/lib/utils";
 import {
-  FieldError,
-  FieldLabel,
   Field as FieldComponent,
   FieldDescription,
+  FieldError,
+  FieldLabel,
 } from "./field";
 
 // FIXME: TYPES

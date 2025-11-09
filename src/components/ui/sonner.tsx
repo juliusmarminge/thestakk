@@ -1,5 +1,5 @@
-import { Toaster as Sonner, type ToasterProps } from "sonner";
 import { useTheme } from "@tanstack-themes/react";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const mode = useTheme((s) => s.resolvedTheme);

@@ -1,4 +1,4 @@
-import { ThemeColorMap } from "@tanstack-themes/react";
+import type { ThemeColorMap } from "@tanstack-themes/react";
 import * as Schema from "effect/Schema";
 
 export const ThemeVariant = Schema.Literal(

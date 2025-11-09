@@ -59,22 +59,27 @@ function RouteComponent() {
   });
 
   useEffect(() => {
-    if (
-      !PublicKeyCredential.isConditionalMediationAvailable ||
-      !PublicKeyCredential.isConditionalMediationAvailable()
-    ) {
+    if (!PublicKeyCredential.isConditionalMediationAvailable?.()) {
+      console.log("[Login][Passkey] Conditional mediation is not available");
       return;
     }
 
-    void authClient.signIn.passkey({ autoFill: true }).then((result) => {
-      if (result?.error != null) {
-        if (result.error.message !== "auth cancelled") {
-          toast.error(result.error.message);
+    console.log("[Login][Passkey] Signing in with passkey...");
+    void authClient.signIn.passkey({ autoFill: true }).then(
+      (result) => {
+        console.log("[Login][Passkey] Result", result);
+        if (result?.error != null) {
+          if (result.error.message !== "auth cancelled") {
+            toast.error(result.error.message);
+          }
+        } else {
+          void navigate({ to: "/" });
         }
-      } else {
-        void navigate({ to: "/" });
-      }
-    });
+      },
+      (error) => {
+        console.error("[Login][Passkey] Error signing in with passkey", error);
+      },
+    );
   }, [navigate]);
 
   return (

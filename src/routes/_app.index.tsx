@@ -1,11 +1,11 @@
 import { convexQuery } from "@convex-dev/react-query";
-import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, ErrorComponent } from "@tanstack/react-router";
 import * as Schema from "effect/Schema";
 import { ChartAreaInteractive } from "~/components/chart-area-interactive";
+import { DataTable } from "~/components/data-table";
 import { SectionCards } from "~/components/section-cards";
 import { useFilters } from "~/lib/use-filters";
 import { api } from "../../convex/_generated/api";
-import { DataTable } from "~/components/data-table";
 
 export const Route = createFileRoute("/_app/")({
   validateSearch: Schema.standardSchemaV1(

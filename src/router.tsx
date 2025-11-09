@@ -1,11 +1,11 @@
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { MutationCache, QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { toast } from "sonner";
-import { routeTree } from "~/routeTree.gen";
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { authClient } from "~/auth/client";
+import { routeTree } from "~/routeTree.gen";
 
 export function getRouter() {
   const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;

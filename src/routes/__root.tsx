@@ -1,14 +1,14 @@
 /// <reference types="vite/client" />
-import { ConvexQueryClient } from "@convex-dev/react-query";
-import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
+import type { ConvexQueryClient } from "@convex-dev/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 import {
+  createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
-  createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { ConvexReactClient } from "convex/react";
+import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
+import type { ConvexReactClient } from "convex/react";
 import { getConvexToken } from "~/auth/client";
 import { TanstackDevtools } from "~/components/devtools";
 import {
@@ -56,7 +56,7 @@ function RootDocument(props: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className="md:bg-sidebar theme-neutral"
+      className="theme-neutral md:bg-sidebar"
       suppressHydrationWarning
     >
       <head>
