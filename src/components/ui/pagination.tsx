@@ -1,8 +1,11 @@
+import { mergeProps } from "@base-ui-components/react/merge-props";
+import { useRender } from "@base-ui-components/react/use-render";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalIcon,
 } from "@heroicons/react/16/solid";
+import type * as React from "react";
 import { type Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -36,30 +39,36 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean;
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">;
+  size?: React.ComponentProps<typeof Button>["size"];
+} & useRender.ComponentProps<"a">;
 
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  render,
   ...props
 }: PaginationLinkProps) {
-  return (
-    <a
-      aria-current={isActive ? "page" : undefined}
-      data-slot="pagination-link"
-      data-active={isActive}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
-        }),
-        className,
-      )}
-      {...props}
-    />
-  );
+  const defaultProps = {
+    "aria-current": isActive ? ("page" as const) : undefined,
+    "data-slot": "pagination-link",
+    "data-active": isActive,
+    className: render
+      ? className
+      : cn(
+          buttonVariants({
+            variant: isActive ? "outline" : "ghost",
+            size,
+          }),
+          className,
+        ),
+  };
+
+  return useRender({
+    defaultTagName: "a",
+    render,
+    props: mergeProps<"a">(defaultProps, props),
+  });
 }
 
 function PaginationPrevious({
@@ -70,11 +79,11 @@ function PaginationPrevious({
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
+      className={cn("max-sm:aspect-square max-sm:p-0", className)}
       {...props}
     >
-      <ChevronLeftIcon />
-      <span className="hidden sm:block">Previous</span>
+      <ChevronLeftIcon className="sm:-ms-1" />
+      <span className="max-sm:hidden">Previous</span>
     </PaginationLink>
   );
 }
@@ -87,11 +96,11 @@ function PaginationNext({
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
+      className={cn("max-sm:aspect-square max-sm:p-0", className)}
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
-      <ChevronRightIcon />
+      <span className="max-sm:hidden">Next</span>
+      <ChevronRightIcon className="sm:-me-1" />
     </PaginationLink>
   );
 }
@@ -104,7 +113,7 @@ function PaginationEllipsis({
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn("flex size-9 items-center justify-center", className)}
+      className={cn("flex min-w-7 justify-center", className)}
       {...props}
     >
       <EllipsisHorizontalIcon className="size-4" />

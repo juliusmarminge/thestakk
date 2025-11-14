@@ -23,7 +23,6 @@
 	},
 	"tailwindCSS.classFunctions": ["cva", "cn", "cx"],
 	"typescript.enablePromptUseWorkspaceTsdk": true,
-	"typescript.preferences.autoImportFileExcludePatterns": ["radix-ui/**"],
 	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
 	"typescript.tsdk": "node_modules/typescript/lib"
 }

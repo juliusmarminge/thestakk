@@ -6,7 +6,7 @@ import { authClient } from "~/auth/client";
 import { PasskeyIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { FieldGroup, FieldLegend, FieldSet } from "~/components/ui/field";
-import { Form } from "~/components/ui/form";
+
 import { Text } from "~/components/ui/text";
 import { useAppForm } from "~/lib/use-form";
 
@@ -84,8 +84,8 @@ function RouteComponent() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <Form
-        form={form as never}
+      <form.Form
+        form={form}
         className="w-full max-w-lg space-y-6 rounded-xl border bg-linear-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
       >
         <FieldSet disabled={isPending || form.state.isSubmitting}>
@@ -165,7 +165,7 @@ function RouteComponent() {
               : "Don't have an account? Sign up"}
           </Button>
         </div>
-      </Form>
+      </form.Form>
     </div>
   );
 }

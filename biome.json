@@ -11,8 +11,7 @@
       "src/**/*.tsx",
       "convex/**/*.ts",
       "!convex/_generated",
-      "!**/*.gen.ts",
-      "!**/data-table-filter"
+      "!**/*.gen.ts"
     ],
     "ignoreUnknown": false
   },
@@ -30,7 +29,10 @@
         "noChildrenProp": "off"
       },
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe"
+        }
       },
       "suspicious": {
         "noExplicitAny": "off",

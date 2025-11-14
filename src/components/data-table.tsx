@@ -78,22 +78,21 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "~/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
-import { Form } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
+  Menu,
+  MenuCheckboxItem,
+  MenuItem,
+  MenuPopup,
+  MenuSeparator,
+  MenuTrigger,
+} from "~/components/ui/menu";
+import {
   Select,
-  SelectContent,
   SelectItem,
+  SelectPopup,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
@@ -236,10 +235,8 @@ const columns: ColumnDef<Item>[] = [
       return (
         <div className="flex items-center justify-center">
           <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
+            indeterminate={table.getIsSomePageRowsSelected()}
+            checked={table.getIsAllPageRowsSelected()}
             onCheckedChange={(value) =>
               table.toggleAllPageRowsSelected(!!value)
             }
@@ -414,15 +411,15 @@ const columns: ColumnDef<Item>[] = [
                     aria-invalid={isInvalid}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a reviewer" />
+                      <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectPopup>
                       <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
                       <SelectItem value="Jamik Tashpulatov">
                         Jamik Tashpulatov
                       </SelectItem>
                       <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
-                    </SelectContent>
+                    </SelectPopup>
                   </Select>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -439,32 +436,29 @@ const columns: ColumnDef<Item>[] = [
       const deleteItem = useDeleteItem();
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-              size="icon"
-            >
-              <EllipsisVerticalIcon />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
+        <Menu>
+          <MenuTrigger
+            className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+            render={<Button variant="ghost" size="icon" />}
+          >
+            <EllipsisVerticalIcon />
+            <span className="sr-only">Open menu</span>
+          </MenuTrigger>
+          <MenuPopup align="end" className="w-32">
+            <MenuItem>Edit</MenuItem>
+            <MenuItem>Make a copy</MenuItem>
+            <MenuItem>Favorite</MenuItem>
+            <MenuSeparator />
+            <MenuItem
               variant="destructive"
               onClick={() => {
                 deleteItem.mutate({ id: row.original._id });
               }}
             >
               Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </MenuItem>
+          </MenuPopup>
+        </Menu>
       );
     },
   },
@@ -565,14 +559,14 @@ export function DataTable(props: {
             size="sm"
             id="view-selector"
           >
-            <SelectValue placeholder="Select a view" />
+            <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectPopup>
             <SelectItem value="outline">Outline</SelectItem>
             <SelectItem value="past-performance">Past Performance</SelectItem>
             <SelectItem value="key-personnel">Key Personnel</SelectItem>
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
-          </SelectContent>
+          </SelectPopup>
         </Select>
         <TabsList className="@4xl/main:flex hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
           <TabsTrigger value="outline">Outline</TabsTrigger>
@@ -621,16 +615,14 @@ export function DataTable(props: {
 function TableActions({ table }: { table: ReactTable<Item> }) {
   return (
     <div className="flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            <ViewColumnsIcon />
-            <span className="hidden lg:inline">Customize Columns</span>
-            <span className="lg:hidden">Columns</span>
-            <ChevronDownIcon />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+      <Menu>
+        <MenuTrigger render={<Button variant="outline" size="sm" />}>
+          <ViewColumnsIcon />
+          <span className="hidden lg:inline">Customize Columns</span>
+          <span className="lg:hidden">Columns</span>
+          <ChevronDownIcon />
+        </MenuTrigger>
+        <MenuPopup align="end" className="w-56">
           {table
             .getAllColumns()
             .filter(
@@ -638,7 +630,7 @@ function TableActions({ table }: { table: ReactTable<Item> }) {
                 typeof column.accessorFn !== "undefined" && column.getCanHide(),
             )
             .map((column) => (
-              <DropdownMenuCheckboxItem
+              <MenuCheckboxItem
                 key={column.id}
                 className="capitalize"
                 checked={column.getIsVisible()}
@@ -647,10 +639,10 @@ function TableActions({ table }: { table: ReactTable<Item> }) {
                 }
               >
                 {column.id}
-              </DropdownMenuCheckboxItem>
+              </MenuCheckboxItem>
             ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </MenuPopup>
+      </Menu>
       <Button variant="outline" size="sm">
         <PlusIcon />
         <span className="hidden lg:inline">Add Section</span>
@@ -744,15 +736,15 @@ function TablePagination({ table }: { table: ReactTable<Item> }) {
             }}
           >
             <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectPopup>
               {[10, 20, 30, 40, 50].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
               ))}
-            </SelectContent>
+            </SelectPopup>
           </Select>
         </div>
         <div className="flex w-fit items-center justify-center font-medium text-sm">
@@ -886,7 +878,7 @@ function TableCellViewer({ item }: { item: Item }) {
         </Button>
       </DrawerTrigger>
       <DrawerContent asChild>
-        <Form form={form as never}>
+        <form.Form form={form}>
           <DrawerHandle />
           <DrawerHeader className="gap-1">
             <DrawerTitle>{item.header}</DrawerTitle>
@@ -964,8 +956,7 @@ function TableCellViewer({ item }: { item: Item }) {
                   children={(field) => (
                     <field.SelectField
                       label="Type"
-                      placeholder="Select a type"
-                      options={ItemType.literals.map((type) => ({
+                      items={ItemType.literals.map((type) => ({
                         label: type,
                         value: type,
                       }))}
@@ -978,8 +969,7 @@ function TableCellViewer({ item }: { item: Item }) {
                   children={(field) => (
                     <field.SelectField
                       label="Status"
-                      placeholder="Select a status"
-                      options={ItemStatus.literals.map((status) => ({
+                      items={ItemStatus.literals.map((status) => ({
                         label: status,
                         value: status,
                       }))}
@@ -1015,8 +1005,7 @@ function TableCellViewer({ item }: { item: Item }) {
                 children={(field) => (
                   <field.SelectField
                     label="Reviewer"
-                    placeholder="Select a reviewer"
-                    options={[
+                    items={[
                       "Eddie Lake",
                       "Jamik Tashpulatov",
                       "Emily Whalen",
@@ -1036,7 +1025,7 @@ function TableCellViewer({ item }: { item: Item }) {
               <Button variant="outline">Close and discard changes</Button>
             </DrawerClose>
           </DrawerFooter>
-        </Form>
+        </form.Form>
       </DrawerContent>
     </Drawer>
   );

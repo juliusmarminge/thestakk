@@ -1,38 +1,52 @@
+import { Dialog as SheetPrimitive } from "@base-ui-components/react/dialog";
 import { XMarkIcon } from "@heroicons/react/16/solid";
-import { Dialog as SheetPrimitive } from "radix-ui";
+import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "~/lib/utils";
 
-function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
-}
+const Sheet = SheetPrimitive.Root;
 
-function SheetTrigger({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
+function SheetTrigger(props: SheetPrimitive.Trigger.Props) {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
-function SheetClose({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Close>) {
+function SheetPortal(props: SheetPrimitive.Portal.Props) {
+  return <SheetPrimitive.Portal {...props} />;
+}
+
+function SheetClose(props: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
-function SheetPortal({
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Portal>) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
+const sheetPopupVariants = cva(
+  "fixed z-50 flex flex-col gap-4 overflow-y-auto bg-popover text-popover-foreground shadow-lg transition-[opacity,translate] duration-300 ease-in-out will-change-transform [--sheet-inset:0px] data-ending-style:opacity-0 data-starting-style:opacity-0",
+  {
+    variants: {
+      inset: {
+        true: "sm:rounded-xl sm:[--sheet-inset:1rem]",
+      },
+      side: {
+        right:
+          "inset-y-(--sheet-inset) right-(--sheet-inset) h-dvh w-[calc(100%-(--spacing(12)))] max-w-sm data-ending-style:translate-x-12 data-starting-style:translate-x-12 sm:h-[calc(100dvh-var(--sheet-inset)*2)]",
+        left: "inset-y-(--sheet-inset) left-(--sheet-inset) h-dvh w-[calc(100%-(--spacing(12)))] max-w-sm data-ending-style:-translate-x-12 data-starting-style:-translate-x-12 sm:h-[calc(100dvh-var(--sheet-inset)*2)]",
+        top: "inset-x-(--sheet-inset) top-(--sheet-inset) h-auto max-h-[calc(100dvh-var(--sheet-inset)*2)] data-ending-style:-translate-y-12 data-starting-style:-translate-y-12",
+        bottom:
+          "inset-x-(--sheet-inset) bottom-(--sheet-inset) h-auto max-h-[calc(100dvh-var(--sheet-inset)*2)] data-ending-style:translate-y-12 data-starting-style:translate-y-12",
+      },
+    },
+    defaultVariants: {
+      inset: false,
+      side: "right",
+    },
+  },
+);
 
-function SheetOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
+function SheetBackdrop({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
-    <SheetPrimitive.Overlay
-      data-slot="sheet-overlay"
+    <SheetPrimitive.Backdrop
+      data-slot="sheet-backdrop"
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
         className,
       )}
       {...props}
@@ -40,39 +54,32 @@ function SheetOverlay({
   );
 }
 
-function SheetContent({
+function SheetPopup({
   className,
   children,
+  showCloseButton = true,
   side = "right",
+  inset = false,
   ...props
-}: React.ComponentProps<typeof SheetPrimitive.Content> & {
-  side?: "top" | "right" | "bottom" | "left";
-}) {
+}: SheetPrimitive.Popup.Props & {
+  showCloseButton?: boolean;
+} & VariantProps<typeof sheetPopupVariants>) {
   return (
     <SheetPortal>
-      <SheetOverlay />
-      <SheetPrimitive.Content
-        data-slot="sheet-content"
-        className={cn(
-          "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-500",
-          side === "right" &&
-            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
-          side === "left" &&
-            "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
-          side === "top" &&
-            "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b",
-          side === "bottom" &&
-            "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
-          className,
-        )}
+      <SheetBackdrop />
+      <SheetPrimitive.Popup
+        data-slot="sheet-popup"
+        className={cn(sheetPopupVariants({ inset, side }), className)}
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-          <XMarkIcon className="size-4" />
-          <span className="sr-only">Close</span>
-        </SheetPrimitive.Close>
-      </SheetPrimitive.Content>
+        {showCloseButton && (
+          <SheetPrimitive.Close className="absolute end-2 top-2 inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md border border-transparent opacity-72 outline-none transition-[color,background-color,box-shadow,opacity] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0">
+            <XMarkIcon />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        )}
+      </SheetPrimitive.Popup>
     </SheetPortal>
   );
 }
@@ -97,14 +104,11 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function SheetTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Title>) {
+function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn("font-semibold text-foreground", className)}
+      className={cn("font-semibold", className)}
       {...props}
     />
   );
@@ -113,7 +117,7 @@ function SheetTitle({
 function SheetDescription({
   className,
   ...props
-}: React.ComponentProps<typeof SheetPrimitive.Description>) {
+}: SheetPrimitive.Description.Props) {
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
@@ -126,10 +130,13 @@ function SheetDescription({
 export {
   Sheet,
   SheetTrigger,
+  SheetPortal,
   SheetClose,
-  SheetContent,
+  SheetBackdrop,
+  SheetPopup,
   SheetHeader,
   SheetFooter,
   SheetTitle,
   SheetDescription,
+  sheetPopupVariants,
 };

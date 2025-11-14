@@ -8,16 +8,16 @@ import {
 } from "@tanstack-themes/react";
 import type * as React from "react";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { Label } from "~/components/ui/label";
+import {
+  Menu,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuPopup,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuTrigger,
+} from "~/components/ui/menu";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ThemeVariant } from "~/lib/themes";
 import { cn } from "~/lib/utils";
@@ -97,24 +97,22 @@ export function ThemeSelector() {
       <Label htmlFor="theme-selector" className="sr-only">
         Theme
       </Label>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">
-            <span className="hidden text-muted-foreground sm:block">
-              Select a theme:
-            </span>
-            <span className="block text-muted-foreground sm:hidden">Theme</span>
-            <span className="min-w-[15ch] capitalize">
-              <ClientOnly fallback={<Skeleton>amber neutral</Skeleton>}>
-                {activeTheme} {baseColor}
-              </ClientOnly>
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width)">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>Color Scheme</DropdownMenuLabel>
-            <DropdownMenuRadioGroup
+      <Menu>
+        <MenuTrigger render={<Button variant="outline" />}>
+          <span className="hidden text-muted-foreground sm:block">
+            Select a theme:
+          </span>
+          <span className="block text-muted-foreground sm:hidden">Theme</span>
+          <span className="min-w-[15ch] capitalize">
+            <ClientOnly fallback={<Skeleton>amber neutral</Skeleton>}>
+              {activeTheme} {baseColor}
+            </ClientOnly>
+          </span>
+        </MenuTrigger>
+        <MenuPopup className="w-(--radix--menu-trigger-width)">
+          <MenuGroup>
+            <MenuGroupLabel>Color Scheme</MenuGroupLabel>
+            <MenuRadioGroup
               value={activeTheme}
               onValueChange={(value) =>
                 setVariant(value as Register["variant"])
@@ -122,19 +120,19 @@ export function ThemeSelector() {
             >
               {ThemeVariant.literals.map((theme) => {
                 return (
-                  <DropdownMenuRadioItem
+                  <MenuRadioItem
                     key={theme}
                     value={theme}
                     className="capitalize"
                   >
                     {theme}
-                  </DropdownMenuRadioItem>
+                  </MenuRadioItem>
                 );
               })}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            </MenuRadioGroup>
+          </MenuGroup>
+        </MenuPopup>
+      </Menu>
     </div>
   );
 }
@@ -148,7 +146,7 @@ export function ThemePreview() {
       className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
       value={`${baseColor}-${activeTheme}`}
       onValueChange={(value) => {
-        const [_baseColor, activeTheme] = value.split("-");
+        const [_baseColor, activeTheme] = (value as string).split("-");
         setVariant(activeTheme as Register["variant"]);
       }}
     >
