@@ -90,24 +90,25 @@ export function NavUser() {
             <EllipsisVerticalIcon className="ml-auto size-4" />
           </MenuTrigger>
           <MenuPopup
-            className="w-(--radix--menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
-            <MenuGroupLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {UserAvatar}
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
-                    {session.user.name}
-                  </span>
-                  <span className="truncate text-muted-foreground text-xs">
-                    {session.user.email}
-                  </span>
+            <MenuGroup>
+              <MenuGroupLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  {UserAvatar}
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">
+                      {session.user.name}
+                    </span>
+                    <span className="truncate text-muted-foreground text-xs">
+                      {session.user.email}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </MenuGroupLabel>
+              </MenuGroupLabel>
+            </MenuGroup>
             <MenuSeparator />
             <MenuGroup>
               <MenuItem render={<Link to="/account" />}>

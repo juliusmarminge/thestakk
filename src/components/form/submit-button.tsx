@@ -1,4 +1,4 @@
-import { Button, LoadingButton } from "../ui/button";
+import { type Button, LoadingButton } from "../ui/button";
 import { useFormContext } from "./context";
 
 export function SubscribeButton(props: React.ComponentProps<typeof Button>) {

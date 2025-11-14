@@ -10,7 +10,7 @@ export function LoaderIcon({
       viewBox="0 0 24 24"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn("size-6 fill-none stroke-2 stroke-current", className)}
+      className={cn("fill-none stroke-2 stroke-current", className)}
       {...props}
     >
       <title>Loader</title>

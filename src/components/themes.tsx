@@ -109,7 +109,7 @@ export function ThemeSelector() {
             </ClientOnly>
           </span>
         </MenuTrigger>
-        <MenuPopup className="w-(--radix--menu-trigger-width)">
+        <MenuPopup>
           <MenuGroup>
             <MenuGroupLabel>Color Scheme</MenuGroupLabel>
             <MenuRadioGroup
