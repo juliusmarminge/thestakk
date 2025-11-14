@@ -12,12 +12,11 @@ import { PasskeyIcon } from "~/components/icons";
 import { Button, LoadingButton } from "~/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
+  DialogPopup,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Form } from "~/components/ui/form";
 import { useAppForm } from "~/lib/use-form";
 import { cn } from "~/lib/utils";
 
@@ -43,17 +42,15 @@ export function AddPasskeyDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <PlusIcon className="size-4" />
-          Create Passkey
-        </Button>
+      <DialogTrigger render={<Button variant="outline" />}>
+        <PlusIcon className="size-4" />
+        Create Passkey
       </DialogTrigger>
-      <DialogContent>
+      <DialogPopup>
         <DialogHeader>
           <DialogTitle>Create a Passkey</DialogTitle>
         </DialogHeader>
-        <Form form={form as never} className="flex flex-col gap-4">
+        <form.Form form={form} className="flex flex-col gap-4">
           <form.AppField
             name="name"
             children={(field) => (
@@ -67,8 +64,8 @@ export function AddPasskeyDialog() {
           <form.SubscribeButton type="submit">
             Create passkey
           </form.SubscribeButton>
-        </Form>
-      </DialogContent>
+        </form.Form>
+      </DialogPopup>
     </Dialog>
   );
 }

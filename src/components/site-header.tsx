@@ -4,8 +4,8 @@ import { Separator } from "~/components/ui/separator";
 import { SidebarTrigger, useSidebar } from "~/components/ui/sidebar";
 import {
   ContextMenu,
-  ContextMenuContent,
   ContextMenuLabel,
+  ContextMenuPopup,
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuTrigger,
@@ -28,7 +28,7 @@ export function SiteHeader() {
           <ContextMenuTrigger>
             <SidebarTrigger className="-ml-1" />
           </ContextMenuTrigger>
-          <ContextMenuContent>
+          <ContextMenuPopup>
             <ContextMenuLabel>Sidebar Location</ContextMenuLabel>
             <ContextMenuRadioGroup
               value={side}
@@ -37,7 +37,7 @@ export function SiteHeader() {
               <ContextMenuRadioItem value="left">Left</ContextMenuRadioItem>
               <ContextMenuRadioItem value="right">Right</ContextMenuRadioItem>
             </ContextMenuRadioGroup>
-          </ContextMenuContent>
+          </ContextMenuPopup>
         </ContextMenu>
         <Separator
           orientation="vertical"
@@ -45,15 +45,19 @@ export function SiteHeader() {
         />
         <h1 className="font-medium text-base">Documents</h1>
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/juliusmarminge/thestakk"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:flex dark:text-foreground"
+            render={
+              <a
+                href="https://github.com/juliusmarminge/thestakk"
+                rel="noopener noreferrer"
+                target="_blank"
+              />
+            }
+          >
+            GitHub
           </Button>
           <ThemeSelector />
           <ModeToggle className="h-9" />

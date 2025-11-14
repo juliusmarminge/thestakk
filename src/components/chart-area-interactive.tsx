@@ -17,8 +17,8 @@ import {
 } from "~/components/ui/chart";
 import {
   Select,
-  SelectContent,
   SelectItem,
+  SelectPopup,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
@@ -169,9 +169,8 @@ export function ChartAreaInteractive() {
         </CardDescription>
         <CardAction>
           <ToggleGroup
-            type="single"
-            value={timeRange}
-            onValueChange={setTimeRange}
+            value={[timeRange]}
+            onValueChange={([value]) => setTimeRange(value)}
             variant="outline"
             className="@[767px]/card:flex hidden *:data-[slot=toggle-group-item]:px-4!"
           >
@@ -185,9 +184,9 @@ export function ChartAreaInteractive() {
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="Last 3 months" />
+              <SelectValue />
             </SelectTrigger>
-            <SelectContent className="rounded-xl">
+            <SelectPopup className="rounded-xl">
               <SelectItem value="90d" className="rounded-lg">
                 Last 3 months
               </SelectItem>
@@ -197,7 +196,7 @@ export function ChartAreaInteractive() {
               <SelectItem value="7d" className="rounded-lg">
                 Last 7 days
               </SelectItem>
-            </SelectContent>
+            </SelectPopup>
           </Select>
         </CardAction>
       </CardHeader>

@@ -1,14 +1,13 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/router.tsx", "src/routes/**/*.tsx"],
-  "ignore": ["src/components/ui/**", "src/components/data-table-filter/**"],
+  "ignore": ["src/components/ui/**"],
   "ignoreExportsUsedInFile": {
     "interface": true,
     "type": true
   },
   "ignoreDependencies": [
     "@internationalized/date",
-    "cmdk",
     "react-aria-components"
   ],
   "tags": [
