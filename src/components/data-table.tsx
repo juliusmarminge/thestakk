@@ -325,7 +325,7 @@ const columns: ColumnDef<Item>[] = [
                     value={field.state.value.toString()}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(Number(e.target.value))}
-                    aria-invalid={isInvalid}
+                    aria-invalid={isInvalid ? true : undefined}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -365,7 +365,7 @@ const columns: ColumnDef<Item>[] = [
                     value={field.state.value.toString()}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(Number(e.target.value))}
-                    aria-invalid={isInvalid}
+                    aria-invalid={isInvalid ? true : undefined}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -408,7 +408,7 @@ const columns: ColumnDef<Item>[] = [
                     name={field.name}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
-                    aria-invalid={isInvalid}
+                    aria-invalid={isInvalid ? true : undefined}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -439,7 +439,7 @@ const columns: ColumnDef<Item>[] = [
         <Menu>
           <MenuTrigger
             className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-            render={<Button variant="ghost" size="icon" />}
+            render={<Button variant="ghost" />}
           >
             <EllipsisVerticalIcon />
             <span className="sr-only">Open menu</span>
@@ -544,6 +544,13 @@ export function DataTable(props: {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const viewItems = [
+    { label: "Outline", value: "outline" },
+    { label: "Past Performance", value: "past-performance" },
+    { label: "Key Personnel", value: "key-personnel" },
+    { label: "Focus Documents", value: "focus-documents" },
+  ];
+
   return (
     <Tabs
       defaultValue="outline"
@@ -553,19 +560,19 @@ export function DataTable(props: {
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
-        <Select defaultValue="outline">
+        <Select defaultValue="outline" items={viewItems}>
           <SelectTrigger
             className="flex @4xl/main:hidden w-fit"
-            size="sm"
             id="view-selector"
           >
             <SelectValue />
           </SelectTrigger>
           <SelectPopup>
-            <SelectItem value="outline">Outline</SelectItem>
-            <SelectItem value="past-performance">Past Performance</SelectItem>
-            <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
+            {viewItems.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
           </SelectPopup>
         </Select>
         <TabsList className="@4xl/main:flex hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
@@ -616,13 +623,13 @@ function TableActions({ table }: { table: ReactTable<Item> }) {
   return (
     <div className="flex items-center gap-2">
       <Menu>
-        <MenuTrigger render={<Button variant="outline" size="sm" />}>
+        <MenuTrigger render={<Button variant="outline" />}>
           <ViewColumnsIcon />
           <span className="hidden lg:inline">Customize Columns</span>
           <span className="lg:hidden">Columns</span>
           <ChevronDownIcon />
         </MenuTrigger>
-        <MenuPopup align="end" className="w-56">
+        <MenuPopup align="end">
           {table
             .getAllColumns()
             .filter(
@@ -643,7 +650,7 @@ function TableActions({ table }: { table: ReactTable<Item> }) {
             ))}
         </MenuPopup>
       </Menu>
-      <Button variant="outline" size="sm">
+      <Button variant="outline">
         <PlusIcon />
         <span className="hidden lg:inline">Add Section</span>
       </Button>
@@ -735,7 +742,7 @@ function TablePagination({ table }: { table: ReactTable<Item> }) {
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+            <SelectTrigger className="w-20" id="rows-per-page">
               <SelectValue />
             </SelectTrigger>
             <SelectPopup>

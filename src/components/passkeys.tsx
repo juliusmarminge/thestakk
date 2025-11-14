@@ -61,9 +61,7 @@ export function AddPasskeyDialog() {
               />
             )}
           />
-          <form.SubscribeButton type="submit">
-            Create passkey
-          </form.SubscribeButton>
+          <form.SubscribeButton>Create passkey</form.SubscribeButton>
         </form.Form>
       </DialogPopup>
     </Dialog>
@@ -92,7 +90,6 @@ function PasskeyItem({ passkey }: { passkey: Passkey }) {
       </div>
       <LoadingButton
         variant="ghost"
-        size="sm"
         onClick={() => deletePasskey()}
         isLoading={isPending}
       >

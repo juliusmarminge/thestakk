@@ -11,7 +11,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "../ui/input-group";
-import { FieldProps, useFieldContext } from "./context";
+import { type FieldProps, useFieldContext } from "./context";
 
 export function TextField({
   label,
@@ -32,6 +32,7 @@ export function TextField({
 }) {
   const field = useFieldContext<string>();
   const errors = useStore(field.store, (state) => state.meta.errors);
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
   return (
     <Field className={fieldClassName}>
@@ -53,7 +54,7 @@ export function TextField({
         <InputGroupInput
           id={field.name}
           name={field.name}
-          aria-invalid={field.state.meta.isTouched && !field.state.meta.isValid}
+          aria-invalid={isInvalid ? true : undefined}
           value={field.state.value ?? ""}
           onChange={(e) => field.handleChange(e.target.value)}
           {...props}

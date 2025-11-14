@@ -181,7 +181,6 @@ export function ChartAreaInteractive() {
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
               className="flex @[767px]/card:hidden w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-              size="sm"
               aria-label="Select a value"
             >
               <SelectValue />

@@ -54,11 +54,11 @@ export function SiteHeader() {
                 href="https://github.com/juliusmarminge/thestakk"
                 rel="noopener noreferrer"
                 target="_blank"
-              />
+              >
+                GitHub
+              </a>
             }
-          >
-            GitHub
-          </Button>
+          />
           <ThemeSelector />
           <ModeToggle className="h-9" />
         </div>
