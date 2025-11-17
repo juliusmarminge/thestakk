@@ -45,8 +45,8 @@ importers:
         specifier: ^0.0.31
         version: 0.0.31(@effect/platform@0.92.1(effect@3.19.3))(convex@1.29.0(react@19.2.0))(effect@3.19.3)
       '@tanstack-themes/react':
-        specifier: ^0.0.3
-        version: 0.0.3(@tanstack/react-router@1.135.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)))(@tanstack/react-store@0.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)(react@19.2.0)
+        specifier: ^0.0.7
+        version: 0.0.7(@tanstack/react-router@1.135.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)))(@tanstack/react-store@0.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)(react@19.2.0)
       '@tanstack/react-form':
         specifier: ^1.23.8
         version: 1.23.8(@tanstack/react-start@1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -2650,14 +2650,14 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@tanstack-themes/core@0.0.3':
-    resolution: {integrity: sha512-IF5xzVW6gbN+MbtdQD02vbvDT5A7QGQrF6/4ueCbOO5AgIDdZnWo+BauMfNkpWzUEu/ho+I8472mL9NTR9E8xw==}
+  '@tanstack-themes/core@0.0.7':
+    resolution: {integrity: sha512-LCAFj13VCuL59DrfcRLcP6e7OjXS2Ko36rnwiJhk++XYw39o229PEik4WFRZAG6R+hz8stAjjPNC6Vr6m2A9EQ==}
     peerDependencies:
       '@tanstack/start-client-core': ^1.130
       '@tanstack/store': '*'
 
-  '@tanstack-themes/react@0.0.3':
-    resolution: {integrity: sha512-W1cfT0trVsO298gWA975CMV2v65KNGts7rX1JUavyY2mD+m+1dTrhdghBri2BQUKboCcK45EiLK3jFCHibsbEw==}
+  '@tanstack-themes/react@0.0.7':
+    resolution: {integrity: sha512-/uoqR9H/3gnmGTjB15jC97ie7rXN2pE1SSnMsaSGsRoA9et1dpR4rQeWFQ+QxpXCtvjtwYRoNIzIt9bIl2bWjA==}
     peerDependencies:
       '@tanstack/react-router': ^1.130
       '@tanstack/react-start': ^1.130
@@ -7620,14 +7620,14 @@ snapshots:
       tailwindcss: 4.1.17
       vite: rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)
 
-  '@tanstack-themes/core@0.0.3(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)':
+  '@tanstack-themes/core@0.0.7(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)':
     dependencies:
       '@tanstack/start-client-core': 1.135.2
       '@tanstack/store': 0.8.0
 
-  '@tanstack-themes/react@0.0.3(@tanstack/react-router@1.135.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)))(@tanstack/react-store@0.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)(react@19.2.0)':
+  '@tanstack-themes/react@0.0.7(@tanstack/react-router@1.135.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6)))(@tanstack/react-store@0.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)(react@19.2.0)':
     dependencies:
-      '@tanstack-themes/core': 0.0.3(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)
+      '@tanstack-themes/core': 0.0.7(@tanstack/start-client-core@1.135.2)(@tanstack/store@0.8.0)
       '@tanstack/react-router': 1.135.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tanstack/react-start': 1.135.2(crossws@0.4.1(srvx@0.9.6))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rolldown-vite@7.2.0(@types/node@24.10.1)(esbuild@0.25.11)(jiti@2.6.1)(terser@5.39.0)(tsx@4.20.6))
       '@tanstack/react-store': 0.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

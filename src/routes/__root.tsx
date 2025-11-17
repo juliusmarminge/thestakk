@@ -7,7 +7,12 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
-import { getThemeColorMetaTags, ThemeProvider } from "@tanstack-themes/react";
+import {
+  getThemeColorMetaTags,
+  ThemeProvider,
+  useBodyAttributes,
+  useHtmlAttributes,
+} from "@tanstack-themes/react";
 import type { ConvexReactClient } from "convex/react";
 import { getConvexToken } from "~/auth/client";
 import { TanstackDevtools } from "~/components/devtools";
@@ -17,6 +22,7 @@ import {
 } from "~/components/error-component";
 import { Toaster } from "~/components/ui/sonner";
 import { themeColorMap } from "~/lib/themes";
+import { cn } from "~/lib/utils";
 import stylesUrl from "~/styles/index.css?url";
 
 export const Route = createRootRouteWithContext<{
@@ -45,29 +51,30 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
-  return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
-  );
-}
-
-function RootDocument(props: { children: React.ReactNode }) {
+  const { className: htmlClassName, ...htmlAttributes } = useHtmlAttributes();
+  const { className: bodyClassName, ...bodyAttributes } = useBodyAttributes();
   return (
     <html
       lang="en"
-      className="theme-neutral md:bg-sidebar"
-      suppressHydrationWarning
+      className={cn(htmlClassName, "md:bg-sidebar")}
+      {...htmlAttributes}
     >
       <head>
         <HeadContent />
       </head>
       <body
-        className="overscroll-none bg-background font-sans antialiased"
-        suppressHydrationWarning
+        className={cn(
+          bodyClassName,
+          "overscroll-none bg-background font-sans antialiased",
+        )}
+        {...bodyAttributes}
       >
-        <ThemeProvider themeColorLookup={themeColorMap} />
-        {props.children}
+        <ThemeProvider
+          themeColorLookup={themeColorMap}
+          defaultBase="stone"
+          defaultAccent="amber"
+        />
+        <Outlet />
         <Toaster />
         <Scripts />
         <TanstackDevtools />
