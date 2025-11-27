@@ -19,4 +19,4 @@
   - Serverless AWS Lambda
   - Stateful ECS Service
 
-- Blazingly fast ⚡ linting using `Biome`
+- Blazingly fast ⚡ linting using `oxc` (`oxlint`, `oxlint-tsgolint` & `oxfmt`)
