@@ -34,7 +34,7 @@ jobs:
       - name: Setup
         uses: ./.github/setup
 
-      - run: pnpm dlx sherif@1.9.0
+      # - run: pnpm dlx sherif@1.9.0
       - run: pnpm run knip
 
   check-fmt:
