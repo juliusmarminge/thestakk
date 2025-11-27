@@ -38,12 +38,7 @@ export function NavUser() {
         <SidebarMenuButton
           size="lg"
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-          render={
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              to="/login"
-            />
-          }
+          render={<Link className={buttonVariants({ variant: "outline" })} to="/login" />}
         >
           Sign in
         </SidebarMenuButton>
@@ -53,16 +48,9 @@ export function NavUser() {
 
   const UserAvatar = (
     <Avatar className="h-8 w-8 rounded-lg in-[.theme-mono]:grayscale">
-      <AvatarImage
-        src={session.user.image ?? undefined}
-        alt={session.user.name}
-      />
+      <AvatarImage src={session.user.image ?? undefined} alt={session.user.name} />
       <AvatarFallback className="rounded-lg">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          className="size-6 fill-current"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="size-6 fill-current">
           <title>User Avatar</title>
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M12 2a5 5 0 1 1 -5 5l.005 -.217a5 5 0 0 1 4.995 -4.783z" />
@@ -83,25 +71,17 @@ export function NavUser() {
             {UserAvatar}
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{session.user.name}</span>
-              <span className="truncate text-muted-foreground text-xs">
-                {session.user.email}
-              </span>
+              <span className="truncate text-muted-foreground text-xs">{session.user.email}</span>
             </div>
             <EllipsisVerticalIcon className="ml-auto size-4" />
           </MenuTrigger>
-          <MenuPopup
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
+          <MenuPopup side={isMobile ? "bottom" : "right"} align="end" sideOffset={4}>
             <MenuGroup>
               <MenuGroupLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   {UserAvatar}
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">
-                      {session.user.name}
-                    </span>
+                    <span className="truncate font-medium">{session.user.name}</span>
                     <span className="truncate text-muted-foreground text-xs">
                       {session.user.email}
                     </span>

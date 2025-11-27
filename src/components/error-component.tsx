@@ -1,4 +1,5 @@
-import { type ErrorComponentProps, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Heading, Text } from "~/components/ui/text";
@@ -19,8 +20,8 @@ export function ErrorComponent(_props: ErrorComponentProps) {
           Oops! Something went wrong
         </Heading>
         <Text className="text-lg text-muted-foreground">
-          Don't worry, it happens to the best of us. Our team has been notified
-          and is working on it.
+          Don't worry, it happens to the best of us. Our team has been notified and is working on
+          it.
         </Text>
         <div className="relative mt-8 flex justify-center gap-4">
           <Button
@@ -55,15 +56,13 @@ export function NotFoundComponent() {
       </div>
 
       <Card className="relative w-full max-w-md space-y-4 p-8 text-center backdrop-blur-sm">
-        <div className="mb-6 animate-[bounce_2s_ease-in-out_infinite] text-8xl">
-          🔍
-        </div>
+        <div className="mb-6 animate-[bounce_2s_ease-in-out_infinite] text-8xl">🔍</div>
         <Heading className="bg-linear-to-r from-primary to-primary-foreground bg-clip-text font-semibold text-3xl text-transparent">
           Page Not Found
         </Heading>
         <Text className="text-lg text-muted-foreground">
-          Looks like you've ventured into uncharted territory! The page you're
-          looking for doesn't exist or may have moved.
+          Looks like you've ventured into uncharted territory! The page you're looking for doesn't
+          exist or may have moved.
         </Text>
         <div className="mt-8 flex justify-center">
           <Link

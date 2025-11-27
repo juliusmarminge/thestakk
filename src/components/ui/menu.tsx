@@ -19,7 +19,7 @@ function MenuPopup({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
-  side = "bottom",
+  side: _side = "bottom",
   ...props
 }: MenuPrimitive.Popup.Props & {
   align?: MenuPrimitive.Positioner.Props["align"];
@@ -108,11 +108,7 @@ function MenuRadioGroup(props: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup data-slot="menu-radio-group" {...props} />;
 }
 
-function MenuRadioItem({
-  className,
-  children,
-  ...props
-}: MenuPrimitive.RadioItem.Props) {
+function MenuRadioItem({ className, children, ...props }: MenuPrimitive.RadioItem.Props) {
   return (
     <MenuPrimitive.RadioItem
       data-slot="menu-radio-item"
@@ -164,10 +160,7 @@ function MenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="menu-shortcut"
-      className={cn(
-        "ms-auto text-muted-foreground/64 text-xs tracking-widest",
-        className,
-      )}
+      className={cn("ms-auto text-muted-foreground/64 text-xs tracking-widest", className)}
       {...props}
     />
   );

@@ -1,12 +1,7 @@
 /// <reference types="vite/client" />
 import type { ConvexQueryClient } from "@convex-dev/react-query";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-  createRootRouteWithContext,
-  HeadContent,
-  Outlet,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import {
   getThemeColorMetaTags,
   ThemeProvider,
@@ -16,10 +11,7 @@ import {
 import type { ConvexReactClient } from "convex/react";
 import { getConvexToken } from "~/auth/client";
 import { TanstackDevtools } from "~/components/devtools";
-import {
-  ErrorComponent,
-  NotFoundComponent,
-} from "~/components/error-component";
+import { ErrorComponent, NotFoundComponent } from "~/components/error-component";
 import { Toaster } from "~/components/ui/sonner";
 import { themeColorMap } from "~/lib/themes";
 import { cn } from "~/lib/utils";
@@ -39,7 +31,7 @@ export const Route = createRootRouteWithContext<{
     ],
     links: [{ rel: "stylesheet", href: stylesUrl }],
   }),
-  beforeLoad: async ({ context }) => {
+  beforeLoad: ({ context }) => {
     const token = getConvexToken();
     if (token) {
       context.convexQueryClient.serverHttpClient?.setAuth(token);
@@ -54,26 +46,15 @@ function RootComponent() {
   const { className: htmlClassName, ...htmlAttributes } = useHtmlAttributes();
   const { className: bodyClassName, ...bodyAttributes } = useBodyAttributes();
   return (
-    <html
-      lang="en"
-      className={cn(htmlClassName, "md:bg-sidebar")}
-      {...htmlAttributes}
-    >
+    <html lang="en" className={cn(htmlClassName, "md:bg-sidebar")} {...htmlAttributes}>
       <head>
         <HeadContent />
       </head>
       <body
-        className={cn(
-          bodyClassName,
-          "overscroll-none bg-background font-sans antialiased",
-        )}
+        className={cn(bodyClassName, "overscroll-none bg-background font-sans antialiased")}
         {...bodyAttributes}
       >
-        <ThemeProvider
-          themeColorLookup={themeColorMap}
-          defaultBase="stone"
-          defaultAccent="amber"
-        />
+        <ThemeProvider themeColorLookup={themeColorMap} defaultBase="stone" defaultAccent="amber" />
         <Outlet />
         <Toaster />
         <Scripts />

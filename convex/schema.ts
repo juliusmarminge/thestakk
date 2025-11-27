@@ -12,12 +12,7 @@ export class ItemType extends Schema.Literal(
   "Cover Page",
 ) {}
 
-export class ItemStatus extends Schema.Literal(
-  "Triage",
-  "Next up",
-  "In Progress",
-  "Done",
-) {}
+export class ItemStatus extends Schema.Literal("Triage", "Next up", "In Progress", "Done") {}
 
 export const Item = Schema.Struct({
   header: Schema.String,

@@ -1,9 +1,5 @@
 import { PlusIcon } from "@heroicons/react/16/solid";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import type { Passkey } from "better-auth/plugins/passkey";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -88,11 +84,7 @@ function PasskeyItem({ passkey }: { passkey: Passkey }) {
           </p>
         </div>
       </div>
-      <LoadingButton
-        variant="ghost"
-        onClick={() => deletePasskey()}
-        isLoading={isPending}
-      >
+      <LoadingButton variant="ghost" onClick={() => deletePasskey()} isLoading={isPending}>
         Delete
       </LoadingButton>
     </li>
@@ -106,24 +98,15 @@ function PasskeyItemSkeleton(props: { pulse?: boolean }) {
         <PasskeyIcon className="size-5" />
         <div className="flex flex-col gap-2">
           <p
-            className={cn(
-              "h-5 w-20 rounded-md bg-muted",
-              props.pulse !== false && "animate-pulse",
-            )}
+            className={cn("h-5 w-20 rounded-md bg-muted", props.pulse !== false && "animate-pulse")}
           />
           <p
-            className={cn(
-              "h-4 w-16 rounded-md bg-muted",
-              props.pulse !== false && "animate-pulse",
-            )}
+            className={cn("h-4 w-16 rounded-md bg-muted", props.pulse !== false && "animate-pulse")}
           />
         </div>
       </div>
       <div
-        className={cn(
-          "h-5 w-16 rounded-md bg-muted",
-          props.pulse !== false && "animate-pulse",
-        )}
+        className={cn("h-5 w-16 rounded-md bg-muted", props.pulse !== false && "animate-pulse")}
       />
     </li>
   );

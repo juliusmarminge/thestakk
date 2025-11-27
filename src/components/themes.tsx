@@ -1,12 +1,7 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
 import { ClientOnly } from "@tanstack/react-router";
-import {
-  type Register,
-  setThemeAccent,
-  setThemeBase,
-  toggleThemeMode,
-  useTheme,
-} from "@tanstack-themes/react";
+import { setThemeAccent, setThemeBase, toggleThemeMode, useTheme } from "@tanstack-themes/react";
+import type { Register } from "@tanstack-themes/react";
 import type * as React from "react";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
@@ -22,21 +17,13 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { ThemeAccent, ThemeBase } from "~/lib/themes";
 import { cn } from "~/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 export function ModeToggle(props: { className?: string }) {
   const mode = useTheme((s) => s.mode);
 
-  const handleToggleMode = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleToggleMode = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     toggleThemeMode();
@@ -100,9 +87,7 @@ export function ThemeSelector() {
       </Label>
       <Menu>
         <MenuTrigger render={<Button variant="outline" />}>
-          <span className="hidden text-muted-foreground sm:block">
-            Select a theme:
-          </span>
+          <span className="hidden text-muted-foreground sm:block">Select a theme:</span>
           <span className="block text-muted-foreground sm:hidden">Theme</span>
           <span className="min-w-[15ch] capitalize">
             <ClientOnly fallback={<Skeleton>amber neutral</Skeleton>}>
@@ -119,11 +104,7 @@ export function ThemeSelector() {
             >
               {ThemeBase.literals.map((theme) => {
                 return (
-                  <MenuRadioItem
-                    key={theme}
-                    value={theme}
-                    className="capitalize"
-                  >
+                  <MenuRadioItem key={theme} value={theme} className="capitalize">
                     {theme}
                   </MenuRadioItem>
                 );
@@ -134,17 +115,11 @@ export function ThemeSelector() {
             <MenuGroupLabel>Accent Color</MenuGroupLabel>
             <MenuRadioGroup
               value={accentColor}
-              onValueChange={(value) =>
-                setThemeAccent(value as Register["accent"])
-              }
+              onValueChange={(value) => setThemeAccent(value as Register["accent"])}
             >
               {ThemeAccent.literals.map((theme) => {
                 return (
-                  <MenuRadioItem
-                    key={theme}
-                    value={theme}
-                    className="capitalize"
-                  >
+                  <MenuRadioItem key={theme} value={theme} className="capitalize">
                     {theme}
                   </MenuRadioItem>
                 );

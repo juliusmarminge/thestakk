@@ -1,5 +1,5 @@
 import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
-import type { RegisteredRouter, ValidateToPath } from "@tanstack/react-router";
+import type { ValidateToPath } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";
 import {
   SidebarGroup,
@@ -15,7 +15,7 @@ export function NavMain({
 }: {
   items: {
     title: string;
-    to: ValidateToPath<RegisteredRouter>;
+    to: ValidateToPath;
     icon?: React.ElementType;
   }[];
 }) {

@@ -2,19 +2,15 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import {
   closestCenter,
   DndContext,
-  type DragEndEvent,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
   ArrowTrendingUpIcon,
@@ -30,19 +26,21 @@ import {
 import { formOptions, useForm } from "@tanstack/react-form";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import {
-  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
-  type OnChangeFn,
-  type PaginationState,
-  type Table as ReactTable,
-  type Row as ReactTableRow,
   useReactTable,
-  type VisibilityState,
+} from "@tanstack/react-table";
+import type {
+  ColumnDef,
+  OnChangeFn,
+  PaginationState,
+  Table as ReactTable,
+  Row as ReactTableRow,
+  VisibilityState,
 } from "@tanstack/react-table";
 import * as Array from "effect/Array";
 import { pipe } from "effect/Function";
@@ -60,12 +58,8 @@ import { ItemStatus, ItemType } from "#convex/schema";
 import { LoaderIcon } from "~/components/icons";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "~/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "~/components/ui/chart";
+import type { ChartConfig } from "~/components/ui/chart";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
   Drawer,
@@ -114,16 +108,11 @@ function useUpdateItem() {
     (localStore, args) => {
       // Find query that contains the item
       const queries = localStore.getAllQueries(api.items.getAll);
-      const query = queries.find((q) =>
-        q.value?.items.find((i) => i._id === args._id),
-      );
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args._id));
       if (!query?.value) return;
 
       // Find the item in the query
-      const item = Array.findFirstIndex(
-        query.value.items,
-        (i) => i._id === args._id,
-      );
+      const item = Array.findFirstIndex(query.value.items, (i) => i._id === args._id);
       if (Option.isNone(item)) return;
 
       const items = Array.replace(query.value.items, item.value, args);
@@ -147,15 +136,10 @@ function useMoveItem() {
   const mutationFn = useConvexMutation(api.items.moveItem).withOptimisticUpdate(
     (localStore, args) => {
       const queries = localStore.getAllQueries(api.items.getAll);
-      const query = queries.find((q) =>
-        q.value?.items.find((i) => i._id === args.id),
-      );
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args.id));
       if (!query?.value) return;
 
-      const item = Array.findFirstWithIndex(
-        query.value.items,
-        (i) => i._id === args.id,
-      );
+      const item = Array.findFirstWithIndex(query.value.items, (i) => i._id === args.id);
       if (Option.isNone(item)) return;
 
       // Update the moved item's order and re-sort
@@ -175,21 +159,19 @@ function useMoveItem() {
 }
 
 function useDeleteItem() {
-  const mutationFn = useConvexMutation(
-    api.items.deleteOne,
-  ).withOptimisticUpdate((localStore, args) => {
-    const queries = localStore.getAllQueries(api.items.getAll);
-    const query = queries.find((q) =>
-      q.value?.items.find((i) => i._id === args.id),
-    );
-    if (!query?.value) return;
+  const mutationFn = useConvexMutation(api.items.deleteOne).withOptimisticUpdate(
+    (localStore, args) => {
+      const queries = localStore.getAllQueries(api.items.getAll);
+      const query = queries.find((q) => q.value?.items.find((i) => i._id === args.id));
+      if (!query?.value) return;
 
-    const items = query.value.items.filter((i) => i._id !== args.id);
-    localStore.setQuery(api.items.getAll, query.args, {
-      ...query.value,
-      items,
-    });
-  });
+      const items = query.value.items.filter((i) => i._id !== args.id);
+      localStore.setQuery(api.items.getAll, query.args, {
+        ...query.value,
+        items,
+      });
+    },
+  );
 
   return useMutation({
     mutationFn,
@@ -201,10 +183,7 @@ function useDeleteItem() {
 
 type Item = GetAllItemsResult["items"][number];
 
-const updateItemForm = (
-  item: Item,
-  updateItem: ReturnType<typeof useUpdateItem>,
-) =>
+const updateItemForm = (item: Item, updateItem: ReturnType<typeof useUpdateItem>) =>
   formOptions({
     defaultValues: item,
     validators: {
@@ -237,9 +216,7 @@ const columns: ColumnDef<Item>[] = [
           <Checkbox
             indeterminate={table.getIsSomePageRowsSelected()}
             checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
           />
         </div>
@@ -312,8 +289,7 @@ const columns: ColumnDef<Item>[] = [
           <form.Field
             name="target"
             children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel className="sr-only" htmlFor={field.name}>
@@ -352,8 +328,7 @@ const columns: ColumnDef<Item>[] = [
           <form.Field
             name="limit"
             children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel className="sr-only" htmlFor={field.name}>
@@ -397,8 +372,7 @@ const columns: ColumnDef<Item>[] = [
           <form.Field
             name="reviewer"
             children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel className="sr-only" htmlFor={field.name}>
@@ -415,9 +389,7 @@ const columns: ColumnDef<Item>[] = [
                     </SelectTrigger>
                     <SelectPopup>
                       <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                      <SelectItem value="Jamik Tashpulatov">
-                        Jamik Tashpulatov
-                      </SelectItem>
+                      <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
                       <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
                     </SelectPopup>
                   </Select>
@@ -507,9 +479,7 @@ export function DataTable(props: {
       newOrder = (overItem?.order + nextItemOrder) / 2;
     } else {
       const prevItemOrder =
-        overItemIndex === 0
-          ? overItem.order - 0.01
-          : items[overItemIndex - 1]?.order;
+        overItemIndex === 0 ? overItem.order - 0.01 : items[overItemIndex - 1]?.order;
       newOrder = (overItem?.order + prevItemOrder) / 2;
     }
 
@@ -520,8 +490,7 @@ export function DataTable(props: {
   }
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
   const table = useReactTable({
     columns,
@@ -552,19 +521,13 @@ export function DataTable(props: {
   ];
 
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
-    >
+    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
         <Select defaultValue="outline" items={viewItems}>
-          <SelectTrigger
-            className="flex @4xl/main:hidden w-fit"
-            id="view-selector"
-          >
+          <SelectTrigger className="flex @4xl/main:hidden w-fit" id="view-selector">
             <SelectValue />
           </SelectTrigger>
           <SelectPopup>
@@ -592,27 +555,17 @@ export function DataTable(props: {
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <div className="overflow-hidden rounded-lg border">
-          <TableWithDraggableRows
-            table={table}
-            data={items}
-            handleDragEnd={handleDragEnd}
-          />
+          <TableWithDraggableRows table={table} data={items} handleDragEnd={handleDragEnd} />
         </div>
         <TablePagination table={table} />
       </TabsContent>
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="past-performance" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
       <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="focus-documents" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed" />
       </TabsContent>
     </Tabs>
@@ -632,18 +585,13 @@ function TableActions({ table }: { table: ReactTable<Item> }) {
         <MenuPopup align="end">
           {table
             .getAllColumns()
-            .filter(
-              (column) =>
-                typeof column.accessorFn !== "undefined" && column.getCanHide(),
-            )
+            .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
             .map((column) => (
               <MenuCheckboxItem
                 key={column.id}
                 className="capitalize"
                 checked={column.getIsVisible()}
-                onCheckedChange={(value: unknown) =>
-                  column.toggleVisibility(!!value)
-                }
+                onCheckedChange={(value: unknown) => column.toggleVisibility(!!value)}
               >
                 {column.id}
               </MenuCheckboxItem>
@@ -692,10 +640,7 @@ function TableWithDraggableRows({
                 <TableHead key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
@@ -755,8 +700,7 @@ function TablePagination({ table }: { table: ReactTable<Item> }) {
           </Select>
         </div>
         <div className="flex w-fit items-center justify-center font-medium text-sm">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <Button
@@ -875,10 +819,7 @@ function TableCellViewer({ item }: { item: Item }) {
   const form = useAppForm(updateItemForm(item, useUpdateItem()));
 
   return (
-    <Drawer
-      direction={isMobile ? "bottom" : "right"}
-      onClose={() => form.reset()}
-    >
+    <Drawer direction={isMobile ? "bottom" : "right"} onClose={() => form.reset()}>
       <DrawerTrigger asChild>
         <Button variant="link" className="w-fit px-0 text-left text-foreground">
           {item.header}
@@ -889,9 +830,7 @@ function TableCellViewer({ item }: { item: Item }) {
           <DrawerHandle />
           <DrawerHeader className="gap-1">
             <DrawerTitle>{item.header}</DrawerTitle>
-            <DrawerDescription>
-              Showing total visitors for the last 6 months
-            </DrawerDescription>
+            <DrawerDescription>Showing total visitors for the last 6 months</DrawerDescription>
           </DrawerHeader>
           <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
             {!isMobile && (
@@ -939,13 +878,11 @@ function TableCellViewer({ item }: { item: Item }) {
                 <Separator />
                 <div className="grid gap-2">
                   <div className="flex gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month{" "}
-                    <ArrowTrendingUpIcon className="size-4" />
+                    Trending up by 5.2% this month <ArrowTrendingUpIcon className="size-4" />
                   </div>
                   <div className="text-muted-foreground">
-                    Showing total visitors for the last 6 months. This is just
-                    some random text to test the layout. It spans multiple lines
-                    and should wrap around.
+                    Showing total visitors for the last 6 months. This is just some random text to
+                    test the layout. It spans multiple lines and should wrap around.
                   </div>
                 </div>
                 <Separator />
@@ -989,21 +926,13 @@ function TableCellViewer({ item }: { item: Item }) {
                 <form.AppField
                   name="target"
                   children={(field) => (
-                    <field.TextField
-                      label="Target"
-                      type="number"
-                      inputMode="numeric"
-                    />
+                    <field.TextField label="Target" type="number" inputMode="numeric" />
                   )}
                 />
                 <form.AppField
                   name="limit"
                   children={(field) => (
-                    <field.TextField
-                      label="Limit"
-                      type="number"
-                      inputMode="numeric"
-                    />
+                    <field.TextField label="Limit" type="number" inputMode="numeric" />
                   )}
                 />
               </div>
@@ -1012,11 +941,7 @@ function TableCellViewer({ item }: { item: Item }) {
                 children={(field) => (
                   <field.SelectField
                     label="Reviewer"
-                    items={[
-                      "Eddie Lake",
-                      "Jamik Tashpulatov",
-                      "Emily Whalen",
-                    ].map((reviewer) => ({
+                    items={["Eddie Lake", "Jamik Tashpulatov", "Emily Whalen"].map((reviewer) => ({
                       label: reviewer,
                       value: reviewer,
                     }))}

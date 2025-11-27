@@ -45,10 +45,7 @@ export function getRouter() {
     },
     Wrap: (props) => {
       return (
-        <ConvexBetterAuthProvider
-          client={convexQueryClient.convexClient}
-          authClient={authClient}
-        >
+        <ConvexBetterAuthProvider client={convexQueryClient.convexClient} authClient={authClient}>
           {props.children}
         </ConvexBetterAuthProvider>
       );

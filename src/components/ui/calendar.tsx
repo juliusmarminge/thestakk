@@ -19,10 +19,8 @@ interface BaseCalendarProps {
   className?: string;
 }
 
-type CalendarProps = React.ComponentProps<typeof CalendarRac> &
-  BaseCalendarProps;
-type RangeCalendarProps = React.ComponentProps<typeof RangeCalendarRac> &
-  BaseCalendarProps;
+type CalendarProps = React.ComponentProps<typeof CalendarRac> & BaseCalendarProps;
+type RangeCalendarProps = React.ComponentProps<typeof RangeCalendarRac> & BaseCalendarProps;
 
 function CalendarHeader() {
   return (
@@ -85,9 +83,7 @@ export function Calendar({ className, ...props }: CalendarProps) {
   return (
     <CalendarRac
       {...props}
-      className={composeRenderProps(className, (className) =>
-        cn("w-fit", className),
-      )}
+      className={composeRenderProps(className, (className) => cn("w-fit", className))}
     >
       <CalendarHeader />
       <CalendarGridComponent />
@@ -99,9 +95,7 @@ export function RangeCalendar({ className, ...props }: RangeCalendarProps) {
   return (
     <RangeCalendarRac
       {...props}
-      className={composeRenderProps(className, (className) =>
-        cn("w-fit", className),
-      )}
+      className={composeRenderProps(className, (className) => cn("w-fit", className))}
     >
       <CalendarHeader />
       <CalendarGridComponent isRange />

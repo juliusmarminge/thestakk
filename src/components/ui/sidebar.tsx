@@ -1,10 +1,11 @@
 import { mergeProps } from "@base-ui-components/react/merge-props";
 import { useRender } from "@base-ui-components/react/use-render";
-import type { LinkProps, RegisteredRouter } from "@tanstack/react-router";
+import type { LinkProps } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { createIsomorphicFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import * as Cookie from "cookie-es";
 import * as Schema from "effect/Schema";
 import * as React from "react";
@@ -33,14 +34,10 @@ const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 const getSidebarCookieValue = createIsomorphicFn()
   .server(() => getCookie(SIDEBAR_COOKIE_NAME) ?? "open-left")
-  .client(
-    () => Cookie.parse(document.cookie)[SIDEBAR_COOKIE_NAME] ?? "open-left",
-  );
+  .client(() => Cookie.parse(document.cookie)[SIDEBAR_COOKIE_NAME] ?? "open-left");
 
-const initialSidebarOpenState = () =>
-  getSidebarCookieValue().startsWith("open-");
-const initialSidebarSide = () =>
-  getSidebarCookieValue().endsWith("-left") ? "left" : "right";
+const initialSidebarOpenState = () => getSidebarCookieValue().startsWith("open-");
+const initialSidebarSide = () => (getSidebarCookieValue().endsWith("-left") ? "left" : "right");
 
 const updateSidebarCookie = createServerFn({ method: "POST" })
   .inputValidator(
@@ -135,10 +132,7 @@ function SidebarProvider({
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
-        (event.metaKey || event.ctrlKey)
-      ) {
+      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         toggleSidebar();
       }
@@ -202,13 +196,7 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
-  const {
-    isMobile,
-    state,
-    openMobile,
-    setOpenMobile,
-    side: sideContext,
-  } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile, side: sideContext } = useSidebar();
   const side = sideProp ?? sideContext;
 
   if (collapsible === "none") {
@@ -299,11 +287,7 @@ function Sidebar({
   );
 }
 
-function SidebarTrigger({
-  className,
-  onClick,
-  ...props
-}: React.ComponentProps<typeof Button>) {
+function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -376,10 +360,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   );
 }
 
-function SidebarInput({
-  className,
-  ...props
-}: React.ComponentProps<typeof Input>) {
+function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input>) {
   return (
     <Input
       data-slot="sidebar-input"
@@ -412,10 +393,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function SidebarSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof Separator>) {
+function SidebarSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {
   return (
     <Separator
       data-slot="sidebar-separator"
@@ -451,11 +429,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function SidebarGroupLabel({
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"div">) {
+function SidebarGroupLabel({ className, render, ...props }: useRender.ComponentProps<"div">) {
   const defaultProps = {
     "data-slot": "sidebar-group-label",
     "data-sidebar": "group-label",
@@ -473,11 +447,7 @@ function SidebarGroupLabel({
   });
 }
 
-function SidebarGroupAction({
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"button">) {
+function SidebarGroupAction({ className, render, ...props }: useRender.ComponentProps<"button">) {
   const defaultProps = {
     "data-slot": "sidebar-group-action",
     "data-sidebar": "group-action",
@@ -496,10 +466,7 @@ function SidebarGroupAction({
   });
 }
 
-function SidebarGroupContent({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarGroupContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-group-content"
@@ -608,8 +575,7 @@ function SidebarMenuButton({
 function SidebarMenuLink({
   className,
   ...props
-}: React.ComponentProps<typeof SidebarMenuButton> &
-  LinkProps<"a", RegisteredRouter>) {
+}: React.ComponentProps<typeof SidebarMenuButton> & LinkProps) {
   return (
     <SidebarMenuButton
       render={
@@ -617,6 +583,7 @@ function SidebarMenuLink({
           data-slot="sidebar-menu-link"
           data-sidebar="menu-link"
           className={cn(className)}
+          // oxlint-disable-next-line no-explicit-any
           {...(props as any)}
         />
       }
@@ -655,10 +622,7 @@ function SidebarMenuAction({
   });
 }
 
-function SidebarMenuBadge({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarMenuBadge({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-menu-badge"
@@ -696,12 +660,7 @@ function SidebarMenuSkeleton({
       className={cn("flex h-8 items-center gap-2 rounded-md px-2", className)}
       {...props}
     >
-      {showIcon && (
-        <Skeleton
-          className="size-4 rounded-md"
-          data-sidebar="menu-skeleton-icon"
-        />
-      )}
+      {showIcon && <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />}
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"
@@ -730,10 +689,7 @@ function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
   );
 }
 
-function SidebarMenuSubItem({
-  className,
-  ...props
-}: React.ComponentProps<"li">) {
+function SidebarMenuSubItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="sidebar-menu-sub-item"

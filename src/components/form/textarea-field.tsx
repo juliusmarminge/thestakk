@@ -2,18 +2,8 @@ import { useStore } from "@tanstack/react-form";
 import type * as React from "react";
 import { useFieldContext } from "~/components/form/context";
 
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "../ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupTextarea,
-} from "../ui/input-group";
+import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "../ui/field";
+import { InputGroup, InputGroupAddon, InputGroupTextarea } from "../ui/input-group";
 
 export function TextareaField({
   label,
@@ -51,9 +41,7 @@ export function TextareaField({
             </FieldLabel>
           )}
           {description && (
-            <FieldDescription className={descriptionClassName}>
-              {description}
-            </FieldDescription>
+            <FieldDescription className={descriptionClassName}>{description}</FieldDescription>
           )}
         </FieldContent>
       )}
@@ -66,18 +54,10 @@ export function TextareaField({
           onChange={(e) => field.handleChange(e.target.value)}
           {...props}
         />
-        {inlineStart && (
-          <InputGroupAddon align="inline-start">{inlineStart}</InputGroupAddon>
-        )}
-        {inlineEnd && (
-          <InputGroupAddon align="inline-end">{inlineEnd}</InputGroupAddon>
-        )}
-        {blockStart && (
-          <InputGroupAddon align="block-start">{blockStart}</InputGroupAddon>
-        )}
-        {blockEnd && (
-          <InputGroupAddon align="block-end">{blockEnd}</InputGroupAddon>
-        )}
+        {inlineStart && <InputGroupAddon align="inline-start">{inlineStart}</InputGroupAddon>}
+        {inlineEnd && <InputGroupAddon align="inline-end">{inlineEnd}</InputGroupAddon>}
+        {blockStart && <InputGroupAddon align="block-start">{blockStart}</InputGroupAddon>}
+        {blockEnd && <InputGroupAddon align="block-end">{blockEnd}</InputGroupAddon>}
       </InputGroup>
       <FieldError errors={errors} />
     </Field>

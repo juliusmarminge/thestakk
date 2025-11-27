@@ -19,32 +19,16 @@ function Toolbar({ className, ...props }: ToolbarPrimitive.Root.Props) {
 
 function ToolbarButton({ className, ...props }: ToolbarPrimitive.Button.Props) {
   return (
-    <ToolbarPrimitive.Button
-      data-slot="toolbar-button"
-      className={cn(className)}
-      {...props}
-    />
+    <ToolbarPrimitive.Button data-slot="toolbar-button" className={cn(className)} {...props} />
   );
 }
 
 function ToolbarLink({ className, ...props }: ToolbarPrimitive.Link.Props) {
-  return (
-    <ToolbarPrimitive.Link
-      data-slot="toolbar-link"
-      className={cn(className)}
-      {...props}
-    />
-  );
+  return <ToolbarPrimitive.Link data-slot="toolbar-link" className={cn(className)} {...props} />;
 }
 
 function ToolbarInput({ className, ...props }: ToolbarPrimitive.Input.Props) {
-  return (
-    <ToolbarPrimitive.Input
-      data-slot="toolbar-input"
-      className={cn(className)}
-      {...props}
-    />
-  );
+  return <ToolbarPrimitive.Input data-slot="toolbar-input" className={cn(className)} {...props} />;
 }
 
 function ToolbarGroup({ className, ...props }: ToolbarPrimitive.Group.Props) {
@@ -57,10 +41,7 @@ function ToolbarGroup({ className, ...props }: ToolbarPrimitive.Group.Props) {
   );
 }
 
-function ToolbarSeparator({
-  className,
-  ...props
-}: ToolbarPrimitive.Separator.Props) {
+function ToolbarSeparator({ className, ...props }: ToolbarPrimitive.Separator.Props) {
   return (
     <ToolbarPrimitive.Separator
       data-slot="toolbar-separator"
@@ -73,11 +54,4 @@ function ToolbarSeparator({
   );
 }
 
-export {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-  ToolbarButton,
-  ToolbarLink,
-  ToolbarInput,
-};
+export { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarButton, ToolbarLink, ToolbarInput };

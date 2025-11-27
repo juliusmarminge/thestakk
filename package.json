@@ -4,13 +4,13 @@
 	"sideEffects": false,
 	"type": "module",
 	"scripts": {
-		"build": "vite build",
-		"check": "biome check && tsgo --noEmit",
-		"check:fix": "biome check --write --unsafe && tsgo --noEmit",
 		"clean": "rm -rf .nitro .output .tanstack node_modules",
 		"dev": "vite dev",
+		"build": "vite build",
 		"start": "NODE_ENV=production node --env-file .env.local .output/server/index.mjs",
-		"knip": "knip"
+		"lint": "oxlint -c .config/.oxlintrc.json --type-aware --type-check --deny-warnings --report-unused-disable-directives",
+		"fmt": "oxfmt -c .config/.oxfmtrc.json",
+		"knip": "knip -c .config/knip.json"
 	},
 	"dependencies": {
 		"@base-ui-components/react": "1.0.0-beta.4",
@@ -46,7 +46,6 @@
 		"vaul": "^1.1.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.5",
 		"@faker-js/faker": "^10.1.0",
 		"@tailwindcss/vite": "^4.1.17",
 		"@tanstack/devtools-vite": "^0.3.11",
@@ -58,19 +57,22 @@
 		"@types/node": "^24.10.1",
 		"@types/react": "~19.2.4",
 		"@types/react-dom": "~19.2.3",
-		"@typescript/native-preview": "7.0.0-dev.20251103.1",
 		"@vitejs/plugin-react": "^5.1.1",
 		"knip": "^5.69.1",
 		"nitro": "3.0.1-alpha.1",
+		"oxfmt": "^0.15.0",
+		"oxlint": "^1.30.0",
+		"oxlint-tsgolint": "^0.8.3",
 		"tailwindcss": "^4.1.17",
 		"tw-animate-css": "^1.4.0",
 		"typescript": "5.9.3",
 		"vite": "npm:rolldown-vite@7.2.0",
 		"vite-plugin-inspect": "^11.3.3"
 	},
-	"packageManager": "pnpm@10.20.0",
+	"packageManager": "pnpm@10.23.0",
 	"engines": {
-		"node": "^22.20.0"
+		"node": "^24.0.0",
+		"pnpm": "^10.23.0"
 	},
 	"pnpm": {
 		"overrides": {

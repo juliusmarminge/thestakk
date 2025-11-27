@@ -17,12 +17,5 @@ export default defineConfig({
       "~": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  plugins: [
-    devtools() as never,
-    tanstackStart(),
-    react(),
-    tailwindcss(),
-    nitro(),
-    inspect(),
-  ],
+  plugins: [devtools() as never, tanstackStart(), react(), tailwindcss(), nitro(), inspect()],
 });

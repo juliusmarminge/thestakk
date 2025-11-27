@@ -1,4 +1,5 @@
-import { AnyFormApi, createFormHook } from "@tanstack/react-form";
+import type { AnyFormApi } from "@tanstack/react-form";
+import { createFormHook } from "@tanstack/react-form";
 import { fieldContext, formContext } from "~/components/form/context";
 import { SelectField } from "~/components/form/select-field";
 import { SubscribeButton } from "~/components/form/submit-button";
@@ -9,7 +10,10 @@ function Form<_TForm extends AnyFormApi>({
   form,
   children,
   ...props
-}: Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> & { form: any }) {
+}: Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> & {
+  // oxlint-disable-next-line no-explicit-any
+  form: any;
+}) {
   return (
     <form
       onSubmit={(e) => {
