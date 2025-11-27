@@ -6,10 +6,7 @@ function Frame({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="frame"
-      className={cn(
-        "relative flex flex-col rounded-2xl bg-muted p-1",
-        className,
-      )}
+      className={cn("relative flex flex-col rounded-2xl bg-muted p-1", className)}
       {...props}
     />
   );
@@ -48,10 +45,7 @@ function FrameTitle({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function FrameDescription({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FrameDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="frame-panel-description"
@@ -71,11 +65,4 @@ function FrameFooter({ className, ...props }: React.ComponentProps<"footer">) {
   );
 }
 
-export {
-  Frame,
-  FramePanel,
-  FrameHeader,
-  FrameTitle,
-  FrameDescription,
-  FrameFooter,
-};
+export { Frame, FramePanel, FrameHeader, FrameTitle, FrameDescription, FrameFooter };

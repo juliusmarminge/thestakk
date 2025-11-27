@@ -1,28 +1,30 @@
 {
-	"editor.codeActionsOnSave": {
-		"source.organizeImports.biome": "explicit",
-		"source.action.organizeImports": "explicit",
-		"source.fixAll.biome": "explicit"
-	},
-	"editor.defaultFormatter": "biomejs.biome",
-	"editor.formatOnSave": true,
-	"files.associations": {
-		"**/*.css": "tailwindcss"
-	},
-	"files.readonlyInclude": {
-		"**/sst-env.d.ts": true,
-		"**/routeTree.gen.ts": true
-	},
-	"files.watcherExclude": {
-		"**/sst-env.d.ts": true,
-		"**/routeTree.gen.ts": true
-	},
-	"search.exclude": {
-		"**/node_modules": true,
-		"**/routeTree.gen.ts": true
-	},
-	"tailwindCSS.classFunctions": ["cva", "cn", "cx"],
-	"typescript.enablePromptUseWorkspaceTsdk": true,
-	"typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
-	"typescript.tsdk": "node_modules/typescript/lib"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "oxc.configPath": ".config/.oxlintrc.json",
+  "oxc.typeAware": true,
+  "oxc.fmt.experimental": true,
+  "oxc.fmt.configPath": ".config/.oxfmtrc.json",
+  "files.associations": {
+    "**/*.css": "tailwindcss"
+  },
+  "files.readonlyInclude": {
+    "**/sst-env.d.ts": true,
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/sst-env.d.ts": true,
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/routeTree.gen.ts": true
+  },
+  "tailwindCSS.classFunctions": ["cva", "cn", "cx"],
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,0 +1,68 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "import"],
+  "categories": {
+    "correctness": "warn",
+    "suspicious": "warn"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": ["**/_generated/**", "**/routeTree.gen.ts"],
+  "rules": {
+    "eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "eslint/prefer-rest-params": "warn",
+    "eslint/no-case-declarations": "warn",
+    "eslint/no-var": "warn",
+    "eslint/no-new": "off",
+    "import/consistent-type-specifier-style": ["warn", "prefer-top-level"],
+    "import/no-unassigned-import": [
+      "warn",
+      {
+        "allow": ["**/*.css"]
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/no-children-prop": "off",
+    "react/rules-of-hooks": "warn",
+    "react/exhaustive-deps": "warn",
+    "typescript/consistent-type-imports": [
+      "warn",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "typescript/no-misused-spread": "off",
+    "typescript/ban-ts-comment": "warn",
+    "typescript/no-empty-object-type": "warn",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-require-imports": "warn",
+    "typescript/no-unnecessary-type-constraint": "warn",
+    "typescript/no-unsafe-function-type": "warn",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/prefer-namespace-keyword": "warn",
+    "typescript/require-await": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["convex/**"],
+      "rules": {
+        "typescript/require-await": "off"
+      }
+    },
+    {
+      "files": ["test/**", "**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "typescript/require-await": "off",
+        "typescript/no-empty-object-type": "off"
+      }
+    }
+  ]
+}

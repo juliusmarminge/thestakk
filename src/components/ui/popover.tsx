@@ -46,8 +46,7 @@ function PopoverPopup({
             data-slot="popover-content"
             className={cn(
               "max-h-(--available-height) w-full overflow-y-auto p-4 outline-none",
-              tooltipStyle &&
-                "px-[calc(--spacing(2)+1px)] py-[calc(--spacing(1)+1px)]",
+              tooltipStyle && "px-[calc(--spacing(2)+1px)] py-[calc(--spacing(1)+1px)]",
             )}
             {...props}
           >
@@ -73,10 +72,7 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
   );
 }
 
-function PopoverDescription({
-  className,
-  ...props
-}: PopoverPrimitive.Description.Props) {
+function PopoverDescription({ className, ...props }: PopoverPrimitive.Description.Props) {
   return (
     <PopoverPrimitive.Description
       data-slot="popover-description"
@@ -86,11 +82,4 @@ function PopoverDescription({
   );
 }
 
-export {
-  Popover,
-  PopoverTrigger,
-  PopoverPopup,
-  PopoverTitle,
-  PopoverDescription,
-  PopoverClose,
-};
+export { Popover, PopoverTrigger, PopoverPopup, PopoverTitle, PopoverDescription, PopoverClose };

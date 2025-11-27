@@ -1,9 +1,6 @@
 import { cn } from "~/lib/utils";
 
-export function LoaderIcon({
-  className,
-  ...props
-}: React.ComponentProps<"svg">) {
+export function LoaderIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -27,10 +24,7 @@ export function LoaderIcon({
   );
 }
 
-export function ThemeToggleIcon({
-  className,
-  ...props
-}: React.ComponentProps<"svg">) {
+export function ThemeToggleIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -51,10 +45,7 @@ export function ThemeToggleIcon({
   );
 }
 
-export function PanelLeftIcon({
-  className,
-  ...props
-}: React.ComponentProps<"svg">) {
+export function PanelLeftIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -69,10 +60,7 @@ export function PanelLeftIcon({
   );
 }
 
-export function PanelRightIcon({
-  className,
-  ...props
-}: React.ComponentProps<"svg">) {
+export function PanelRightIcon({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -86,11 +74,7 @@ export function PanelRightIcon({
     </svg>
   );
 }
-export function LoadingSpinner(props: {
-  size?: number;
-  invert?: boolean;
-  className?: string;
-}) {
+export function LoadingSpinner(props: { size?: number; invert?: boolean; className?: string }) {
   const size = props.size ?? "24";
   return (
     <output>
@@ -122,10 +106,7 @@ export function LoadingSpinner(props: {
   );
 }
 
-export const PasskeyIcon = ({
-  className,
-  ...props
-}: React.ComponentProps<"svg">) => (
+export const PasskeyIcon = ({ className, ...props }: React.ComponentProps<"svg">) => (
   <svg
     viewBox="0 0 327 318"
     fill="currentColor"

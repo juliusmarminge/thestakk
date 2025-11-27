@@ -3,13 +3,7 @@ import * as Schema from "effect/Schema";
 
 export const ThemeBase = Schema.Literal("neutral", "stone", "slate", "zinc");
 
-export const ThemeAccent = Schema.Literal(
-  "default",
-  "amber",
-  "sapphire",
-  "emerald",
-  "mono",
-);
+export const ThemeAccent = Schema.Literal("default", "amber", "sapphire", "emerald", "mono");
 
 declare module "@tanstack-themes/react" {
   interface Register {

@@ -1,4 +1,5 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "~/lib/utils";
 
@@ -19,10 +20,7 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="empty-header"
-      className={cn(
-        "flex max-w-sm flex-col items-center text-center",
-        className,
-      )}
+      className={cn("flex max-w-sm flex-col items-center text-center", className)}
       {...props}
     />
   );
@@ -73,10 +71,7 @@ function EmptyMedia({
           />
         </>
       )}
-      <div
-        className={cn(emptyMediaVariants({ variant, className }))}
-        {...props}
-      />
+      <div className={cn(emptyMediaVariants({ variant, className }))} {...props} />
     </div>
   );
 }
@@ -117,11 +112,4 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription,
-  EmptyContent,
-  EmptyMedia,
-};
+export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia };

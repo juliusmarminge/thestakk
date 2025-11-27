@@ -1,6 +1,7 @@
 import { mergeProps } from "@base-ui-components/react/merge-props";
 import { useRender } from "@base-ui-components/react/use-render";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "~/lib/utils";
 import { LoadingSpinner } from "../icons";
@@ -24,15 +25,13 @@ const buttonVariants = cva(
         link: "border-transparent underline-offset-4 hover:underline",
       },
       size: {
-        default:
-          "min-h-8 px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)]",
+        default: "min-h-8 px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)]",
         xs: "min-h-6 gap-1 rounded-md px-[calc(--spacing(2)-1px)] py-[calc(--spacing(1)-1px)] text-xs before:rounded-[calc(var(--radius-md)-1px)] [&_svg:not([class*='size-'])]:size-3",
         sm: "min-h-7 gap-1.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)]",
         lg: "min-h-9 px-[calc(--spacing(3.5)-1px)] py-[calc(--spacing(2)-1px)]",
         xl: "min-h-10 px-[calc(--spacing(4)-1px)] py-[calc(--spacing(2)-1px)] text-base [&_svg:not([class*='size-'])]:size-4.5",
         icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-md before:rounded-[calc(var(--radius-md)-1px)]",
+        "icon-xs": "size-6 rounded-md before:rounded-[calc(var(--radius-md)-1px)]",
         "icon-sm": "size-7",
         "icon-lg": "size-9",
         "icon-xl": "size-10 [&_svg:not([class*='size-'])]:size-4.5",
@@ -51,8 +50,9 @@ interface ButtonProps extends useRender.ComponentProps<"button"> {
 }
 
 function Button({ className, variant, size, render, ...props }: ButtonProps) {
-  const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] =
-    render ? undefined : "button";
+  const typeValue: React.ButtonHTMLAttributes<HTMLButtonElement>["type"] = render
+    ? undefined
+    : "button";
 
   const defaultProps = {
     "data-slot": "button",
@@ -80,10 +80,7 @@ export function LoadingButton({
         "data-disabled": true,
       })}
       onClick={props.onClick}
-      className={cn(
-        "relative overflow-hidden px-5 transition",
-        props.className,
-      )}
+      className={cn("relative overflow-hidden px-5 transition", props.className)}
     >
       <span
         aria-hidden={isLoading}

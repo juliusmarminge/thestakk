@@ -1,17 +1,8 @@
 import { useStore } from "@tanstack/react-form";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "../ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "../ui/input-group";
-import { type FieldProps, useFieldContext } from "./context";
+import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "../ui/field";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
+import { useFieldContext } from "./context";
+import type { FieldProps } from "./context";
 
 export function TextField({
   label,
@@ -44,9 +35,7 @@ export function TextField({
             </FieldLabel>
           )}
           {description && (
-            <FieldDescription className={descriptionClassName}>
-              {description}
-            </FieldDescription>
+            <FieldDescription className={descriptionClassName}>{description}</FieldDescription>
           )}
         </FieldContent>
       )}
@@ -59,18 +48,10 @@ export function TextField({
           onChange={(e) => field.handleChange(e.target.value)}
           {...props}
         />
-        {inlineStart && (
-          <InputGroupAddon align="inline-start">{inlineStart}</InputGroupAddon>
-        )}
-        {inlineEnd && (
-          <InputGroupAddon align="inline-end">{inlineEnd}</InputGroupAddon>
-        )}
-        {blockStart && (
-          <InputGroupAddon align="block-start">{blockStart}</InputGroupAddon>
-        )}
-        {blockEnd && (
-          <InputGroupAddon align="block-end">{blockEnd}</InputGroupAddon>
-        )}
+        {inlineStart && <InputGroupAddon align="inline-start">{inlineStart}</InputGroupAddon>}
+        {inlineEnd && <InputGroupAddon align="inline-end">{inlineEnd}</InputGroupAddon>}
+        {blockStart && <InputGroupAddon align="block-start">{blockStart}</InputGroupAddon>}
+        {blockEnd && <InputGroupAddon align="block-end">{blockEnd}</InputGroupAddon>}
       </InputGroup>
       <FieldError errors={errors} />
     </Field>

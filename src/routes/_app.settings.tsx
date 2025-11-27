@@ -36,10 +36,7 @@ function RouteComponent() {
           <div className="space-y-4">
             <div>
               <Subheading>Sidebar Position</Subheading>
-              <Text>
-                You can also right-click the sidebar toggle to change the
-                position.
-              </Text>
+              <Text>You can also right-click the sidebar toggle to change the position.</Text>
             </div>
             <RadioGroup
               value={side}
@@ -47,11 +44,7 @@ function RouteComponent() {
               className="grid grid-cols-2 gap-4"
             >
               <div>
-                <RadioGroupItem
-                  value="left"
-                  id="left"
-                  className="peer sr-only"
-                />
+                <RadioGroupItem value="left" id="left" className="peer sr-only" />
                 <Label
                   htmlFor="left"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
@@ -62,11 +55,7 @@ function RouteComponent() {
               </div>
 
               <div>
-                <RadioGroupItem
-                  value="right"
-                  id="right"
-                  className="peer sr-only"
-                />
+                <RadioGroupItem value="right" id="right" className="peer sr-only" />
                 <Label
                   htmlFor="right"
                   className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { FieldProps, useFieldContext } from "~/components/form/context";
+import type { FieldProps } from "~/components/form/context";
+import { useFieldContext } from "~/components/form/context";
 import {
   Select,
   SelectItem,
@@ -35,9 +36,7 @@ export function SelectField({
             </FieldLabel>
           )}
           {description && (
-            <FieldDescription className={descriptionClassName}>
-              {description}
-            </FieldDescription>
+            <FieldDescription className={descriptionClassName}>{description}</FieldDescription>
           )}
         </FieldContent>
       )}
@@ -49,9 +48,7 @@ export function SelectField({
         value={field.state.value}
         onValueChange={field.handleChange}
       >
-        <SelectTrigger
-          className={cn("data-invalid:border-destructive", triggerClassName)}
-        >
+        <SelectTrigger className={cn("data-invalid:border-destructive", triggerClassName)}>
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>

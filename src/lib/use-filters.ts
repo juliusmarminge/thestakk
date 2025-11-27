@@ -1,19 +1,11 @@
-import {
-  type RegisteredRouter,
-  type RouteIds,
-  useNavigate,
-  useSearch,
-} from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import type { RegisteredRouter, RouteIds } from "@tanstack/react-router";
 
 function cleanEmptyParams<T extends Record<string, unknown>>(search: T) {
   const newSearch = { ...search };
   for (const key in newSearch) {
     const value = newSearch[key];
-    if (
-      value === undefined ||
-      value === "" ||
-      (typeof value === "number" && Number.isNaN(value))
-    )
+    if (value === undefined || value === "" || (typeof value === "number" && Number.isNaN(value)))
       delete newSearch[key];
   }
 
@@ -23,9 +15,7 @@ function cleanEmptyParams<T extends Record<string, unknown>>(search: T) {
   return newSearch;
 }
 
-export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(
-  routeId: T,
-) {
+export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(routeId: T) {
   const navigate = useNavigate();
   const filters = useSearch({
     from: routeId,
@@ -33,7 +23,7 @@ export function useFilters<T extends RouteIds<RegisteredRouter["routeTree"]>>(
 
   const setFilters = (partialFilters: Partial<typeof filters>) => {
     void navigate({
-      search: (prev: any) => cleanEmptyParams({ ...prev, ...partialFilters }),
+      search: (prev) => cleanEmptyParams({ ...prev, ...partialFilters }),
       to: ".",
     });
   };

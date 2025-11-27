@@ -1,20 +1,40 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": [".sst"],
   "compilerOptions": {
-    "lib": ["es2023", "dom"],
-    "module": "preserve",
-    "target": "es2022",
-    "jsx": "preserve",
-    "strict": true,
-    "skipLibCheck": true,
+    // Build Performance
+    "incremental": true,
+    "composite": true,
     "libReplacement": false,
-    // "erasableSyntaxOnly": true,
-    "allowImportingTsExtensions": true,
+    "tsBuildInfoFile": "${configDir}/.cache/tsbuildinfo.json",
+
+    // Module System
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    // "isolatedDeclarations": true,
+    "erasableSyntaxOnly": true,
     "noEmit": true,
+    "jsx": "react-jsx",
+
+    // Import Resolution
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true,
+
+    // Type Safety
+    "strict": true,
+    // "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    // "noUncheckedIndexedAccess": true,
+
+    // Development
+    "skipLibCheck": true,
     "paths": {
       "~/*": ["./src/*"],
       "#convex/*": ["./convex/*"]
     }
-  }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["./node_modules"]
 }

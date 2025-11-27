@@ -2,12 +2,7 @@ import { ShardedCounter } from "@convex-dev/sharded-counter";
 import * as Array from "effect/Array";
 import * as Effect from "effect/Effect";
 import { components } from "./_generated/api";
-import {
-  ConfectMutationCtx,
-  ConfectQueryCtx,
-  mutation,
-  query,
-} from "./confect";
+import { ConfectMutationCtx, ConfectQueryCtx, mutation, query } from "./confect";
 import {
   DeleteOneArgs,
   DeleteOneResult,

@@ -4,12 +4,8 @@ import {
   MagnifyingGlassIcon,
   RocketLaunchIcon,
 } from "@heroicons/react/24/outline";
-import {
-  Link,
-  linkOptions,
-  type RegisteredRouter,
-  type ToPathOption,
-} from "@tanstack/react-router";
+import { Link, linkOptions } from "@tanstack/react-router";
+import type { RegisteredRouter, ToPathOption } from "@tanstack/react-router";
 import { NavMain } from "~/components/nav-main";
 import { NavSecondary } from "~/components/nav-secondary";
 import { NavUser } from "~/components/nav-user";

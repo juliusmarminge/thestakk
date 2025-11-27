@@ -11,10 +11,7 @@ export function Heading({ className, level = 1, ...props }: HeadingProps) {
   return (
     <Element
       {...props}
-      className={cn(
-        "font-semibold text-2xl/8 text-foreground sm:text-xl/8",
-        className,
-      )}
+      className={cn("font-semibold text-2xl/8 text-foreground sm:text-xl/8", className)}
     />
   );
 }
@@ -25,10 +22,7 @@ export function Subheading({ className, level = 2, ...props }: HeadingProps) {
   return (
     <Element
       {...props}
-      className={cn(
-        "font-semibold text-base/7 text-foreground sm:text-sm/6",
-        className,
-      )}
+      className={cn("font-semibold text-base/7 text-foreground sm:text-sm/6", className)}
     />
   );
 }
@@ -38,18 +32,12 @@ export function Text({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="text"
       {...props}
-      className={cn(
-        "text-base/6 text-muted-foreground sm:text-sm/6",
-        className,
-      )}
+      className={cn("text-base/6 text-muted-foreground sm:text-sm/6", className)}
     />
   );
 }
 
-export function TextLink({
-  className,
-  ...props
-}: React.ComponentProps<typeof Link>) {
+export function TextLink({ className, ...props }: React.ComponentProps<typeof Link>) {
   return (
     <Link
       {...props}
@@ -61,16 +49,8 @@ export function TextLink({
   );
 }
 
-export function Strong({
-  className,
-  ...props
-}: React.ComponentProps<"strong">) {
-  return (
-    <strong
-      {...props}
-      className={cn("font-medium text-foreground", className)}
-    />
-  );
+export function Strong({ className, ...props }: React.ComponentProps<"strong">) {
+  return <strong {...props} className={cn("font-medium text-foreground", className)} />;
 }
 
 export function Code({ className, ...props }: React.ComponentProps<"code">) {
@@ -85,10 +65,7 @@ export function Code({ className, ...props }: React.ComponentProps<"code">) {
   );
 }
 
-export function Pre({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"pre">) {
+export function Pre({ className, ...props }: React.ComponentPropsWithoutRef<"pre">) {
   return (
     <pre
       {...props}

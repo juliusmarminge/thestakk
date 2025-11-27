@@ -89,9 +89,7 @@ function RouteComponent() {
         className="w-full max-w-lg space-y-6 rounded-xl border bg-linear-to-t from-primary/10 to-card p-8 shadow-lg backdrop-blur-[2px] transition-all hover:shadow-xl dark:border-primary/10 dark:from-primary/20 dark:to-card/90"
       >
         <FieldSet disabled={isPending || form.state.isSubmitting}>
-          <FieldLegend>
-            {isSignUp ? "Create an account" : "Welcome back"}
-          </FieldLegend>
+          <FieldLegend>{isSignUp ? "Create an account" : "Welcome back"}</FieldLegend>
           <Text>
             {isSignUp
               ? "Enter your details to create your account"
@@ -99,19 +97,12 @@ function RouteComponent() {
           </Text>
           <FieldGroup>
             {isSignUp && (
-              <form.AppField
-                name="name"
-                children={(field) => <field.TextField label="Name" />}
-              />
+              <form.AppField name="name" children={(field) => <field.TextField label="Name" />} />
             )}
             <form.AppField
               name="email"
               children={(field) => (
-                <field.TextField
-                  autoComplete="username webauthn"
-                  label="Email"
-                  type="email"
-                />
+                <field.TextField autoComplete="username webauthn" label="Email" type="email" />
               )}
             />
             <form.AppField
@@ -160,9 +151,7 @@ function RouteComponent() {
             disabled={isPending || form.state.isSubmitting}
             onClick={() => setIsSignUp(!isSignUp)}
           >
-            {isSignUp
-              ? "Already have an account? Sign in"
-              : "Don't have an account? Sign up"}
+            {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
           </Button>
         </div>
       </form.Form>
