@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Build Performance
     "incremental": true,
-    "composite": true,
+    // "composite": true,
     "libReplacement": false,
     "tsBuildInfoFile": "${configDir}/.cache/tsbuildinfo.json",
 
