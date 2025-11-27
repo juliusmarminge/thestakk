@@ -7,7 +7,6 @@ import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 
-// biome-ignore lint/style/noNonNullAssertion: Convex enforces us to provide env vars during deploys
 const siteUrl = process.env.SITE_URL!;
 
 // The component client has methods needed for integrating Convex with Better Auth,
